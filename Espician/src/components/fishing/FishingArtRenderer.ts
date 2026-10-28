@@ -16,7 +16,9 @@ export type FishingPhase =
   | 'FISH_BITING'
   | 'REELING_MINIGAME'
   | 'CATCHING'
-  | 'CATCH_REVEAL';
+  | 'CATCH_REVEAL'
+  | 'CATCH_FAIL'
+  | 'RETRIEVING';
 
 export interface SceneRenderParams {
   ctx: CanvasRenderingContext2D;

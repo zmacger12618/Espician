@@ -328,7 +328,7 @@ const ScenePreview: React.FC<{ costume: CostumeItem; rod: FishingRodItem }> = ({
 const SpritePreviewStage: React.FC<{
   costume: CostumeItem;
   rod: FishingRodItem;
-  action: 'idle' | 'walk' | 'jerk' | 'bite' | 'reeling' | 'victory';
+  action: 'idle' | 'walk' | 'cast' | 'jerk' | 'bite' | 'reeling' | 'victory' | 'fail' | 'retrieve';
 }> = ({ costume, rod, action }) => {
   const ref = useRef<HTMLCanvasElement | null>(null);
   const tier = Math.max(0, FISHING_RODS_CATALOG.findIndex((r) => r.id === rod.id));
@@ -370,10 +370,14 @@ const SpritePreviewStage: React.FC<{
         let phase: FishingPhase = 'IDLE_READY';
         let entranceProgress01 = 1.0;
         let jerkAgeSec = 99;
+        let castProgress01 = 0;
 
         if (action === 'walk') {
           phase = 'IDLE_READY';
           entranceProgress01 = (t * 0.35) % 0.7; // looping walk
+        } else if (action === 'cast') {
+          phase = 'CASTING';
+          castProgress01 = (t * 0.8) % 1.0; // looping cast swing
         } else if (action === 'jerk') {
           phase = 'WAITING_FOR_BITE';
           jerkAgeSec = t % 0.7; // looping jerk line action
@@ -383,6 +387,10 @@ const SpritePreviewStage: React.FC<{
           phase = 'REELING_MINIGAME';
         } else if (action === 'victory') {
           phase = 'CATCH_REVEAL';
+        } else if (action === 'fail') {
+          phase = 'CATCH_FAIL';
+        } else if (action === 'retrieve') {
+          phase = 'RETRIEVING';
         }
 
         ctx.save();
@@ -401,7 +409,7 @@ const SpritePreviewStage: React.FC<{
           rodTier: tier,
           reelTension01: 0.6,
           hookedSpecies: null,
-          castProgress01: 0,
+          castProgress01,
           catchProgress01: 1,
           catchHue: 0,
           jerkAgeSec,
@@ -424,16 +432,23 @@ const SpritePreviewStage: React.FC<{
   return <canvas ref={ref} width={480} height={280} className="w-full block bg-[#07070a]" />;
 };
 
-const Modal: React.FC<{ onClose: () => void; children: React.ReactNode }> = ({ onClose, children }) => (
+const Modal: React.FC<{
+  onClose: () => void;
+  hideCloseButton?: boolean;
+  maxWidthClass?: string;
+  children: React.ReactNode;
+}> = ({ onClose, hideCloseButton = false, maxWidthClass = 'max-w-lg', children }) => (
   <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
     <div
       style={{ ...CUT_STYLE, animation: 'popIn .25s ease-out' }}
-      className="relative bg-[#0b0b10] border border-[#ff4655]/40 w-full max-w-lg max-h-[92vh] overflow-y-auto"
+      className={`relative bg-[#0b0b10] border border-[#ff4655]/40 w-full ${maxWidthClass} max-h-[92vh] overflow-y-auto`}
       onClick={(e) => e.stopPropagation()}
     >
-      <button onClick={onClose} className="absolute top-3 right-3 p-1.5 text-zinc-400 hover:text-white z-10">
-        <X className="w-4 h-4" />
-      </button>
+      {!hideCloseButton && (
+        <button onClick={onClose} className="absolute top-3 right-3 p-1.5 text-zinc-400 hover:text-white z-20">
+          <X className="w-4 h-4" />
+        </button>
+      )}
       {children}
     </div>
   </div>
@@ -812,9 +827,10 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
         if (autoReel) startReeling();
         else {
           soundEngine.playFail();
-          setPhase('IDLE_READY');
+          setPhase('CATCH_FAIL');
           setPendingSpecies(null);
           notify(t.fishEscaped, 'bad');
+          setTimeout(() => setPhase('IDLE_READY'), 2000);
         }
       },
       autoReel ? 600 : 5000
@@ -827,9 +843,10 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       if (!pendingSpecies) return;
       if (!win) {
         soundEngine.playFail();
-        setPhase('IDLE_READY');
+        setPhase('CATCH_FAIL');
         setPendingSpecies(null);
         notify(t.gotAway, 'bad');
+        setTimeout(() => setPhase('IDLE_READY'), 2200);
         return;
       }
       const sp = pendingSpecies;
@@ -1281,13 +1298,13 @@ const CostumeDetailModal: React.FC<{
   onBuyOrWear: () => void;
 }> = ({ costume, rod, owned, worn, lang, onClose, onBuyOrWear }) => {
   const [tab, setTab] = useState<'base_sprite' | 'base_art' | 'scene'>('base_sprite');
-  const [action, setAction] = useState<'idle' | 'walk' | 'jerk' | 'bite' | 'reeling' | 'victory'>('idle');
+  const [action, setAction] = useState<'idle' | 'walk' | 'cast' | 'jerk' | 'bite' | 'reeling' | 'victory' | 'fail' | 'retrieve'>('idle');
   const t = FISHING_UI[lang];
 
   return (
     <Modal onClose={onClose}>
       {/* Abby-style Granblue Wiki Toggle Navigation */}
-      <div className="flex items-center gap-1.5 p-2.5 bg-black/80 border-b border-white/10">
+      <div className="flex items-center gap-1.5 p-2.5 bg-black/80 border-b border-white/10 pr-11">
         <button
           onClick={() => setTab('base_sprite')}
           className={`flex-1 py-1.5 px-2 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
@@ -1344,15 +1361,18 @@ const CostumeDetailModal: React.FC<{
         <div className="border-b border-white/10">
           <SpritePreviewStage costume={costume} rod={rod} action={action} />
           {/* Action pose selector buttons (GBF Animation Player style) */}
-          <div className="p-2 bg-black/60 flex items-center justify-center gap-1 border-t border-white/5 overflow-x-auto">
-            <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1">Pose:</span>
+          <div className="p-2 bg-black/60 flex items-center justify-start sm:justify-center gap-1 border-t border-white/5 overflow-x-auto">
+            <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1 flex-shrink-0">Pose:</span>
             {[
               { id: 'idle', labelTh: 'ปกติ', labelEn: 'Idle' },
               { id: 'walk', labelTh: 'เดิน', labelEn: 'Walk' },
-              { id: 'jerk', labelTh: 'กระตุกเบ็ด', labelEn: 'Jerk' },
+              { id: 'cast', labelTh: 'เหวี่ยง', labelEn: 'Cast' },
+              { id: 'jerk', labelTh: 'กระตุก', labelEn: 'Jerk' },
               { id: 'bite', labelTh: 'ติดเบ็ด!', labelEn: 'Bite!' },
               { id: 'reeling', labelTh: 'เย่อเบ็ด', labelEn: 'Reel' },
-              { id: 'victory', labelTh: 'ชูปลา', labelEn: 'Win' }
+              { id: 'victory', labelTh: 'ชูปลา', labelEn: 'Win' },
+              { id: 'fail', labelTh: 'หลุด/พลาด', labelEn: 'Fail' },
+              { id: 'retrieve', labelTh: 'เก็บสาย', labelEn: 'Retrieve' }
             ].map((p) => (
               <button
                 key={p.id}
@@ -1741,7 +1761,7 @@ const CostumeDetailModal: React.FC<{
 
       {/* Illustrated Fantasy Nautical World Map Modal */}
       {isIslandMapOpen && (
-        <Modal onClose={() => setIsIslandMapOpen(false)}>
+        <Modal onClose={() => setIsIslandMapOpen(false)} hideCloseButton maxWidthClass="max-w-4xl">
           <div className="p-4 sm:p-6 space-y-4 max-w-4xl bg-[#080910] border border-cyan-500/40 text-white">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -1874,12 +1894,9 @@ const CostumeDetailModal: React.FC<{
                       isSelected ? 'scale-125 z-20' : 'hover:scale-110 z-10'
                     }`}
                   >
-                    {/* Pulsing Active / Anchor Beacon */}
+                    {/* Refined Calm Anchor Ring (No wide blinding ping) */}
                     {isCurrent && (
-                      <span
-                        className="absolute inset-0 rounded-full animate-ping opacity-75"
-                        style={{ backgroundColor: node.glow }}
-                      />
+                      <span className="absolute -inset-1 rounded-full border-2 border-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.45)] pointer-events-none" />
                     )}
 
                     {/* Island Pin Body */}

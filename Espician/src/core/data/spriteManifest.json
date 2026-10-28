@@ -293,6 +293,138 @@
           "anchorY": 230,
           "tipX": 270,
           "tipY": 51
+        },
+        "cast_1": {
+          "file": "cast_1.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 242,
+          "tipY": 34
+        },
+        "cast_2": {
+          "file": "cast_2.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 282,
+          "tipY": 40
+        },
+        "cast_3": {
+          "file": "cast_3.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 294,
+          "tipY": 56
+        },
+        "cast_4": {
+          "file": "cast_4.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 274,
+          "tipY": 52
+        },
+        "retrieve_1": {
+          "file": "retrieve_1.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 262,
+          "tipY": 36
+        },
+        "retrieve_2": {
+          "file": "retrieve_2.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 266,
+          "tipY": 42
+        },
+        "retrieve_3": {
+          "file": "retrieve_3.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 270,
+          "tipY": 48
+        },
+        "retrieve_4": {
+          "file": "retrieve_4.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 270,
+          "tipY": 52
+        },
+        "fail_1": {
+          "file": "fail_1.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 254,
+          "tipY": 28
+        },
+        "fail_2": {
+          "file": "fail_2.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 282,
+          "tipY": 68
+        },
+        "fail_3": {
+          "file": "fail_3.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 278,
+          "tipY": 72
+        },
+        "fail_4": {
+          "file": "fail_4.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 270,
+          "tipY": 52
         }
       },
       "art": "art.png"
@@ -589,6 +721,138 @@
           "anchorY": 237,
           "tipX": 286,
           "tipY": 30
+        },
+        "cast_1": {
+          "file": "cast_1.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 258,
+          "tipY": 13
+        },
+        "cast_2": {
+          "file": "cast_2.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 298,
+          "tipY": 19
+        },
+        "cast_3": {
+          "file": "cast_3.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 310,
+          "tipY": 35
+        },
+        "cast_4": {
+          "file": "cast_4.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 290,
+          "tipY": 31
+        },
+        "retrieve_1": {
+          "file": "retrieve_1.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 278,
+          "tipY": 15
+        },
+        "retrieve_2": {
+          "file": "retrieve_2.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 282,
+          "tipY": 21
+        },
+        "retrieve_3": {
+          "file": "retrieve_3.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 286,
+          "tipY": 27
+        },
+        "retrieve_4": {
+          "file": "retrieve_4.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 286,
+          "tipY": 31
+        },
+        "fail_1": {
+          "file": "fail_1.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 270,
+          "tipY": 7
+        },
+        "fail_2": {
+          "file": "fail_2.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 298,
+          "tipY": 47
+        },
+        "fail_3": {
+          "file": "fail_3.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 294,
+          "tipY": 51
+        },
+        "fail_4": {
+          "file": "fail_4.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 286,
+          "tipY": 31
         }
       },
       "art": "art.png"
@@ -885,6 +1149,138 @@
           "anchorY": 226,
           "tipX": 272,
           "tipY": 65
+        },
+        "cast_1": {
+          "file": "cast_1.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 244,
+          "tipY": 48
+        },
+        "cast_2": {
+          "file": "cast_2.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 284,
+          "tipY": 54
+        },
+        "cast_3": {
+          "file": "cast_3.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 296,
+          "tipY": 70
+        },
+        "cast_4": {
+          "file": "cast_4.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 276,
+          "tipY": 66
+        },
+        "retrieve_1": {
+          "file": "retrieve_1.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 264,
+          "tipY": 50
+        },
+        "retrieve_2": {
+          "file": "retrieve_2.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 268,
+          "tipY": 56
+        },
+        "retrieve_3": {
+          "file": "retrieve_3.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 272,
+          "tipY": 62
+        },
+        "retrieve_4": {
+          "file": "retrieve_4.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 272,
+          "tipY": 66
+        },
+        "fail_1": {
+          "file": "fail_1.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 256,
+          "tipY": 42
+        },
+        "fail_2": {
+          "file": "fail_2.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 284,
+          "tipY": 82
+        },
+        "fail_3": {
+          "file": "fail_3.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 280,
+          "tipY": 86
+        },
+        "fail_4": {
+          "file": "fail_4.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 272,
+          "tipY": 66
         }
       },
       "art": "art.png"
@@ -1181,6 +1577,138 @@
           "anchorY": 232,
           "tipX": 269,
           "tipY": 65
+        },
+        "cast_1": {
+          "file": "cast_1.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 241,
+          "tipY": 48
+        },
+        "cast_2": {
+          "file": "cast_2.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 281,
+          "tipY": 54
+        },
+        "cast_3": {
+          "file": "cast_3.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 293,
+          "tipY": 70
+        },
+        "cast_4": {
+          "file": "cast_4.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 273,
+          "tipY": 66
+        },
+        "retrieve_1": {
+          "file": "retrieve_1.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 261,
+          "tipY": 50
+        },
+        "retrieve_2": {
+          "file": "retrieve_2.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 265,
+          "tipY": 56
+        },
+        "retrieve_3": {
+          "file": "retrieve_3.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 269,
+          "tipY": 62
+        },
+        "retrieve_4": {
+          "file": "retrieve_4.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 269,
+          "tipY": 66
+        },
+        "fail_1": {
+          "file": "fail_1.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 253,
+          "tipY": 42
+        },
+        "fail_2": {
+          "file": "fail_2.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 281,
+          "tipY": 82
+        },
+        "fail_3": {
+          "file": "fail_3.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 277,
+          "tipY": 86
+        },
+        "fail_4": {
+          "file": "fail_4.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 269,
+          "tipY": 66
         }
       },
       "art": "art.png"
@@ -1477,6 +2005,138 @@
           "anchorY": 234,
           "tipX": 265,
           "tipY": 49
+        },
+        "cast_1": {
+          "file": "cast_1.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 237,
+          "tipY": 32
+        },
+        "cast_2": {
+          "file": "cast_2.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 277,
+          "tipY": 38
+        },
+        "cast_3": {
+          "file": "cast_3.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 289,
+          "tipY": 54
+        },
+        "cast_4": {
+          "file": "cast_4.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 269,
+          "tipY": 50
+        },
+        "retrieve_1": {
+          "file": "retrieve_1.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 257,
+          "tipY": 34
+        },
+        "retrieve_2": {
+          "file": "retrieve_2.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 261,
+          "tipY": 40
+        },
+        "retrieve_3": {
+          "file": "retrieve_3.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 265,
+          "tipY": 46
+        },
+        "retrieve_4": {
+          "file": "retrieve_4.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 265,
+          "tipY": 50
+        },
+        "fail_1": {
+          "file": "fail_1.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 249,
+          "tipY": 26
+        },
+        "fail_2": {
+          "file": "fail_2.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 277,
+          "tipY": 66
+        },
+        "fail_3": {
+          "file": "fail_3.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 273,
+          "tipY": 70
+        },
+        "fail_4": {
+          "file": "fail_4.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 265,
+          "tipY": 50
         }
       },
       "art": "art.png"
@@ -1773,6 +2433,138 @@
           "anchorY": 227,
           "tipX": 281,
           "tipY": 33
+        },
+        "cast_1": {
+          "file": "cast_1.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 253,
+          "tipY": 16
+        },
+        "cast_2": {
+          "file": "cast_2.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 293,
+          "tipY": 22
+        },
+        "cast_3": {
+          "file": "cast_3.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 305,
+          "tipY": 38
+        },
+        "cast_4": {
+          "file": "cast_4.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 285,
+          "tipY": 34
+        },
+        "retrieve_1": {
+          "file": "retrieve_1.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 273,
+          "tipY": 18
+        },
+        "retrieve_2": {
+          "file": "retrieve_2.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 277,
+          "tipY": 24
+        },
+        "retrieve_3": {
+          "file": "retrieve_3.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 281,
+          "tipY": 30
+        },
+        "retrieve_4": {
+          "file": "retrieve_4.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 281,
+          "tipY": 34
+        },
+        "fail_1": {
+          "file": "fail_1.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 265,
+          "tipY": 10
+        },
+        "fail_2": {
+          "file": "fail_2.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 293,
+          "tipY": 50
+        },
+        "fail_3": {
+          "file": "fail_3.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 289,
+          "tipY": 54
+        },
+        "fail_4": {
+          "file": "fail_4.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 281,
+          "tipY": 34
         }
       },
       "art": "art.png"

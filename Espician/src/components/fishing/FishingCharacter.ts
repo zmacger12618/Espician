@@ -10,7 +10,9 @@ export type AnglerPhase =
   | 'FISH_BITING'
   | 'REELING_MINIGAME'
   | 'CATCHING'
-  | 'CATCH_REVEAL';
+  | 'CATCH_REVEAL'
+  | 'CATCH_FAIL'
+  | 'RETRIEVING';
 
 export interface AnglerRig {
   breath: number; // 0..1 (driven by GSAP timeline)
@@ -326,6 +328,18 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
     // 4-frame walk cycle (contact, down, passing, up)
     const stepIdx = (Math.floor(walkT * 14) % 4) + 1;
     frameName = `walk_${stepIdx}`;
+  } else if (phase === 'CASTING') {
+    // 4-frame forward cast swing sequence
+    const castStep = Math.min(4, Math.max(1, Math.floor(o.castProgress01 * 4) + 1));
+    frameName = `cast_${castStep}`;
+  } else if (phase === 'RETRIEVING') {
+    // 4-frame retrieve line loop
+    const retStep = (Math.floor(t * 4.5) % 4) + 1;
+    frameName = `retrieve_${retStep}`;
+  } else if (phase === 'CATCH_FAIL') {
+    // 4-frame comical fish escape / fail reaction sequence
+    const failStep = (Math.floor(t * 3.5) % 4) + 1;
+    frameName = `fail_${failStep}`;
   } else if (o.jerkAgeSec < 0.7) {
     // 4-frame dedicated jerk line action sequence
     const jerkStep = Math.min(4, Math.max(1, Math.floor((o.jerkAgeSec / 0.7) * 4) + 1));
@@ -340,7 +354,7 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
     const reelIdx = (Math.floor(t * reelSpeed) % 4) + 1;
     frameName = `reel_${reelIdx}`;
   } else if (phase === 'CATCH_REVEAL' || phase === 'CATCHING') {
-    // 4-frame victory catch celebration loop (5 fps bouncy triumph)
+    // 4-frame victory catch celebration loop (5.5 fps bouncy triumph)
     const vicIdx = (Math.floor(t * 5.5) % 4) + 1;
     frameName = `victory_${vicIdx}`;
   } else {

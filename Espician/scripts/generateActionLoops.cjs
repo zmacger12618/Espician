@@ -480,6 +480,214 @@ async function processCostume(costumeId, manifest) {
       };
     }
   }
+
+  // 6. CAST LINE LOOP (4 frames)
+  if (fs.existsSync(idleFile)) {
+    const { data: idleData, info: idleInfo } = await sharp(idleFile).raw().toBuffer({ resolveWithObject: true });
+    const { width: w, height: h } = idleInfo;
+    const baseInfo = costManifest.frames['idle'] || { w, h, anchorX: w * 0.5, anchorY: h * 0.7, tipX: w * 0.85, tipY: h * 0.2 };
+
+    const castDefs = [
+      // Frame 1: Wind-Up (leaning back, pulls rod over right shoulder)
+      {
+        name: 'cast_1',
+        fn: (x, y, nx, ny) => {
+          const lean = Math.max(0, 1.0 - ny) * 8.0;
+          return { srcX: x + lean, srcY: y - lean * 0.2 };
+        },
+        tipDx: -28,
+        tipDy: -18
+      },
+      // Frame 2: Forward Whip (torso extends forward, rod swings powerfully)
+      {
+        name: 'cast_2',
+        fn: (x, y, nx, ny) => {
+          const whip = Math.sin(ny * Math.PI * 0.6) * 7.0;
+          return { srcX: x - whip * 0.8, srcY: y + whip * 0.4 };
+        },
+        tipDx: 12,
+        tipDy: -12
+      },
+      // Frame 3: Release & Cast (full forward arm extension, line shoots out into sea)
+      {
+        name: 'cast_3',
+        fn: (x, y, nx, ny) => {
+          const ext = Math.max(0, 1.0 - ny * 1.2) * 5.0;
+          return { srcX: x - ext, srcY: y + ext * 0.5 };
+        },
+        tipDx: 24,
+        tipDy: 4
+      },
+      // Frame 4: Follow Through & Settle into Water
+      {
+        name: 'cast_4',
+        fn: (x, y, nx, ny) => {
+          const settle = Math.sin(ny * Math.PI) * 2.0;
+          return { srcX: x - settle * 0.4, srcY: y + settle * 0.2 };
+        },
+        tipDx: 4,
+        tipDy: 0
+      }
+    ];
+
+    for (const def of castDefs) {
+      const outBuf = deformSprite(idleData, w, h, def.fn);
+      const outPath = path.join(dir, `${def.name}.png`);
+      await sharp(outBuf, { raw: { width: w, height: h, channels: 4 } }).png().toFile(outPath);
+
+      costManifest.frames[def.name] = {
+        file: `${def.name}.png`,
+        w,
+        h,
+        top: baseInfo.top,
+        bottom: baseInfo.bottom,
+        anchorX: baseInfo.anchorX,
+        anchorY: baseInfo.anchorY,
+        tipX: Math.round((baseInfo.tipX || w * 0.85) + def.tipDx),
+        tipY: Math.round((baseInfo.tipY || h * 0.2) + def.tipDy)
+      };
+    }
+  }
+
+  // 7. RETRIEVE LINE LOOP (4 frames)
+  if (fs.existsSync(idleFile)) {
+    const { data: idleData, info: idleInfo } = await sharp(idleFile).raw().toBuffer({ resolveWithObject: true });
+    const { width: w, height: h } = idleInfo;
+    const baseInfo = costManifest.frames['idle'] || { w, h, anchorX: w * 0.5, anchorY: h * 0.7, tipX: w * 0.85, tipY: h * 0.2 };
+
+    const retrieveDefs = [
+      // Frame 1: Lift Rod Upward
+      {
+        name: 'retrieve_1',
+        fn: (x, y, nx, ny) => {
+          const lift = Math.max(0, 1.0 - ny) * 5.0;
+          return { srcX: x + lift * 0.3, srcY: y + lift * 0.8 };
+        },
+        tipDx: -8,
+        tipDy: -16
+      },
+      // Frame 2: Fast Wind Crank
+      {
+        name: 'retrieve_2',
+        fn: (x, y, nx, ny) => {
+          const crank = Math.cos(ny * Math.PI) * 3.0;
+          return { srcX: x + crank * 0.3, srcY: y + crank * 0.5 };
+        },
+        tipDx: -4,
+        tipDy: -10
+      },
+      // Frame 3: Hook Swings Near
+      {
+        name: 'retrieve_3',
+        fn: (x, y, nx, ny) => {
+          const lift = Math.sin(ny * Math.PI * 0.5) * 3.0;
+          return { srcX: x - lift * 0.2, srcY: y + lift * 0.5 };
+        },
+        tipDx: 0,
+        tipDy: -4
+      },
+      // Frame 4: Rest Ready
+      {
+        name: 'retrieve_4',
+        fn: (x, y, nx, ny) => ({ srcX: x, srcY: y }),
+        tipDx: 0,
+        tipDy: 0
+      }
+    ];
+
+    for (const def of retrieveDefs) {
+      const outBuf = deformSprite(idleData, w, h, def.fn);
+      const outPath = path.join(dir, `${def.name}.png`);
+      await sharp(outBuf, { raw: { width: w, height: h, channels: 4 } }).png().toFile(outPath);
+
+      costManifest.frames[def.name] = {
+        file: `${def.name}.png`,
+        w,
+        h,
+        top: baseInfo.top,
+        bottom: baseInfo.bottom,
+        anchorX: baseInfo.anchorX,
+        anchorY: baseInfo.anchorY,
+        tipX: Math.round((baseInfo.tipX || w * 0.85) + def.tipDx),
+        tipY: Math.round((baseInfo.tipY || h * 0.2) + def.tipDy)
+      };
+    }
+  }
+
+  // 8. FAIL / ESCAPE LOOP (4 frames)
+  if (fs.existsSync(idleFile)) {
+    const { data: idleData, info: idleInfo } = await sharp(idleFile).raw().toBuffer({ resolveWithObject: true });
+    const { width: w, height: h } = idleInfo;
+    const baseInfo = costManifest.frames['idle'] || { w, h, anchorX: w * 0.5, anchorY: h * 0.7, tipX: w * 0.85, tipY: h * 0.2 };
+
+    const failDefs = [
+      // Frame 1: Sudden Snap Recoil (shock jolt backward, rod springs straight)
+      {
+        name: 'fail_1',
+        fn: (x, y, nx, ny) => {
+          const snap = Math.max(0, 1.0 - ny) * 7.5;
+          return { srcX: x + snap * 0.9, srcY: y + snap * 0.5 };
+        },
+        tipDx: -16,
+        tipDy: -24,
+        sweat: true
+      },
+      // Frame 2: Shock & Despair (arms drop, empty hook swinging, comical anime gloom)
+      {
+        name: 'fail_2',
+        fn: (x, y, nx, ny) => {
+          const drop = Math.max(0, 1.0 - ny) * 4.0;
+          return { srcX: x - drop * 0.4, srcY: y - drop * 0.7 };
+        },
+        tipDx: 12,
+        tipDy: 16,
+        sweat: true
+      },
+      // Frame 3: Slumped Sigh (shoulders slump, head tilts down, sad pout)
+      {
+        name: 'fail_3',
+        fn: (x, y, nx, ny) => {
+          const slump = Math.sin(ny * Math.PI * 0.8) * 3.5;
+          return { srcX: x - slump * 0.3, srcY: y - slump * 0.9 };
+        },
+        tipDx: 8,
+        tipDy: 20,
+        sweat: false
+      },
+      // Frame 4: Regain Composure (dusting off hands, determined cute pout ready to retry)
+      {
+        name: 'fail_4',
+        fn: (x, y, nx, ny) => {
+          const recover = Math.sin(ny * Math.PI) * 1.5;
+          return { srcX: x, srcY: y + recover * 0.4 };
+        },
+        tipDx: 0,
+        tipDy: 0,
+        sweat: false
+      }
+    ];
+
+    for (const def of failDefs) {
+      const outBuf = deformSprite(idleData, w, h, def.fn);
+      if (def.sweat) {
+        addSweatBead(outBuf, w, h, baseInfo.anchorX + 18, (baseInfo.top || 10) + 30);
+      }
+      const outPath = path.join(dir, `${def.name}.png`);
+      await sharp(outBuf, { raw: { width: w, height: h, channels: 4 } }).png().toFile(outPath);
+
+      costManifest.frames[def.name] = {
+        file: `${def.name}.png`,
+        w,
+        h,
+        top: baseInfo.top,
+        bottom: baseInfo.bottom,
+        anchorX: baseInfo.anchorX,
+        anchorY: baseInfo.anchorY,
+        tipX: Math.round((baseInfo.tipX || w * 0.85) + def.tipDx),
+        tipY: Math.round((baseInfo.tipY || h * 0.2) + def.tipDy)
+      };
+    }
+  }
 }
 
 async function main() {
