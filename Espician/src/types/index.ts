@@ -12,11 +12,18 @@ export interface PlayerCondition {
   durationDays?: number;
 }
 
+export type TalentTier = 'S+' | 'S' | 'A' | 'B' | 'C';
+
 export interface PlayerGenetics {
   maxMechanicsCap: number;   // 0-100
   maxAwarenessCap: number;   // 0-100
   baseEgo: number;           // 0-100
   learningSpeed: number;     // 0.8 - 1.5
+  mentalComposureCap?: number; // 0-100
+  clutchPotential?: number;    // 0-100
+  talentTier?: TalentTier;
+  hiddenTraits?: string[];
+  trainingAffinity?: 'Mechanics' | 'Awareness' | 'Teamwork' | 'Stamina';
 }
 
 export interface PlayerStats {
@@ -76,6 +83,8 @@ export interface PlayerData {
   championMasteries: Record<string, number>; // championId -> mastery (0-100)
   avatar: string;
   marketPrice: number;
+  mentalFatigue?: number; // 0-100
+  contractYearsRemaining?: number;
 }
 
 // --- MOBA In-Game Ecosystem ---
