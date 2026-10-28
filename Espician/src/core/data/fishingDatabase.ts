@@ -953,7 +953,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     attractionPower: 140,
     oceanFortune: 'C',
     lineResilience: 150,
-    baseAttractionBonusPct: 2
+    baseAttractionBonusPct: 6
   },
   {
     id: 'rod_coral_carbon',
@@ -970,7 +970,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     attractionPower: 195,
     oceanFortune: 'B',
     lineResilience: 230,
-    baseAttractionBonusPct: 5
+    baseAttractionBonusPct: 14
   },
   {
     id: 'rod_deep_titanium',
@@ -987,7 +987,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     attractionPower: 260,
     oceanFortune: 'A',
     lineResilience: 340,
-    baseAttractionBonusPct: 9
+    baseAttractionBonusPct: 22
   },
   {
     id: 'rod_starlight',
@@ -1004,7 +1004,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     attractionPower: 360,
     oceanFortune: 'S',
     lineResilience: 480,
-    baseAttractionBonusPct: 14
+    baseAttractionBonusPct: 30
   },
   {
     id: 'rod_chronos_abyss',
@@ -1021,7 +1021,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     attractionPower: 520,
     oceanFortune: 'SS+',
     lineResilience: 700,
-    baseAttractionBonusPct: 20
+    baseAttractionBonusPct: 38
   }
 ];
 
@@ -1057,7 +1057,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     iconColor: '#fb7185',
     description: 'กุ้งฝอยกลิ่นหอมสดใหม่ เพิ่มโอกาสติดปลาแนวปะการังสีสวยและเพิ่มพลังดึงดูด',
     attractionPowerBonus: 25,
-    baseAttractionBonusPct: 2
+    baseAttractionBonusPct: 1
   },
   {
     id: 'bait_squid',
@@ -1082,7 +1082,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     iconColor: '#38bdf8',
     description: 'เนื้อหมึกเรืองแสงที่ปลานักล่าน้ำลึกและปลา Rare/Epic ชื่นชอบเป็นพิเศษ',
     attractionPowerBonus: 50,
-    baseAttractionBonusPct: 4
+    baseAttractionBonusPct: 2
   },
   {
     id: 'bait_crystal_lure',
@@ -1105,7 +1105,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     iconColor: '#22d3ee',
     description: 'เหยื่อสะท้อนแสงปริซึมใต้น้ำ ดึงดูดปลากระโทงดาบผลึกแก้วและปลาออร์ฟิชซากุระโดยตรง!',
     attractionPowerBonus: 85,
-    baseAttractionBonusPct: 6
+    baseAttractionBonusPct: 3
   },
   {
     id: 'bait_golden_essence',
@@ -1126,7 +1126,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     iconColor: '#fbbf24',
     description: 'หัวเชื้อสกัดจากแร่ทองคำใต้สมุทร ดึงดูดฉลามวาฬดาราจักรและซีลาแคนท์สุริยะอย่างทรงพลัง',
     attractionPowerBonus: 130,
-    baseAttractionBonusPct: 9
+    baseAttractionBonusPct: 4
   },
   {
     id: 'bait_astral_nectar',
@@ -1150,7 +1150,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     iconColor: '#f43f5e',
     description: 'เหยื่อศักดิ์สิทธิ์ที่เพิ่มโอกาสพบปลา SECRET TIER ถึง 8.5 เท่า และดึงดูดสิ่งมีชีวิตดาราจักร!',
     attractionPowerBonus: 200,
-    baseAttractionBonusPct: 14
+    baseAttractionBonusPct: 5
   }
 ];
 

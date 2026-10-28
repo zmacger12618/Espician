@@ -2881,29 +2881,22 @@ const CostumeDetailModal: React.FC<{
 
             {phase === 'WAITING_FOR_BITE' && (
               <>
-                {/* Atmospheric Bite Waiting Pill & 1-Minute Countdown */}
+                {/* Atmospheric Bite Waiting Pill without exposing roll timers */}
                 <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-10 px-4">
                   <div
                     style={CUT_STYLE}
-                    className="pointer-events-auto px-4 py-2 bg-black/85 backdrop-blur-md border border-cyan-500/40 text-xs text-white shadow-2xl flex items-center gap-3"
+                    className="pointer-events-auto px-4 py-2 bg-black/85 backdrop-blur-md border border-cyan-500/30 text-xs text-white shadow-2xl flex items-center gap-2.5"
                   >
-                    <div className="flex items-center gap-1.5 text-cyan-300 font-bold font-mono">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                      <span>🎣 {lang === 'th' ? 'รอปลาดึงเบ็ดเอง' : 'Waiting for natural bite'}</span>
-                    </div>
-                    <div className="h-3 w-px bg-white/20" />
-                    <div className="text-zinc-300 font-mono text-[11px] flex items-center gap-1">
-                      <span>{lang === 'th' ? 'รอบถัดไป:' : 'Next roll:'}</span>
-                      <span className="text-amber-400 font-bold font-mono text-xs">
-                        {Math.floor(waitSecondsRemaining / 60)}:{String(waitSecondsRemaining % 60).padStart(2, '0')}
-                      </span>
+                    <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                      <span>{lang === 'th' ? 'สายเบ็ดลอยในกระแสน้ำ...' : 'Line drifting in ocean current...'}</span>
                     </div>
                     {pityBonus > 0 && (
                       <>
                         <div className="h-3 w-px bg-white/20" />
-                        <div className="text-emerald-400 font-bold text-[10px] tracking-wider uppercase flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 text-emerald-400" />
-                          <span>{lang === 'th' ? 'ปลาระแวงเริ่มสนใจ (+โอกาส)' : 'Fish curious (+Pity)'}</span>
+                        <div className="text-emerald-400 font-semibold text-[11px] flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-emerald-400 animate-pulse" />
+                          <span>{lang === 'th' ? 'ผิวน้ำกระเพื่อม... ปลาระแวงเริ่มสนใจ' : 'Water ripples... fish showing interest'}</span>
                         </div>
                       </>
                     )}
