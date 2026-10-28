@@ -993,7 +993,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     }
     soundEngine.startBgm();
     soundEngine.playCast();
-    setTimeout(() => soundEngine.playSplash(), 420);
+    setTimeout(() => soundEngine.playSplash(), 1450);
     let bait = equippedBait;
     const free = bait.pricePerPack === 0;
     if (!free && (fishingState.baitInventory[bait.id] || 0) <= 0) {
@@ -1020,8 +1020,8 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     a.cast = 0;
     gsap.to(a, {
       cast: 1,
-      duration: 1.1,
-      ease: 'power2.inOut',
+      duration: 1.8,
+      ease: 'power2.out',
       onComplete: () => {
         if (phaseRef.current === 'CASTING') setPhase('WAITING_FOR_BITE');
       }
@@ -1185,7 +1185,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       a.catchP = 0;
       gsap.to(a, {
         catchP: 1,
-        duration: 1.25,
+        duration: 2.4,
         ease: 'power1.inOut',
         onComplete: () => setPhase('CATCH_REVEAL')
       });
@@ -1194,7 +1194,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
         gsap.fromTo(
           flashRef.current,
           { opacity: ri >= 3 ? 0.75 : 0.35 },
-          { opacity: 0, duration: 0.9, ease: 'power2.out', delay: 0.95 }
+          { opacity: 0, duration: 0.9, ease: 'power2.out', delay: 2.1 }
         );
       }
     },

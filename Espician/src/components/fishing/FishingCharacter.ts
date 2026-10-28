@@ -1,6 +1,7 @@
 import { FishSpeciesData, RARITY_CONFIG } from '../../core/data/fishingDatabase';
 import { CostumeItem } from '../../core/data/fishingMeta';
 import { drawRod } from './FishingRodArt';
+import { renderFishIllustration } from './FishRig';
 import rawManifest from '../../core/data/spriteManifest.json';
 
 export type AnglerPhase =
@@ -281,8 +282,19 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
     walkT = Math.min(1.0, entranceProgress01 / 0.72);
   }
 
-  const isSittingPose = !isWalking && phase !== 'CATCH_REVEAL' && phase !== 'CATCHING';
-  let charX = isSittingPose ? pierEdgeX - 16 : pierEdgeX - 42;
+  const isCatching = phase === 'CATCHING';
+  const catchP = o.catchProgress01 ?? 0;
+  const isCast = phase === 'CASTING';
+  const castP = o.castProgress01 ?? 0;
+
+  // During early CATCHING (0..0.65), she is seated and heaving back with all her might.
+  // At >= 0.65, she stands up smoothly to receive and catch the fish!
+  const isSittingPose =
+    !isWalking &&
+    phase !== 'CATCH_REVEAL' &&
+    (!isCatching || catchP < 0.65);
+
+  let charX = isSittingPose ? pierEdgeX - 16 : pierEdgeX - 38;
 
   if (isWalking) {
     charX = (pierEdgeX - 165) + walkT * 149;
@@ -290,6 +302,10 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
     // Transitioning from walk to seated fishing pose
     const sitProgress = (entranceProgress01 - 0.72) / 0.28;
     charX = (pierEdgeX - 16) - (1 - sitProgress) * 12;
+  } else if (isCatching && catchP >= 0.65) {
+    // Smooth standing transition as the fish reaches her hands
+    const standProg = Math.min(1.0, (catchP - 0.65) / 0.25);
+    charX = (pierEdgeX - 16) - standProg * 22;
   }
 
   const pulling = phase === 'FISH_BITING' || phase === 'REELING_MINIGAME';
@@ -307,59 +323,98 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
   ctx.fill();
   ctx.restore();
 
-  // 3. Multi-Harmonic Idle & Dynamic Tilts
-  const walkBounce = isWalking ? Math.abs(Math.sin(walkT * 24)) * 3.8 : 0;
-  const walkTilt = isWalking ? Math.sin(walkT * 24) * 0.045 : 0;
+  // 3. Multi-Harmonic Idle & Dynamic Tilts with Animation Principles (Anticipation & Weight)
+  const walkBounce = isWalking ? Math.abs(Math.sin(walkT * 16)) * 3.2 : 0;
+  const walkTilt = isWalking ? Math.sin(walkT * 16) * 0.035 : 0;
 
-  const breathCycle = t * 2.4;
-  const harmonicBreath = Math.sin(breathCycle) * 0.72 + Math.sin(breathCycle * 2.0 - 0.4) * 0.28;
-  const breathY = isSittingPose ? harmonicBreath * 1.2 : 0;
+  // Relaxed, peaceful breathing (slower, aesthetic pacing)
+  const breathCycle = t * 1.8;
+  const harmonicBreath = Math.sin(breathCycle) * 0.75 + Math.sin(breathCycle * 2.0 - 0.3) * 0.25;
+  const breathY = isSittingPose ? harmonicBreath * 1.1 : 0;
 
-  const leanBack = pulling ? -0.14 - o.reelTension01 * 0.12 : (phase === 'CASTING' ? 0.18 : 0);
+  // Dynamic lean angles with anticipation & strain:
+  let leanBack = 0;
+  if (pulling) {
+    leanBack = -0.14 - o.reelTension01 * 0.12;
+  } else if (isCast) {
+    // 0..0.35 Anticipation lean back -> 0.35..0.72 Forward whip snap -> 0.72..1.0 Rest
+    if (castP < 0.35) {
+      leanBack = -0.22 * Math.sin((castP / 0.35) * Math.PI * 0.5); // wind back
+    } else if (castP < 0.72) {
+      leanBack = 0.26 * Math.sin(((castP - 0.35) / 0.37) * Math.PI); // forward snap whip
+    } else {
+      leanBack = 0.06 * (1 - (castP - 0.72) / 0.28); // settle
+    }
+  } else if (isCatching) {
+    // 0..0.30 Violent strike jerk -> 0.30..0.65 Muscling haul -> 0.65..1.0 Stand proud
+    if (catchP < 0.30) {
+      leanBack = -0.32; // strike hookset!
+    } else if (catchP < 0.65) {
+      leanBack = -0.22 - Math.sin(t * 12) * 0.04; // muscle strain vibration
+    } else {
+      leanBack = 0.04; // proud chest puff
+    }
+  }
+
   const totalTilt = walkTilt + leanBack + (jerkKick * 0.015);
 
   // Character anchor position: anchors accurately to pierDeckY without sinking or floating
   const charAnchorY = pierDeckY - (isWalking ? walkBounce : -breathY);
 
-  // 4. ACTION LOOP SELECTION (4 Frames for EVERY Action State)
+  // 4. ACTION LOOP SELECTION (4 Frames for EVERY Action State, Tuned Pacing)
   let frameName = 'idle_1';
 
   if (isWalking) {
-    // 4-frame walk cycle (contact, down, passing, up)
-    const stepIdx = (Math.floor(walkT * 14) % 4) + 1;
+    // 4-frame walk cycle (smooth relaxed pace)
+    const stepIdx = (Math.floor(walkT * 10) % 4) + 1;
     frameName = `walk_${stepIdx}`;
-  } else if (phase === 'CASTING') {
-    // 4-frame forward cast swing sequence
-    const castStep = Math.min(4, Math.max(1, Math.floor(o.castProgress01 * 4) + 1));
-    frameName = `cast_${castStep}`;
+  } else if (isCast) {
+    // 4-frame forward cast swing with clear anticipation and follow-through
+    if (castP < 0.32) {
+      frameName = 'cast_1'; // wind-back anticipation
+    } else if (castP < 0.55) {
+      frameName = 'cast_2'; // power arc
+    } else if (castP < 0.80) {
+      frameName = 'cast_3'; // forward release
+    } else {
+      frameName = 'cast_4'; // follow-through splash
+    }
   } else if (phase === 'RETRIEVING') {
-    // 4-frame retrieve line loop
-    const retStep = (Math.floor(t * 4.5) % 4) + 1;
+    const retStep = (Math.floor(t * 3.2) % 4) + 1;
     frameName = `retrieve_${retStep}`;
   } else if (phase === 'CATCH_FAIL') {
-    // 4-frame comical fish escape / fail reaction sequence
-    const failStep = (Math.floor(t * 3.5) % 4) + 1;
+    const failStep = (Math.floor(t * 3.0) % 4) + 1;
     frameName = `fail_${failStep}`;
   } else if (o.jerkAgeSec < 0.7) {
-    // 4-frame dedicated jerk line action sequence
     const jerkStep = Math.min(4, Math.max(1, Math.floor((o.jerkAgeSec / 0.7) * 4) + 1));
     frameName = `jerk_${jerkStep}`;
   } else if (phase === 'FISH_BITING') {
-    // 4-frame fish bite shock & struggle loop (fast 9 fps)
-    const biteIdx = (Math.floor(t * 9.0) % 4) + 1;
+    // 4-frame fish bite struggle (tuned from 9 fps to smooth 5.5 fps)
+    const biteIdx = (Math.floor(t * 5.5) % 4) + 1;
     frameName = `bite_${biteIdx}`;
   } else if (phase === 'REELING_MINIGAME') {
-    // 4-frame reeling battle loop (tension-driven 8..16 fps)
-    const reelSpeed = 8.0 + o.reelTension01 * 8.0;
+    // 4-frame reeling battle loop (tension-driven 5.5..10.5 fps)
+    const reelSpeed = 5.5 + o.reelTension01 * 5.0;
     const reelIdx = (Math.floor(t * reelSpeed) % 4) + 1;
     frameName = `reel_${reelIdx}`;
-  } else if (phase === 'CATCH_REVEAL' || phase === 'CATCHING') {
-    // 4-frame victory catch celebration loop (5.5 fps bouncy triumph)
-    const vicIdx = (Math.floor(t * 5.5) % 4) + 1;
+  } else if (isCatching) {
+    // Multi-stage cinematic catch haul:
+    if (catchP < 0.30) {
+      frameName = 'jerk_3'; // heavy strike hookset!
+    } else if (catchP < 0.65) {
+      frameName = (Math.floor(t * 6) % 2 === 0 ? 'reel_3' : 'reel_4'); // hauling pull!
+    } else if (catchP < 0.85) {
+      frameName = 'victory_1'; // standing up with open hands
+    } else {
+      frameName = `victory_${(Math.floor(t * 4.2) % 4) + 1}`; // victory bounce holding fish!
+    }
+  } else if (phase === 'CATCH_REVEAL') {
+    // Victory celebration loop
+    const vicIdx = (Math.floor(t * 4.2) % 4) + 1;
     frameName = `victory_${vicIdx}`;
   } else {
-    // 4-frame peaceful idle fishing loop (calm 3.6 fps breath & rod sway)
-    const idleIdx = (Math.floor(t * 3.6) % 4) + 1;
+    // Peaceful idle fishing loop (calm 2.2 fps breath & rod sway)
+    const idleIdx = (Math.floor(t * 2.2) % 4) + 1;
     frameName = `idle_${idleIdx}`;
   }
 
@@ -420,9 +475,8 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
 
   ctx.restore();
 
-  // 5. FISHING LINE & ROD TIP PHYSICS
-  // Calculate exact tip coordinates in screen space using manifest tipX & tipY
-  if (!isWalking && phase !== 'CATCH_REVEAL' && phase !== 'CATCHING') {
+  // 5. FISHING LINE, ROD TIP DYNAMICS & LEAPING CATCH SEQUENCE
+  if (!isWalking) {
     const rawTipX = frameMeta.tipX ?? (frameMeta.w * 0.9);
     const rawTipY = frameMeta.tipY ?? (frameMeta.h * 0.2);
 
@@ -435,50 +489,228 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
     const worldTipX = charX + (relTipX * cosA - relTipY * sinA);
     const worldTipY = charAnchorY + (relTipX * sinA + relTipY * cosA);
 
-    // Ocean water entry coordinates
+    // Ocean water entry coordinates for the bobber
     const bobX = pierEdgeX + 185;
     const bobY = pierDeckY + 48;
 
-    // Line bow arc under tension/slack
-    const isReeling = phase === 'REELING_MINIGAME';
-    const isBiting = phase === 'FISH_BITING';
-    const tensionSlack = isReeling ? -6 + (1 - o.reelTension01) * 16 : isBiting ? -4 : 12;
-
     ctx.save();
-    ctx.strokeStyle = isBiting || isReeling ? 'rgba(255, 255, 255, 0.72)' : 'rgba(255, 255, 255, 0.50)';
-    ctx.lineWidth = isBiting ? 1.6 : 1.2;
-    ctx.beginPath();
-    ctx.moveTo(worldTipX, worldTipY);
-    ctx.quadraticCurveTo(
-      (worldTipX + bobX) * 0.5,
-      Math.max(worldTipY, bobY) + tensionSlack,
-      bobX,
-      bobY
-    );
-    ctx.stroke();
 
-    // Floating bobber ripple rings
-    const ripplePulse = (t * 2.5) % 1.0;
-    ctx.strokeStyle = `rgba(255, 255, 255, ${0.45 * (1 - ripplePulse)})`;
-    ctx.lineWidth = 1.0;
-    ctx.beginPath();
-    ctx.ellipse(bobX, bobY + 1, 8 + ripplePulse * 14, (8 + ripplePulse * 14) * 0.38, 0, 0, Math.PI * 2);
-    ctx.stroke();
+    if (isCast) {
+      // Dynamic Rod Swing Cast Flight Animation
+      if (castP < 0.35) {
+        // Phase A: Anticipation Backswing (0..0.35)
+        const lineBackX = worldTipX - 28;
+        const lineBackY = worldTipY + 22 + Math.sin(castP * 10) * 8;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.moveTo(worldTipX, worldTipY);
+        ctx.quadraticCurveTo(worldTipX - 38, worldTipY - 8, lineBackX, lineBackY);
+        ctx.stroke();
 
-    // Red/White anime bobber
-    ctx.fillStyle = '#ef4444';
-    ctx.beginPath();
-    ctx.arc(bobX, bobY - 3, 3.2, Math.PI, 0);
-    ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(bobX, bobY - 3, 3.2, 0, Math.PI);
-    ctx.fill();
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = 0.8;
-    ctx.beginPath();
-    ctx.arc(bobX, bobY - 3, 3.2, 0, Math.PI * 2);
-    ctx.stroke();
+        // Swinging bobber behind
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(lineBackX, lineBackY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (castP < 0.75) {
+        // Phase B: Power Forward Release (0.35..0.75)
+        const flyProg = (castP - 0.35) / 0.40;
+        const leadX = (worldTipX + 15) + flyProg * (bobX - (worldTipX + 15));
+        const leadY = worldTipY + flyProg * (bobY - worldTipY) - Math.sin(flyProg * Math.PI) * 75;
+
+        // Motion blur line arc
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        ctx.moveTo(worldTipX, worldTipY);
+        ctx.quadraticCurveTo((worldTipX + leadX) * 0.5, Math.min(worldTipY, leadY) - 35, leadX, leadY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(worldTipX, worldTipY);
+        ctx.quadraticCurveTo((worldTipX + leadX) * 0.5, Math.min(worldTipY, leadY) - 35, leadX, leadY);
+        ctx.stroke();
+
+        // Flying bobber
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(leadX, leadY, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Phase C: Water Splashdown (0.75..1.0)
+        const settleProg = (castP - 0.75) / 0.25;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(worldTipX, worldTipY);
+        ctx.quadraticCurveTo((worldTipX + bobX) * 0.5, Math.max(worldTipY, bobY) + 8, bobX, bobY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(bobX, bobY - 3, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Expanding ripples
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * (1 - settleProg)})`;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.ellipse(bobX, bobY + 1, 6 + settleProg * 26, (6 + settleProg * 26) * 0.35, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Splash water droplets
+        for (let d = 0; d < 6; d++) {
+          const ang = -Math.PI * 0.2 - (d / 5) * Math.PI * 0.6;
+          const dist = 12 + settleProg * 24;
+          const dropX = bobX + Math.cos(ang) * dist;
+          const dropY = bobY + Math.sin(ang) * dist * 0.7;
+          ctx.fillStyle = 'rgba(165, 243, 252, 0.85)';
+          ctx.beginPath();
+          ctx.arc(dropX, dropY, 2.2 * (1 - settleProg * 0.6), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    } else if (isCatching) {
+      // Dynamic Fish Leap & Haul-Out Animation
+      // 1. Water Explosion at bobber location (0..0.42)
+      if (catchP < 0.42) {
+        const splashProg = catchP / 0.42;
+        const splashAlpha = 1 - splashProg;
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${splashAlpha * 0.9})`;
+        ctx.beginPath();
+        ctx.moveTo(bobX - 14, bobY + 2);
+        ctx.quadraticCurveTo(bobX - 6, bobY - 45 * (1 - splashProg * 0.5), bobX, bobY - 58 * (1 - splashProg * 0.5));
+        ctx.quadraticCurveTo(bobX + 6, bobY - 45 * (1 - splashProg * 0.5), bobX + 14, bobY + 2);
+        ctx.closePath();
+        ctx.fill();
+
+        for (let s = 0; s < 8; s++) {
+          const spAngle = -Math.PI * 0.15 - (s / 7) * Math.PI * 0.7;
+          const spDist = 18 + splashProg * 36;
+          const sx = bobX + Math.cos(spAngle) * spDist;
+          const sy = bobY + Math.sin(spAngle) * spDist * 0.85;
+          ctx.fillStyle = s % 2 === 0 ? `rgba(255, 255, 255, ${splashAlpha})` : `rgba(56, 189, 248, ${splashAlpha})`;
+          ctx.beginPath();
+          ctx.arc(sx, sy, 2.5 * splashAlpha, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.strokeStyle = `rgba(255, 255, 255, ${splashAlpha * 0.7})`;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.ellipse(bobX, bobY + 2, 12 + splashProg * 48, (12 + splashProg * 48) * 0.35, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // 2. The Majestic Leaping Fish Flying Through the Sky! (0.06..0.94)
+      if (catchP >= 0.06 && catchP < 0.94 && o.hookedSpecies) {
+        const flightProg = Math.min(1.0, Math.max(0.0, (catchP - 0.06) / 0.84));
+        const targetX = charX + 20;
+        const targetY = charAnchorY - 34;
+
+        const arcPeak = 145; // Soars majestically into the sky!
+        const fishCurX = bobX + (targetX - bobX) * flightProg;
+        const fishCurY = bobY + (targetY - bobY) * flightProg - Math.sin(flightProg * Math.PI) * arcPeak;
+
+        const velX = (targetX - bobX);
+        const velY = (targetY - bobY) - Math.cos(flightProg * Math.PI) * arcPeak * Math.PI;
+        const fishAngle = Math.atan2(velY, velX) + Math.PI;
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(worldTipX, worldTipY);
+        ctx.lineTo(fishCurX, fishCurY);
+        ctx.stroke();
+
+        // Droplet & Stardust particle trail
+        for (let tr = 1; tr <= 5; tr++) {
+          const trProg = Math.max(0, flightProg - tr * 0.05);
+          const trX = bobX + (targetX - bobX) * trProg;
+          const trY = bobY + (targetY - bobY) * trProg - Math.sin(trProg * Math.PI) * arcPeak;
+          const trAlpha = 0.85 * (1 - tr * 0.18);
+          ctx.fillStyle = tr % 2 === 0 ? `rgba(254, 240, 138, ${trAlpha})` : `rgba(56, 189, 248, ${trAlpha})`;
+          ctx.beginPath();
+          ctx.arc(trX + Math.sin(t * 12 + tr) * 3, trY + Math.cos(t * 12 + tr) * 3, 2.8 - tr * 0.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Render Hooked Fish in Mid-Air!
+        ctx.save();
+        ctx.translate(fishCurX, fishCurY);
+        ctx.rotate(fishAngle);
+        renderFishIllustration(
+          ctx,
+          o.hookedSpecies,
+          0,
+          0,
+          0.85,
+          o.catchHue,
+          t,
+          false
+        );
+        ctx.restore();
+      }
+
+      // 3. Stardust celebration bloom when fish is caught (>= 0.82)
+      if (catchP >= 0.82) {
+        const starProg = (catchP - 0.82) / 0.18;
+        const burstRadius = 24 + starProg * 36;
+        for (let sp = 0; sp < 8; sp++) {
+          const sAngle = (sp / 8) * Math.PI * 2 + t * 2;
+          const starX = charX + 20 + Math.cos(sAngle) * burstRadius;
+          const starY = charAnchorY - 34 + Math.sin(sAngle) * burstRadius;
+          ctx.fillStyle = sp % 2 === 0 ? '#fde047' : '#38bdf8';
+          ctx.beginPath();
+          ctx.arc(starX, starY, 2.5 * (1 - starProg * 0.6), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    } else if (phase !== 'CATCH_REVEAL') {
+      // Standard Fishing Line in WAITING_FOR_BITE, FISH_BITING, REELING_MINIGAME
+      const isReeling = phase === 'REELING_MINIGAME';
+      const isBiting = phase === 'FISH_BITING';
+      const tensionSlack = isReeling ? -6 + (1 - o.reelTension01) * 16 : isBiting ? -4 : 12;
+
+      ctx.strokeStyle = isBiting || isReeling ? 'rgba(255, 255, 255, 0.75)' : 'rgba(255, 255, 255, 0.50)';
+      ctx.lineWidth = isBiting ? 1.6 : 1.2;
+      ctx.beginPath();
+      ctx.moveTo(worldTipX, worldTipY);
+      ctx.quadraticCurveTo(
+        (worldTipX + bobX) * 0.5,
+        Math.max(worldTipY, bobY) + tensionSlack,
+        bobX,
+        bobY
+      );
+      ctx.stroke();
+
+      // Floating bobber ripple rings
+      const ripplePulse = (t * 2.0) % 1.0;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.45 * (1 - ripplePulse)})`;
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.ellipse(bobX, bobY + 1, 8 + ripplePulse * 14, (8 + ripplePulse * 14) * 0.38, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Red/White anime bobber
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(bobX, bobY - 3, 3.2, Math.PI, 0);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(bobX, bobY - 3, 3.2, 0, Math.PI);
+      ctx.fill();
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.arc(bobX, bobY - 3, 3.2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
 
     ctx.restore();
   }
