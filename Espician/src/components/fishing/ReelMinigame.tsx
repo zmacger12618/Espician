@@ -39,16 +39,18 @@ export const ReelMinigame: React.FC<Props> = ({
   onDone
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
+  const progressTextRef = useRef<HTMLSpanElement | null>(null);
   const heldRef = useRef(false);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
 
-  const [displayProgress, setDisplayProgress] = React.useState(0.4);
   const [isInside, setIsInside] = React.useState(false);
 
   useEffect(() => {
     const t = TUNING[species.rarity];
-    const barW = Math.min(0.48, t.bar + rod.sweetSpotSizeBonus * 0.006);
+    const powerBonus = rod.rodStyle === 'power' ? 0.08 : 0;
+    const barW = Math.min(0.58, t.bar + rod.sweetSpotSizeBonus * 0.006 + powerBonus);
     const stiff = t.stiff * (0.9 + species.difficulty * 0.02);
     const loss = t.loss * (1 - Math.min(0.6, rod.lineStrengthBonus / 200));
 
@@ -116,7 +118,15 @@ export const ReelMinigame: React.FC<Props> = ({
       setIsInside(inside);
       progress += (inside ? t.gain : -loss) * dt;
       progress = Math.max(0, Math.min(1, progress));
-      setDisplayProgress(progress);
+      
+      // Directly update progress bar and text at high precision 60-120 FPS
+      if (progressBarRef.current) {
+        progressBarRef.current.style.width = `${Math.max(4, Math.min(100, progress * 100))}%`;
+      }
+      if (progressTextRef.current) {
+        progressTextRef.current.innerText = `${Math.round(progress * 100)}% / 100%`;
+      }
+
       flash = inside ? Math.min(1, flash + dt * 6) : Math.max(0, flash - dt * 6);
 
       if (now - lastTickSound > (inside ? 135 : 220)) {
@@ -278,18 +288,19 @@ export const ReelMinigame: React.FC<Props> = ({
             <span>🎣</span>
             <span>{lang === 'th' ? 'ดึงปลาขึ้นสู่ผิวน้ำ (Reel Progress):' : 'Reel Progress:'}</span>
           </span>
-          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
-            {Math.round(displayProgress * 100)}% / 100%
+          <span ref={progressTextRef} className="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
+            40% / 100%
           </span>
         </div>
         <div className="w-full h-2.5 bg-slate-200/80 dark:bg-black/50 rounded-full overflow-hidden border border-white/80 shadow-inner">
           <div
-            className={`h-full transition-all duration-75 rounded-full ${
+            ref={progressBarRef}
+            className={`h-full rounded-full transition-[background] duration-200 ${
               isInside
                 ? 'bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]'
                 : 'bg-gradient-to-r from-rose-400 to-amber-400'
             }`}
-            style={{ width: `${Math.max(4, displayProgress * 100)}%` }}
+            style={{ width: '40%' }}
           />
         </div>
       </div>

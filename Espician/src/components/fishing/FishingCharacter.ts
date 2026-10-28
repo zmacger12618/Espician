@@ -670,6 +670,57 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
           ctx.fill();
         }
       }
+    } else if (phase === 'IDLE_READY') {
+      // In IDLE_READY (resting on pier before cast):
+      // Line is neatly reeled in, bobber hangs gracefully right below the rod tip (NOT in water)
+      const hangY = worldTipY + 28;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(worldTipX, worldTipY);
+      ctx.lineTo(worldTipX + 1, hangY);
+      ctx.stroke();
+
+      // Small hanging bobber resting near rod tip
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(worldTipX + 1, hangY - 8, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(worldTipX + 1, hangY - 5, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.arc(worldTipX + 1, hangY - 8, 3.2, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (phase === 'CATCH_FAIL') {
+      // Fish escaped! Rapid fleeing ripples + slack line + anime sweatdrop
+      const failProg = (t * 2.5) % 1.0;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * (1 - failProg)})`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.ellipse(bobX + failProg * 35, bobY, 12 + failProg * 25, (12 + failProg * 25) * 0.35, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Slack line whipping back up
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(worldTipX, worldTipY);
+      ctx.quadraticCurveTo(worldTipX + 10, worldTipY + 20, worldTipX + 4, worldTipY + 36);
+      ctx.stroke();
+
+      // Anime sweatdrop emote near character head
+      const dropX = charX + 18;
+      const dropY = charAnchorY - 85;
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(dropX, dropY - 8);
+      ctx.quadraticCurveTo(dropX - 4, dropY, dropX, dropY + 4);
+      ctx.quadraticCurveTo(dropX + 4, dropY, dropX, dropY - 8);
+      ctx.fill();
     } else if (phase !== 'CATCH_REVEAL') {
       // Standard Fishing Line in WAITING_FOR_BITE, FISH_BITING, REELING_MINIGAME
       const isReeling = phase === 'REELING_MINIGAME';

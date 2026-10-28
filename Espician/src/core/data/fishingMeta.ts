@@ -190,6 +190,7 @@ export interface QuestDef {
   labelTh: string;
   labelEn?: string;
   npcId?: string;
+  targetIslandId?: string; // Target island for shortcut teleport
   dialogueTh?: string;
   dialogueEn?: string;
   chapterIndex?: number;
@@ -218,6 +219,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_01',
     chapterIndex: 1,
     npcId: 'alden',
+    targetIslandId: 'island_emerald_haven',
     metric: 'cast',
     target: 1,
     coins: 100,
@@ -230,6 +232,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_02',
     chapterIndex: 1,
     npcId: 'alden',
+    targetIslandId: 'island_emerald_haven',
     metric: 'catch',
     target: 5,
     coins: 350,
@@ -242,6 +245,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_03',
     chapterIndex: 1,
     npcId: 'alden',
+    targetIslandId: 'island_emerald_haven',
     metric: 'new_species',
     target: 4,
     coins: 800,
@@ -254,6 +258,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_04',
     chapterIndex: 1,
     npcId: 'alden',
+    targetIslandId: 'island_coral_sanctuary',
     metric: 'level',
     target: 12,
     coins: 2500,
@@ -268,6 +273,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_05',
     chapterIndex: 2,
     npcId: 'lyra',
+    targetIslandId: 'island_coral_sanctuary',
     metric: 'catch_uncommon_plus',
     target: 8,
     coins: 3500,
@@ -280,6 +286,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_06',
     chapterIndex: 2,
     npcId: 'lyra',
+    targetIslandId: 'island_coral_sanctuary',
     metric: 'catch_creature',
     target: 6,
     coins: 4800,
@@ -292,6 +299,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_07',
     chapterIndex: 2,
     npcId: 'lyra',
+    targetIslandId: 'island_volcanic_atoll',
     metric: 'level',
     target: 25,
     coins: 8000,
@@ -306,6 +314,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_08',
     chapterIndex: 3,
     npcId: 'ignis',
+    targetIslandId: 'island_volcanic_atoll',
     metric: 'catch_rare_plus',
     target: 10,
     coins: 14000,
@@ -318,6 +327,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_09',
     chapterIndex: 3,
     npcId: 'ignis',
+    targetIslandId: 'island_volcanic_atoll',
     metric: 'earn_coins',
     target: 50000,
     coins: 18000,
@@ -330,6 +340,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_10',
     chapterIndex: 3,
     npcId: 'ignis',
+    targetIslandId: 'island_aurora_fjord',
     metric: 'level',
     target: 38,
     coins: 25000,
@@ -344,6 +355,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_11',
     chapterIndex: 4,
     npcId: 'astrid',
+    targetIslandId: 'island_aurora_fjord',
     metric: 'catch_epic_plus',
     target: 5,
     coins: 38000,
@@ -356,6 +368,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_12',
     chapterIndex: 4,
     npcId: 'astrid',
+    targetIslandId: 'island_celestial_archipelago',
     metric: 'level',
     target: 50,
     coins: 60000,
@@ -370,6 +383,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_13',
     chapterIndex: 5,
     npcId: 'seraphina',
+    targetIslandId: 'island_celestial_archipelago',
     metric: 'catch_legendary_plus',
     target: 3,
     coins: 100000,
@@ -382,6 +396,7 @@ export const MAIN_QUESTS: QuestDef[] = [
     id: 'm_14',
     chapterIndex: 5,
     npcId: 'seraphina',
+    targetIslandId: 'island_celestial_archipelago',
     metric: 'new_species',
     target: 26,
     coins: 250000,
@@ -480,3 +495,97 @@ export function questProgress(
 export function expNeededForLevel(level: number): number {
   return Math.floor(83.5 * Math.pow(level, 1.68));
 }
+
+export interface AchievementDef {
+  id: string;
+  category: 'catch' | 'rarity' | 'weight' | 'island' | 'night' | 'misc';
+  titleTh: string;
+  titleEn: string;
+  descTh: string;
+  descEn: string;
+  icon: string;
+  target: number;
+  metric: string;
+  rewardCoins: number;
+  rewardExp: number;
+}
+
+export const ACHIEVEMENT_CATALOG: AchievementDef[] = [
+  { id: 'ach_cast_1', category: 'misc', titleTh: 'ก้าวแรกสู่วิถีเบ็ด', titleEn: 'First Cast', descTh: 'เหวี่ยงเบ็ดลงสู่ทะเลเป็นครั้งแรก', descEn: 'Cast fishing line for the first time', icon: '🎣', target: 1, metric: 'cast', rewardCoins: 100, rewardExp: 50 },
+  { id: 'ach_catch_10', category: 'catch', titleTh: 'นักตกปลามือใหม่', titleEn: 'Apprentice Angler', descTh: 'ตกสัตว์ทะเลได้ครบ 10 ตัว', descEn: 'Catch 10 marine creatures', icon: '🐟', target: 10, metric: 'catch', rewardCoins: 500, rewardExp: 200 },
+  { id: 'ach_catch_50', category: 'catch', titleTh: 'ผู้ชำนาญสายน้ำ', titleEn: 'Tide Walker', descTh: 'ตกสัตว์ทะเลได้ครบ 50 ตัว', descEn: 'Catch 50 marine creatures', icon: '🌊', target: 50, metric: 'catch', rewardCoins: 2500, rewardExp: 1000 },
+  { id: 'ach_catch_150', category: 'catch', titleTh: 'จอมขมังเวทย์แห่งสะพานปลา', titleEn: 'Master of the Pier', descTh: 'ตกสัตว์ทะเลได้ครบ 150 ตัว', descEn: 'Catch 150 marine creatures', icon: '🏆', target: 150, metric: 'catch', rewardCoins: 10000, rewardExp: 4000 },
+  { id: 'ach_catch_300', category: 'catch', titleTh: 'ตำนานปรมาจารย์เบ็ด', titleEn: 'Sovereign of the Seas', descTh: 'ตกสัตว์ทะเลได้ครบ 300 ตัว', descEn: 'Catch 300 marine creatures', icon: '👑', target: 300, metric: 'catch', rewardCoins: 35000, rewardExp: 12000 },
+  { id: 'ach_rare_1', category: 'rarity', titleTh: 'ประกายแสงสีคราม', titleEn: 'Azure Spark', descTh: 'ตกสัตว์ทะเลระดับ Rare สำเร็จ 1 ตัว', descEn: 'Catch your first Rare marine creature', icon: '💎', target: 1, metric: 'catch_rare_plus', rewardCoins: 1200, rewardExp: 500 },
+  { id: 'ach_rare_10', category: 'rarity', titleTh: 'นักล่าอัญมณีสมุทร', titleEn: 'Ocean Gem Hunter', descTh: 'ตกสัตว์ทะเลระดับ Rare ขึ้นไป 10 ตัว', descEn: 'Catch 10 Rare+ marine creatures', icon: '💠', target: 10, metric: 'catch_rare_plus', rewardCoins: 8000, rewardExp: 3000 },
+  { id: 'ach_epic_1', category: 'rarity', titleTh: 'สมบัติมหากาพย์สีม่วง', titleEn: 'Purple Marvel', descTh: 'ตกสัตว์ทะเลระดับ Epic สำเร็จ', descEn: 'Catch your first Epic creature', icon: '🔮', target: 1, metric: 'catch_epic_plus', rewardCoins: 5000, rewardExp: 2000 },
+  { id: 'ach_legend_1', category: 'rarity', titleTh: 'เสียงเพรียกจากตำนาน', titleEn: 'Whisper of Legend', descTh: 'พิชิตสัตว์ทะเลระดับ Legendary สำเร็จ', descEn: 'Catch a Legendary creature', icon: '🌟', target: 1, metric: 'catch_legendary_plus', rewardCoins: 25000, rewardExp: 10000 },
+  { id: 'ach_secret_1', category: 'rarity', titleTh: 'ความลับแห่งห้วงลึกสูงสุด', titleEn: 'Abyssal Secret', descTh: 'ตกสัตว์ทะเลระดับ Secret ที่ซ่อนอยู่ในสมุทร', descEn: 'Catch a Secret mythical entity', icon: '🌌', target: 1, metric: 'catch_secret', rewardCoins: 80000, rewardExp: 30000 },
+  { id: 'ach_jerk_25', category: 'misc', titleTh: 'จังหวะพริ้วไหว', titleEn: 'Rhythmic Jerk', descTh: 'กระตุกเบ็ดวัดจังหวะ 25 ครั้ง', descEn: 'Perform 25 jerk line actions', icon: '⚡', target: 25, metric: 'jerk', rewardCoins: 800, rewardExp: 300 },
+  { id: 'ach_jerk_100', category: 'misc', titleTh: 'กระตุกปลิดวิญญาณ', titleEn: 'Twitch Prodigy', descTh: 'กระตุกเบ็ดวัดจังหวะ 100 ครั้ง', descEn: 'Perform 100 jerk line actions', icon: '💫', target: 100, metric: 'jerk', rewardCoins: 4500, rewardExp: 1800 },
+  { id: 'ach_aqua_4', category: 'misc', titleTh: 'ตู้ปลาเริ่มมีชีวิต', titleEn: 'Aquarium Bloom', descTh: 'นำปลาเข้าตู้ปลา 4 ตัว', descEn: 'Add 4 fish to aquarium', icon: '🐠', target: 4, metric: 'aquarium_add', rewardCoins: 1000, rewardExp: 400 },
+  { id: 'ach_earn_50k', category: 'misc', titleTh: 'พ่อค้าปลาหน้าใหม่', titleEn: 'Fishmonger', descTh: 'ขายสัตว์ทะเลสะสมได้ 50,000 เหรียญ', descEn: 'Earn 50,000 Sea Coins from selling fish', icon: '🪙', target: 50000, metric: 'earn_coins', rewardCoins: 6000, rewardExp: 2500 },
+  { id: 'ach_earn_250k', category: 'misc', titleTh: 'มหาเศรษฐีสมุทร', titleEn: 'Maritime Tycoon', descTh: 'ขายสัตว์ทะเลสะสมได้ 250,000 เหรียญ', descEn: 'Earn 250,000 Sea Coins', icon: '💰', target: 250000, metric: 'earn_coins', rewardCoins: 30000, rewardExp: 10000 },
+  { id: 'ach_species_10', category: 'catch', titleTh: 'ผู้สำรวจชีวภาพ', titleEn: 'Biological Surveyor', descTh: 'ค้นพบสัตว์ทะเลครบ 10 ชนิดในสารานุกรม', descEn: 'Discover 10 unique species in encyclopedia', icon: '📖', target: 10, metric: 'new_species', rewardCoins: 3000, rewardExp: 1200 },
+  { id: 'ach_species_25', category: 'catch', titleTh: 'นักธรรมชาติวิทยาทางทะเล', titleEn: 'Marine Naturalist', descTh: 'ค้นพบสัตว์ทะเลครบ 25 ชนิด', descEn: 'Discover 25 unique species', icon: '📜', target: 25, metric: 'new_species', rewardCoins: 20000, rewardExp: 8000 },
+  { id: 'ach_dex_all', category: 'catch', titleTh: 'สารานุกรมสมบูรณ์แบบ (100%)', titleEn: 'Grand Encyclopedia Master', descTh: 'ค้นพบสัตว์ทะเลครบทั้ง 32 ชนิด', descEn: 'Discover all 32 unique species', icon: '⭐', target: 32, metric: 'new_species', rewardCoins: 100000, rewardExp: 40000 }
+];
+
+export interface FishExchangeItem {
+  id: string;
+  nameTh: string;
+  nameEn: string;
+  descTh: string;
+  descEn: string;
+  type: 'costume' | 'lantern' | 'rod';
+  rewardItemId: string;
+  icon: string;
+  requiredFish: { speciesId: string; count: number }[];
+}
+
+export const FISH_EXCHANGE_SHOP: FishExchangeItem[] = [
+  {
+    id: 'ex_sailor_costume',
+    nameTh: 'ชุดกะลาสีมารีนบลูกะลาสีเรือ',
+    nameEn: 'Navy Sailor Marine Uniform',
+    descTh: 'นำซาร์ดีน 4 ตัว + กุ้งทะเล 3 ตัว มาแลกชุดกะลาสีสุดน่ารัก',
+    descEn: 'Turn in 4 Sardines + 3 Shrimps to receive the Navy Sailor Uniform',
+    type: 'costume',
+    rewardItemId: 'costume_sailor',
+    icon: '⚓',
+    requiredFish: [
+      { speciesId: 'fish_01_sardine', count: 4 },
+      { speciesId: 'creature_21_shrimp', count: 3 }
+    ]
+  },
+  {
+    id: 'ex_yukata_costume',
+    nameTh: 'ยูกาตะเทศกาลดอกไม้ไฟชายฝั่ง',
+    nameEn: 'Ocean Festival Yukata',
+    descTh: 'นำปลาการ์ตูน 4 ตัว + หมึกประกายคราม 3 ตัว + ปลานกแก้ว 2 ตัว มาแลกยูกาตะญี่ปุ่นแท้',
+    descEn: 'Turn in 4 Clownfish + 3 Squids + 2 Parrotfish for the Festival Yukata',
+    type: 'costume',
+    rewardItemId: 'costume_yukata',
+    icon: '👘',
+    requiredFish: [
+      { speciesId: 'fish_02_clownfish', count: 4 },
+      { speciesId: 'creature_22_squid', count: 3 },
+      { speciesId: 'fish_07_parrotfish', count: 2 }
+    ]
+  },
+  {
+    id: 'ex_starlight_costume',
+    nameTh: 'ชุดคลุมผู้พิทักษ์ห้วงอวกาศดาราจักร',
+    nameEn: 'Celestial Starlight Astral Robe',
+    descTh: 'นำปลากระเบนราหู 2 ตัว + ปลาพญานาค 1 ตัว + ปลามังกรดวงดาว 1 ตัว มาแลกชุดคลุมแสงดาว',
+    descEn: 'Turn in 2 Manta Rays + 1 Oarfish + 1 Starlight Dragonet for the Astral Robe',
+    type: 'costume',
+    rewardItemId: 'costume_starlight',
+    icon: '🌌',
+    requiredFish: [
+      { speciesId: 'fish_13_mantaray', count: 2 },
+      { speciesId: 'fish_16_oarfish', count: 1 },
+      { speciesId: 'fish_32_starlight_dragonet', count: 1 }
+    ]
+  }
+];

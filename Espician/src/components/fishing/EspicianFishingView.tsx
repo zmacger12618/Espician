@@ -34,7 +34,11 @@ import {
   questProgress,
   todayKey,
   trackQuest,
-  expNeededForLevel
+  expNeededForLevel,
+  ACHIEVEMENT_CATALOG,
+  AchievementDef,
+  FISH_EXCHANGE_SHOP,
+  FishExchangeItem
 } from '../../core/data/fishingMeta';
 import {
   ALL_ISLANDS,
@@ -822,7 +826,7 @@ interface EspicianFishingViewProps {
   userEmail?: string;
 }
 
-type TabId = 'bag' | 'shop' | 'encyclopedia' | 'aquarium' | 'quests' | 'wardrobe';
+type TabId = 'bag' | 'shop' | 'encyclopedia' | 'aquarium' | 'quests' | 'wardrobe' | 'achieve' | 'exchange';
 type Detail = { kind: 'rod' | 'bait' | 'costume'; id: string } | null;
 
 export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBackToPortal, userEmail }) => {
@@ -1059,6 +1063,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
   );
   const [aquaSubTab, setAquaSubTab] = useState<'in_tank' | 'add_fish' | 'shop_tank'>('in_tank');
   const [showTankModal, setShowTankModal] = useState(false);
+  const [showFishSelectModal, setShowFishSelectModal] = useState(false);
 
   const aquariumFishList = useMemo(
     () => fishingState.caughtInventory.filter((f) => f.isLockedInAquarium),
@@ -1282,7 +1287,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           setTimeout(() => setPhase('IDLE_READY'), 2000);
         }
       },
-      autoReel ? 600 : 5000
+      autoReel ? 600 : 300000 // Fish nibbles for up to 5 minutes before escaping
     );
     return () => clearTimeout(tm);
   }, [phase, autoReel, startReeling, notify, t.fishEscaped]);
@@ -1319,13 +1324,28 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
         if (ri >= 3) q = trackQuest(q, 'catch_epic_plus');
         if (sp.category === 'creature') q = trackQuest(q, 'catch_creature');
         if (!prev.encyclopediaMap[sp.id]) q = trackQuest(q, 'new_species');
+
+        // Check Bag Limit (10 Fish Max, excluding aquarium fish)
+        const bagFish = prev.caughtInventory.filter((f) => !f.isLockedInAquarium);
+        const isBagFull = bagFish.length >= 10;
+        let newInventory = prev.caughtInventory;
+        let extraCoins = 0;
+
+        if (isBagFull) {
+          extraCoins = caught.sellPrice;
+          q = trackQuest(q, 'earn_coins', extraCoins);
+        } else {
+          newInventory = [caught, ...prev.caughtInventory];
+        }
+
         const entry = prev.encyclopediaMap[sp.id] || { count: 0, bestWeightKg: 0, bestLengthCm: 0, unlockedVariants: [] };
         return {
           ...prev,
+          seaCoins: prev.seaCoins + extraCoins,
           anglerLevel: g.anglerLevel,
           anglerExp: g.anglerExp,
           totalCatches: prev.totalCatches + 1,
-          caughtInventory: [caught, ...prev.caughtInventory],
+          caughtInventory: newInventory,
           quests: q,
           encyclopediaMap: {
             ...prev.encyclopediaMap,
@@ -1340,6 +1360,17 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           }
         };
       });
+
+      const bagFishNow = fishingState.caughtInventory.filter((f) => !f.isLockedInAquarium);
+      if (bagFishNow.length >= 10) {
+        soundEngine.playCoin();
+        notify(
+          lang === 'th'
+            ? `🎒 กระเป๋าเต็ม (สูงสุด 10 ตัว)! ขาย ${fishName(sp, lang)} ได้รับ ${caught.sellPrice.toLocaleString()} เหรียญอัตโนมัติ`
+            : `🎒 Bag full (10 max)! Auto-sold ${fishName(sp, 'en')} for ${caught.sellPrice.toLocaleString()} Coins`,
+          'rare'
+        );
+      }
 
       if (isNew) notify(`${t.newDiscovery} · ${fishName(sp, lang)}`, 'rare');
       if (gain.anglerLevel > before) setTimeout(() => notify(t.levelUp, 'good'), 400);
@@ -1864,6 +1895,46 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     );
   };
 
+  const handleExchangeFish = (item: FishExchangeItem) => {
+    const bagFish = fishingState.caughtInventory.filter((f) => !f.isLockedInAquarium);
+    for (const req of item.requiredFish) {
+      const count = bagFish.filter((f) => f.speciesId === req.speciesId).length;
+      if (count < req.count) {
+        soundEngine.playFail();
+        return notify(
+          lang === 'th' ? `ยังสะสมปลาไม่ครบตามเงื่อนไขเพื่อแลก ${item.nameTh}!` : `Not enough fish to exchange!`,
+          'bad'
+        );
+      }
+    }
+    const toConsume = { ...item.requiredFish.reduce((acc, r) => ({ ...acc, [r.speciesId]: r.count }), {} as Record<string, number>) };
+    const newInventory = fishingState.caughtInventory.filter((f) => {
+      if (f.isLockedInAquarium) return true;
+      if ((toConsume[f.speciesId] || 0) > 0) {
+        toConsume[f.speciesId]--;
+        return false;
+      }
+      return true;
+    });
+
+    soundEngine.playCoin();
+    setFishingState((p) => {
+      let ownedCostumes = p.ownedCostumeIds;
+      if (item.type === 'costume') {
+        ownedCostumes = Array.from(new Set([...p.ownedCostumeIds, item.rewardItemId]));
+      }
+      return {
+        ...p,
+        caughtInventory: newInventory,
+        ownedCostumeIds: ownedCostumes
+      };
+    });
+    notify(
+      lang === 'th' ? `✨ แลกรับ ${item.nameTh} สำเร็จแล้ว!` : `Unlocked ${item.nameEn}!`,
+      'rare'
+    );
+  };
+
   const buyOrEquipRod = (rodId: string) => {
     const rod = FISHING_RODS_CATALOG.find((r) => r.id === rodId);
     if (!rod) return;
@@ -2338,6 +2409,32 @@ const CostumeDetailModal: React.FC<{
               )}
             </div>
           </div>
+
+          {def.targetIslandId && fishingState.unlockedIslandIds.includes(def.targetIslandId) && fishingState.currentIslandId !== def.targetIslandId && !locked && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                soundEngine.playClick();
+                setFishingState((p) => ({ ...p, currentIslandId: def.targetIslandId! }));
+                setPityBonus(0);
+                setPhase('IDLE_READY');
+                setPendingSpecies(null);
+                playEntranceCutscene();
+                const targetIsle = ALL_ISLANDS.find((i) => i.id === def.targetIslandId);
+                notify(
+                  lang === 'th'
+                    ? `🗺️ ออกเรือเดินทางด่วนสู่ ${targetIsle?.nameTh || 'เกาะเป้าหมาย'}!`
+                    : `🗺️ Set sail to ${targetIsle?.nameEn || 'target island'}!`,
+                  'info'
+                );
+              }}
+              className="px-2 py-1 rounded-xl text-[10px] font-black bg-sky-500 hover:bg-sky-600 text-white shadow-xs transition active:scale-95 flex items-center gap-1 shrink-0"
+              title={lang === 'th' ? 'เดินทางไปเกาะเป้าหมายทันที' : 'Fast Travel to Island'}
+            >
+              <span>🗺️</span>
+              <span>{lang === 'th' ? 'เดินทาง' : 'Travel'}</span>
+            </button>
+          )}
 
           {locked ? (
             <Lock className="w-3.5 h-3.5 text-slate-400" />
@@ -3359,8 +3456,8 @@ const CostumeDetailModal: React.FC<{
 
         {/* JRPG Command Deck Side Panel */}
         <div className={`lg:col-span-4 ${PANEL} flex flex-col h-[640px]`}>
-          <div className="grid grid-cols-6 border-b border-sky-100 bg-sky-50/50 p-1.5 gap-1 rounded-t-3xl">
-            {tabBtn('bag', <Fish className="w-3.5 h-3.5" />, lang === 'th' ? 'คลังปลา' : 'BAG', <span className="text-[10px] font-mono font-bold text-sky-600">({fishingState.caughtInventory.length})</span>)}
+          <div className="flex items-center overflow-x-auto no-scrollbar border-b border-sky-100 bg-sky-50/50 p-1.5 gap-1 rounded-t-3xl">
+            {tabBtn('bag', <Fish className="w-3.5 h-3.5" />, lang === 'th' ? 'คลังปลา' : 'BAG', <span className="text-[10px] font-mono font-bold text-sky-600">({fishingState.caughtInventory.filter(f => !f.isLockedInAquarium).length}/10)</span>)}
             {tabBtn('shop', <ShoppingBag className="w-3.5 h-3.5" />, lang === 'th' ? 'ร้านค้า' : 'SHOP')}
             {tabBtn('wardrobe', <Shirt className="w-3.5 h-3.5" />, lang === 'th' ? 'คอสตูม' : 'STYLE')}
             {tabBtn('encyclopedia', <BookOpen className="w-3.5 h-3.5" />, lang === 'th' ? 'สมุดปลา' : 'CODEX', <span className="text-[10px] font-mono font-bold text-sky-600">{discoveredCount}</span>)}
@@ -3372,7 +3469,9 @@ const CostumeDetailModal: React.FC<{
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_#f59e0b]" />
               ) : undefined
             )}
-            {tabBtn('aquarium', <Layers className="w-3.5 h-3.5" />, lang === 'th' ? 'ตู้ปลา' : 'AQUA', <span className="text-[10px] font-mono font-bold text-sky-600">{aquariumFishList.length}</span>)}
+            {tabBtn('aquarium', <Layers className="w-3.5 h-3.5" />, lang === 'th' ? 'ตู้ปลา' : 'AQUA', <span className="text-[10px] font-mono font-bold text-sky-600">{aquariumFishList.length}/{currentTank.capacity}</span>)}
+            {tabBtn('exchange', <Sparkles className="w-3.5 h-3.5" />, lang === 'th' ? 'แลกปลา' : 'TRADE')}
+            {tabBtn('achieve', <Target className="w-3.5 h-3.5" />, lang === 'th' ? 'ความสำเร็จ' : 'ACHIEVE')}
           </div>
 
           <div className="flex-1 overflow-hidden p-3.5 flex flex-col">
@@ -3547,7 +3646,7 @@ const CostumeDetailModal: React.FC<{
 
             {activeTab === 'aquarium' && (
               <div className="flex-1 flex flex-col gap-3 min-h-0 overflow-y-auto pr-1">
-                {/* Header bar: Tank status, Tier, Quota, Multiplier, and Upgrade button */}
+                {/* Header bar: Tank status, Tier, Quota, Multiplier, and Modals Triggers */}
                 <div className="bg-gradient-to-r from-sky-500/10 via-teal-500/10 to-indigo-500/10 border-2 border-sky-200/80 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-md font-black text-lg">
@@ -3595,13 +3694,22 @@ const CostumeDetailModal: React.FC<{
                       </div>
                     </div>
 
-                    {/* Upgrade button */}
+                    {/* Shop Modal Trigger */}
                     <button
-                      onClick={() => setAquaSubTab('shop_tank')}
+                      onClick={() => setShowTankModal(true)}
                       className="px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-teal-500 to-sky-500 hover:from-teal-600 hover:to-sky-600 text-white shadow-sm flex items-center gap-1.5 transition active:scale-95"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>{lang === 'th' ? 'ร้านตู้ปลา' : 'Tanks Shop'}</span>
+                      <span>{lang === 'th' ? 'ร้านตู้ปลา (5 Tiers)' : 'Tanks Shop'}</span>
+                    </button>
+
+                    {/* Add Fish Modal Trigger */}
+                    <button
+                      onClick={() => setShowFishSelectModal(true)}
+                      className="px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white shadow-sm flex items-center gap-1.5 transition active:scale-95"
+                    >
+                      <span>📥</span>
+                      <span>{lang === 'th' ? '+ นำปลาเข้าตู้' : '+ Add Fish'}</span>
                     </button>
                   </div>
                 </div>
@@ -3628,7 +3736,7 @@ const CostumeDetailModal: React.FC<{
                           : 'Add caught fish from your bag to swim and generate passive Sea Coins!'}
                       </p>
                       <button
-                        onClick={() => setAquaSubTab('add_fish')}
+                        onClick={() => setShowFishSelectModal(true)}
                         className="mt-3 px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-black shadow-md transition active:scale-95"
                       >
                         {lang === 'th' ? '+ นำปลาเข้าตู้' : '+ Add Fish to Tank'}
@@ -3637,281 +3745,65 @@ const CostumeDetailModal: React.FC<{
                   )}
                 </div>
 
-                {/* Subtab selection pills */}
-                <div className="flex items-center gap-1.5 border-b border-sky-100 pb-1">
-                  <button
-                    onClick={() => setAquaSubTab('in_tank')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-                      aquaSubTab === 'in_tank'
-                        ? 'bg-sky-500 text-white shadow-xs'
-                        : 'bg-sky-50 hover:bg-sky-100 text-sky-800'
-                    }`}
-                  >
-                    <Fish className="w-3.5 h-3.5" />
-                    <span>{lang === 'th' ? `ปลาในตู้ (${aquariumFishList.length}/${currentTank.capacity})` : `In Tank (${aquariumFishList.length}/${currentTank.capacity})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setAquaSubTab('add_fish')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-                      aquaSubTab === 'add_fish'
-                        ? 'bg-sky-500 text-white shadow-xs'
-                        : 'bg-sky-50 hover:bg-sky-100 text-sky-800'
-                    }`}
-                  >
-                    <span>📥</span>
-                    <span>{lang === 'th' ? `เพิ่มปลา (${availableFishToAdd.length})` : `Add Fish (${availableFishToAdd.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setAquaSubTab('shop_tank')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-                      aquaSubTab === 'shop_tank'
-                        ? 'bg-sky-500 text-white shadow-xs'
-                        : 'bg-sky-50 hover:bg-sky-100 text-sky-800'
-                    }`}
-                  >
-                    <span>🛒</span>
-                    <span>{lang === 'th' ? 'ร้านตู้ปลา (5 Tiers)' : 'Tanks Shop (5 Tiers)'}</span>
-                  </button>
+                {/* Swimming Fishes List Header */}
+                <div className="flex items-center justify-between border-b border-sky-100 pb-1">
+                  <div className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                    <Fish className="w-4 h-4 text-sky-500" />
+                    <span>{lang === 'th' ? `ปลาที่กำลังแหวกว่ายในตู้ (${aquariumFishList.length}/${currentTank.capacity} ตัว)` : `Fishes in Tank (${aquariumFishList.length}/${currentTank.capacity})`}</span>
+                  </div>
+                  <div className="text-[11px] text-sky-600 font-bold">
+                    {lang === 'th' ? `ผลิตรวม +${totalPassiveCoinsPerMin} เหรียญ/นาที` : `Yield +${totalPassiveCoinsPerMin} coins/min`}
+                  </div>
                 </div>
 
-                {/* Subtab 1: in_tank */}
-                {aquaSubTab === 'in_tank' && (
-                  <div className="space-y-2">
-                    {aquariumFishList.length === 0 ? (
-                      <div className="p-6 text-center text-xs text-slate-400 bg-sky-50/50 rounded-2xl border border-sky-100">
-                        {lang === 'th' ? 'ไม่มีปลาอยู่ในตู้ปลาขณะนี้' : 'No fish in the tank yet.'}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {aquariumFishList.map((item) => {
-                          const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === item.speciesId);
-                          if (!sp) return null;
-                          const rc = RARITY_CONFIG[sp.rarity];
-                          const passiveCoins = Math.max(2, Math.round(sp.basePrice * 0.03 * currentTank.coinMultiplier));
-                          return (
-                            <div
-                              key={item.uid}
-                              className="p-2.5 rounded-2xl bg-white border border-sky-100 hover:border-sky-300 shadow-xs flex items-center justify-between gap-2 transition"
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-12 h-10 bg-sky-50 rounded-xl p-1 border border-sky-100 flex items-center justify-center shrink-0">
-                                  <FishPreviewCanvas species={sp} hueShiftDeg={item.hueShiftDeg} discovered={true} width={70} height={36} scale={0.45} />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-black text-slate-800 truncate">
-                                      {fishName(sp, lang)}
-                                    </span>
-                                    <span className={`text-[9px] px-1.5 py-0.2 rounded-md font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>
-                                      {sp.rarity.toUpperCase()}
-                                    </span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 font-mono">
-                                    {item.weightKg} kg · <span className="text-amber-600 font-bold">+{passiveCoins}/m</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => handleToggleAquarium(item.uid)}
-                                className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 border border-slate-200 hover:border-rose-200 transition shrink-0 active:scale-95"
-                              >
-                                {lang === 'th' ? 'นำออก' : 'Remove'}
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Subtab 2: add_fish */}
-                {aquaSubTab === 'add_fish' && (
-                  <div className="space-y-2">
-                    {aquariumFishList.length >= currentTank.capacity && (
-                      <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between gap-2 text-xs text-amber-800 font-bold">
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                          <span>{lang === 'th' ? `ตู้ปลาเต็มแล้ว (${currentTank.capacity}/${currentTank.capacity} ตัว) กรุณาอัพเกรดตู้ปลาเพื่อเพิ่มความจุ` : `Tank is full! Upgrade your tank to hold more fish.`}</span>
-                        </div>
-                        <button
-                          onClick={() => setAquaSubTab('shop_tank')}
-                          className="px-2.5 py-1 rounded-xl bg-amber-500 text-white font-black hover:bg-amber-600 text-[11px] shrink-0"
-                        >
-                          {lang === 'th' ? 'อัพเกรดตู้ปลา' : 'Upgrade'}
-                        </button>
-                      </div>
-                    )}
-
-                    {availableFishToAdd.length === 0 ? (
-                      <div className="p-6 text-center text-xs text-slate-400 bg-sky-50/50 rounded-2xl border border-sky-100">
-                        {lang === 'th'
-                          ? 'ไม่มีปลาในกระเป๋าที่สามารถใส่ได้ (ลองไปตกปลาใหม่ดูสิ!)'
-                          : 'No fish available in inventory. Go fishing to catch some!'}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {availableFishToAdd.map((item) => {
-                          const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === item.speciesId);
-                          if (!sp) return null;
-                          const rc = RARITY_CONFIG[sp.rarity];
-                          const passiveGain = Math.max(2, Math.round(sp.basePrice * 0.03 * currentTank.coinMultiplier));
-                          const isFull = aquariumFishList.length >= currentTank.capacity;
-                          return (
-                            <div
-                              key={item.uid}
-                              className="p-2.5 rounded-2xl bg-white border border-sky-100 hover:border-sky-300 shadow-xs flex items-center justify-between gap-2 transition"
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-12 h-10 bg-sky-50 rounded-xl p-1 border border-sky-100 flex items-center justify-center shrink-0">
-                                  <FishPreviewCanvas species={sp} hueShiftDeg={item.hueShiftDeg} discovered={true} width={70} height={36} scale={0.45} />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-black text-slate-800 truncate">
-                                      {fishName(sp, lang)}
-                                    </span>
-                                    <span className={`text-[9px] px-1.5 py-0.2 rounded-md font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>
-                                      {sp.rarity.toUpperCase()}
-                                    </span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 font-mono">
-                                    {item.weightKg} kg · <span className="text-emerald-600 font-bold">+{passiveGain}/m</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => handleToggleAquarium(item.uid)}
-                                disabled={isFull}
-                                className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition shrink-0 active:scale-95 ${
-                                  isFull
-                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                                    : 'bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-xs hover:from-sky-600 hover:to-teal-600'
-                                }`}
-                              >
-                                {lang === 'th' ? '+ นำเข้าตู้' : '+ Add'}
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Subtab 3: shop_tank */}
-                {aquaSubTab === 'shop_tank' && (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {AQUARIUM_TANKS.map((tank) => {
-                        const isEquipped = currentAquariumTier === tank.tier;
-                        const isOwned = (fishingState.ownedAquariumTiers || [1]).includes(tank.tier);
-                        const isLevelLocked = fishingState.anglerLevel < tank.requiredLevel;
-                        const canAfford = fishingState.seaCoins >= tank.price;
-
+                {/* List of fishes in tank */}
+                <div className="space-y-2">
+                  {aquariumFishList.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-slate-400 bg-sky-50/50 rounded-2xl border border-sky-100">
+                      {lang === 'th' ? 'ยังไม่มีปลาอยู่ในตู้ปลาขณะนี้ กดปุ่ม "+ นำปลาเข้าตู้" เพื่อเลือกปลาจากกระเป๋า' : 'No fish in the tank yet. Click "+ Add Fish" to add from inventory.'}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {aquariumFishList.map((item) => {
+                        const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === item.speciesId);
+                        if (!sp) return null;
+                        const rc = RARITY_CONFIG[sp.rarity];
+                        const passiveCoins = Math.max(2, Math.round(sp.basePrice * 0.03 * currentTank.coinMultiplier));
                         return (
                           <div
-                            key={tank.id}
-                            className={`p-3.5 rounded-2xl border-2 transition-all shadow-xs flex flex-col justify-between ${
-                              isEquipped
-                                ? 'border-sky-500 bg-sky-50/70 shadow-md ring-2 ring-sky-300'
-                                : isOwned
-                                ? 'border-teal-200 bg-white hover:border-teal-400'
-                                : isLevelLocked
-                                ? 'border-slate-200 bg-slate-50 opacity-60'
-                                : 'border-amber-200 bg-white hover:border-amber-400 hover:shadow-md'
-                            }`}
+                            key={item.uid}
+                            className="p-2.5 rounded-2xl bg-white border border-sky-100 hover:border-sky-300 shadow-xs flex items-center justify-between gap-2 transition"
                           >
-                            <div>
-                              {/* Header: Tier, Name, and Status */}
-                              <div className="flex items-center justify-between gap-2 mb-1.5">
-                                <div className="flex items-center gap-2">
-                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-xs">
-                                    Tier {tank.tier}
-                                  </span>
-                                  <span className="font-black text-sm text-slate-800">
-                                    {lang === 'th' ? tank.nameTh : tank.nameEn}
-                                  </span>
-                                </div>
-                                {isEquipped && (
-                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center gap-1">
-                                    <Check className="w-3 h-3" />
-                                    {lang === 'th' ? 'ใช้งานอยู่' : 'Equipped'}
-                                  </span>
-                                )}
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-12 h-10 bg-sky-50 rounded-xl p-1 border border-sky-100 flex items-center justify-center shrink-0">
+                                <FishPreviewCanvas species={sp} hueShiftDeg={item.hueShiftDeg} discovered={true} width={70} height={36} scale={0.45} />
                               </div>
-
-                              <p className="text-[11px] text-slate-500 mb-2.5 leading-snug">
-                                {lang === 'th' ? tank.descriptionTh : tank.descriptionEn}
-                              </p>
-
-                              {/* Specs grid */}
-                              <div className="grid grid-cols-2 gap-2 text-[11px] mb-3">
-                                <div className="bg-sky-50/80 p-2 rounded-xl border border-sky-100">
-                                  <div className="text-[10px] text-sky-700 font-bold">{lang === 'th' ? 'ความจุสูงสุด' : 'Max Capacity'}</div>
-                                  <div className="font-black text-sky-900 text-xs">
-                                    🐟 {tank.capacity} {lang === 'th' ? 'ตัว' : 'fish'}
-                                  </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-xs font-black text-slate-800 truncate">
+                                    {fishName(sp, lang)}
+                                  </span>
+                                  <span className={`text-[9px] px-1.5 py-0.2 rounded-md font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>
+                                    {sp.rarity.toUpperCase()}
+                                  </span>
                                 </div>
-                                <div className="bg-amber-50/80 p-2 rounded-xl border border-amber-100">
-                                  <div className="text-[10px] text-amber-700 font-bold">{lang === 'th' ? 'ตัวคูณเหรียญ' : 'Coin Multiplier'}</div>
-                                  <div className="font-black text-amber-900 text-xs">
-                                    🪙 x{tank.coinMultiplier}
-                                  </div>
+                                <div className="text-[10px] text-slate-500 font-mono">
+                                  {item.weightKg} kg · <span className="text-amber-600 font-bold">+{passiveCoins}/m</span>
                                 </div>
                               </div>
                             </div>
-
-                            {/* Action Button */}
-                            <div>
-                              {isEquipped ? (
-                                <button
-                                  disabled
-                                  className="w-full py-2 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-default flex items-center justify-center gap-1.5"
-                                >
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>{lang === 'th' ? 'ติดตั้งอยู่แล้ว' : 'Currently Active'}</span>
-                                </button>
-                              ) : isOwned ? (
-                                <button
-                                  onClick={() => buyOrEquipAquariumTank(tank.tier)}
-                                  className="w-full py-2 rounded-xl text-xs font-black bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition active:scale-95 flex items-center justify-center gap-1.5"
-                                >
-                                  <span>{lang === 'th' ? 'เปลี่ยนมาใช้ตู้นี้' : 'Equip This Tank'}</span>
-                                </button>
-                              ) : isLevelLocked ? (
-                                <button
-                                  disabled
-                                  className="w-full py-2 rounded-xl text-xs font-black bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed flex items-center justify-center gap-1.5"
-                                >
-                                  <Lock className="w-3.5 h-3.5" />
-                                  <span>{lang === 'th' ? `ต้องการเลเวล Lv.${tank.requiredLevel}` : `Requires Lv.${tank.requiredLevel}`}</span>
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => buyOrEquipAquariumTank(tank.tier)}
-                                  disabled={!canAfford}
-                                  className={`w-full py-2 rounded-xl text-xs font-black transition active:scale-95 flex items-center justify-center gap-1.5 ${
-                                    canAfford
-                                      ? 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 shadow-md'
-                                      : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
-                                  }`}
-                                >
-                                  <Coins className="w-3.5 h-3.5" />
-                                  <span>
-                                    {lang === 'th'
-                                      ? `ซื้อและติดตั้ง (${tank.price.toLocaleString()} เหรียญ)`
-                                      : `Buy & Equip (${tank.price.toLocaleString()} Coins)`}
-                                  </span>
-                                </button>
-                              )}
-                            </div>
+                            <button
+                              onClick={() => handleToggleAquarium(item.uid)}
+                              className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 border border-slate-200 hover:border-rose-200 transition shrink-0 active:scale-95"
+                            >
+                              {lang === 'th' ? 'นำออก' : 'Remove'}
+                            </button>
                           </div>
                         );
                       })}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )}
 

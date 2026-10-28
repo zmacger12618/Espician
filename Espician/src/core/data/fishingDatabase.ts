@@ -70,12 +70,15 @@ export interface CaughtFishInstance {
   isLockedInAquarium?: boolean;
 }
 
+export type RodStyle = 'afk' | 'jerk' | 'power';
+
 export interface FishingRodItem {
   id: string;
   nameTh: string;
   nameEn: string;
   price: number;
   requiredLevel: number;
+  rodStyle: RodStyle; // Specialized Archetype: 'afk' (High passive bite rate), 'jerk' (High twitch strike rate), 'power' (Easy reeling & wide catch bar)
   waitTimeReductionPct: number; // Reduces the 1m - 1h wait timer
   sweetSpotSizeBonus: number; // Makes the minigame catch bar wider
   lineStrengthBonus: number; // Slows down progress loss when fish leaves bar
@@ -927,16 +930,17 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Seaside Bamboo Rod',
     price: 0,
     requiredLevel: 1,
+    rodStyle: 'afk',
     waitTimeReductionPct: 0,
     sweetSpotSizeBonus: 0,
     lineStrengthBonus: 0,
     rarityBoostMultiplier: 1.0,
     rodColor: '#b45309',
-    description: 'คันเบ็ดไม้ไผ่เรียบง่าย เหมาะสำหรับเริ่มต้นนั่งตกปลาริมท่าเรือมรกต',
+    description: 'คันเบ็ดไม้ไผ่เรียบง่าย สาย AFK นั่งชิลล์ เพิ่มโอกาสเจอปลาพื้นฐานตลอดเวลา',
     attractionPower: 100,
     oceanFortune: 'D',
     lineResilience: 100,
-    baseAttractionBonusPct: 0
+    baseAttractionBonusPct: 8
   },
   {
     id: 'rod_willow',
@@ -944,12 +948,13 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Breeze Oakwood Rod',
     price: 2500,
     requiredLevel: 5,
+    rodStyle: 'jerk',
     waitTimeReductionPct: 2,
     sweetSpotSizeBonus: 16,
     lineStrengthBonus: 14,
     rarityBoostMultiplier: 1.35,
     rodColor: '#92400e',
-    description: 'คันเบ็ดไม้โอ๊คยืดหยุ่นสูง เพิ่มพลังดึงดูดสมุทรและระยะแถบวัดเบ็ด',
+    description: 'คันเบ็ดไม้โอ๊คยืดหยุ่นสูง สาย JERK ตอบสนองไว เพิ่มโบนัสเจอปลาทันทีจากการกระตุกเบ็ด',
     attractionPower: 140,
     oceanFortune: 'C',
     lineResilience: 150,
@@ -961,12 +966,13 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Azure Coral Carbon Rod',
     price: 18000,
     requiredLevel: 15,
+    rodStyle: 'power',
     waitTimeReductionPct: 4,
-    sweetSpotSizeBonus: 28,
-    lineStrengthBonus: 26,
+    sweetSpotSizeBonus: 32,
+    lineStrengthBonus: 30,
     rarityBoostMultiplier: 1.85,
     rodColor: '#0284c7',
-    description: 'ผลิตจากคาร์บอนไฟเบอร์น้ำหนักเบา กุญแจสำคัญสู่การปลดล็อคเกาะแนวปะการังเรืองแสง',
+    description: 'คาร์บอนไฟเบอร์น้ำหนักเบา สาย POWER แถบวัดปลากว้างขึ้นมาก รอกดึงปลาง่ายไม่หลุด',
     attractionPower: 195,
     oceanFortune: 'B',
     lineResilience: 230,
@@ -978,16 +984,17 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Deep-Trench Titanium Rod',
     price: 85000,
     requiredLevel: 28,
+    rodStyle: 'afk',
     waitTimeReductionPct: 6,
     sweetSpotSizeBonus: 42,
     lineStrengthBonus: 40,
     rarityBoostMultiplier: 2.65,
     rodColor: '#6366f1',
-    description: 'คันเบ็ดอัลลอยด์ทนทานสูง กุญแจสำคัญสู่การปลดล็อคเกาะภูเขาไฟหินดำ',
+    description: 'อัลลอยด์ทนทานสูง สาย AFK ปล่อยสายเบ็ดนิ่งๆ ดึงดูดปลาสมุทรลึกเข้ามากัดอัตโนมัติ',
     attractionPower: 260,
     oceanFortune: 'A',
     lineResilience: 340,
-    baseAttractionBonusPct: 22
+    baseAttractionBonusPct: 24
   },
   {
     id: 'rod_starlight',
@@ -995,12 +1002,13 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Starlight Weaver Rod',
     price: 280000,
     requiredLevel: 42,
+    rodStyle: 'jerk',
     waitTimeReductionPct: 8,
     sweetSpotSizeBonus: 56,
     lineStrengthBonus: 54,
     rarityBoostMultiplier: 3.85,
     rodColor: '#a855f7',
-    description: 'สายเบ็ดทอจากเส้นใยผลึกดาว กุญแจสำคัญสู่การปลดล็อคเกาะธารน้ำแข็งออโรร่า',
+    description: 'เส้นใยผลึกดาว สาย JERK การกระตุกสายสร้างแรงสั่นสะเทือนมิติ เรียกฝูงปลาแรร์พุ่งเข้าฮุบทันที',
     attractionPower: 360,
     oceanFortune: 'S',
     lineResilience: 480,
@@ -1012,12 +1020,13 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Chronos Sovereign Rod',
     price: 850000,
     requiredLevel: 55,
+    rodStyle: 'power',
     waitTimeReductionPct: 10,
-    sweetSpotSizeBonus: 75,
-    lineStrengthBonus: 72,
+    sweetSpotSizeBonus: 80,
+    lineStrengthBonus: 75,
     rarityBoostMultiplier: 6.2,
     rodColor: '#f59e0b',
-    description: 'ศาสตราวุธระดับเทพเจ้า ปลดล็อคความลับแห่งเกาะสวรรค์ลอยฟ้ากลางมิติ',
+    description: 'ศาสตราวุธระดับเทพเจ้า สาย POWER แถบวัดเต็มจอ ควบคุมคลื่นสมุทร ดึงปลาในตำนานขึ้นได้อย่างง่ายดาย',
     attractionPower: 520,
     oceanFortune: 'SS+',
     lineResilience: 700,
@@ -1238,7 +1247,8 @@ export function calculateTickWaitTime(
 export function calculateBaseBiteChance(rod: FishingRodItem, bait: FishingBaitItem): number {
   const rodBonus = (rod.baseAttractionBonusPct || 0) / 100;
   const baitBonus = (bait.baseAttractionBonusPct || 0) / 100;
-  return Math.min(0.60, 0.10 + rodBonus + baitBonus);
+  const afkStyleBonus = rod.rodStyle === 'afk' ? 0.06 : 0;
+  return Math.min(0.45, 0.10 + rodBonus + baitBonus + afkStyleBonus);
 }
 
 /**
@@ -1329,8 +1339,9 @@ export function performBiteRoll(
 } {
   const tod = timeOfDay || getRealTimeOfDay();
   const baseRate = calculateBaseBiteChance(rod, bait);
-  const regularRate = Math.min(1.0, baseRate + pityBonus);
-  const effectiveChance = isJerk ? Math.min(1.0, regularRate * 0.10) : regularRate;
+  const regularRate = Math.min(0.85, baseRate + pityBonus);
+  const jerkMultiplier = rod.rodStyle === 'jerk' ? 0.18 : 0.09;
+  const effectiveChance = isJerk ? Math.min(0.40, regularRate * jerkMultiplier) : regularRate;
 
   const roll = Math.random();
   if (roll < effectiveChance) {

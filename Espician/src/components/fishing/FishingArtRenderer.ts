@@ -240,6 +240,37 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
   }
   ctx.restore();
 
+  // Natural Smooth Moonlight Reflection on Ocean (feathers organically across water waves)
+  if (timeOfDay === 'night') {
+    ctx.save();
+    const moonX = width * 0.72;
+    const moonGrad = ctx.createRadialGradient(
+      moonX,
+      horizonY + 30,
+      10,
+      moonX,
+      horizonY + (height - horizonY) * 0.5,
+      (height - horizonY) * 0.8
+    );
+    moonGrad.addColorStop(0, 'rgba(186, 230, 253, 0.14)');
+    moonGrad.addColorStop(0.4, 'rgba(125, 211, 252, 0.06)');
+    moonGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+    ctx.fillStyle = moonGrad;
+    ctx.fillRect(0, horizonY, width, height - horizonY);
+
+    // Soft water shimmer streaks along the moonlight path
+    for (let s = 0; s < 6; s++) {
+      const sy = horizonY + 20 + s * 24;
+      const sw = 40 + s * 28 + Math.sin(timeSec * 2 + s) * 12;
+      const so = Math.sin(timeSec * 1.5 + s * 0.8) * 8;
+      ctx.fillStyle = `rgba(224, 242, 254, ${0.08 + 0.05 * Math.sin(timeSec * 2.5 + s)})`;
+      ctx.beginPath();
+      ctx.ellipse(moonX + so, sy, sw, 1.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   // Ambient underwater fish silhouettes
   drawAmbientUnderwaterSilhouettes(ctx, width, horizonY, height, timeSec, mood);
 
@@ -576,16 +607,16 @@ function drawDistantIslands(
     ctx.fillStyle = '#ef4444';
     ctx.fillRect(lhX - 3.5, lhY - 18, 7, 3.5);
 
-    if (mood !== 'morning') {
-      const beamAlpha = 0.22 + 0.14 * Math.sin(timeSec * 2.0);
-      ctx.fillStyle = `rgba(253, 224, 71, ${beamAlpha})`;
-      ctx.beginPath();
-      ctx.moveTo(lhX, lhY - 16);
-      ctx.lineTo(lhX - 115, lhY - 44);
-      ctx.lineTo(lhX - 115, lhY + 6);
-      ctx.closePath();
-      ctx.fill();
-    }
+    // Gentle lighthouse lantern beacon glow (soft pulse without harsh flashlight cone)
+    const lhPulse = 0.5 + 0.5 * Math.sin(timeSec * 2.5);
+    const lhGlow = ctx.createRadialGradient(lhX, lhY - 16, 1, lhX, lhY - 16, 24);
+    lhGlow.addColorStop(0, `rgba(254, 240, 138, ${0.4 + 0.3 * lhPulse})`);
+    lhGlow.addColorStop(0.5, `rgba(251, 146, 60, ${0.15 * lhPulse})`);
+    lhGlow.addColorStop(1, 'rgba(251, 146, 60, 0)');
+    ctx.fillStyle = lhGlow;
+    ctx.beginPath();
+    ctx.arc(lhX, lhY - 16, 24, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   ctx.restore();
