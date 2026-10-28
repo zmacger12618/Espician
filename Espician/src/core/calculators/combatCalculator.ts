@@ -135,4 +135,25 @@ export class CombatCalculator {
         return { damageMult: 1.0, defenseMult: 1.0, pushSpeedMult: 1.0 };
     }
   }
+
+  /**
+   * คำนวณการลดทอนดาเมจจากเกราะ (Armor / Magic Resistance Mitigation)
+   * สูตร Non-Linear Standard: effectiveDamage = rawDamage * (100 / (100 + effectiveDefense))
+   * รองรับ Penetration แบนราบ และ Penetration เปอร์เซ็นต์
+   */
+  public static calculateDamageMitigation(
+    rawDamage: number,
+    defense: number,
+    flatPenetration: number = 0,
+    percentPenetration: number = 0
+  ): { finalDamage: number; mitigatedAmount: number; reductionPercent: number } {
+    const postPercentDef = Math.max(0, defense * (1 - Math.min(0.8, percentPenetration)));
+    const effectiveDef = Math.max(0, postPercentDef - flatPenetration);
+    const reductionRatio = effectiveDef / (100 + effectiveDef);
+    const finalDamage = Math.max(1, Math.round(rawDamage * (1 - reductionRatio)));
+    const mitigatedAmount = Math.max(0, rawDamage - finalDamage);
+    const reductionPercent = Math.round(reductionRatio * 100);
+
+    return { finalDamage, mitigatedAmount, reductionPercent };
+  }
 }
