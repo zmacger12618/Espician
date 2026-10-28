@@ -3019,6 +3019,210 @@ const CostumeDetailModal: React.FC<{
         </Modal>
       )}
 
+      {/* 5-Tier Aquarium Showroom Modal */}
+      {showTankModal && (
+        <Modal onClose={() => setShowTankModal(false)} maxWidthClass="max-w-3xl">
+          <div className="p-4 sm:p-6 space-y-4 bg-white text-slate-800 rounded-3xl">
+            <div className="flex items-center justify-between border-b-2 border-sky-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 to-sky-600 text-white flex items-center justify-center font-black shadow-md">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-slate-800 tracking-wider">
+                    {lang === 'th' ? 'โชว์รูมอควาเรียมระดับ 1 - 5' : 'Aquarium Showroom (Tiers 1 - 5)'}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {lang === 'th' ? 'อัปเกรดเพื่อขยายโควต้าการจัดแสดงปลาและรับโบนัสทวีคูณเหรียญ' : 'Upgrade tanks to increase fish display capacity & coin multipliers'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  soundEngine.playClick();
+                  setShowTankModal(false);
+                }}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 flex items-center justify-center transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+              {AQUARIUM_TANKS.map((tank) => {
+                const isOwned = (fishingState.ownedAquariumTiers || [1]).includes(tank.tier);
+                const isEquipped = fishingState.aquariumTier === tank.tier;
+                const isLevelLocked = fishingState.anglerLevel < tank.requiredLevel;
+                const canAfford = fishingState.seaCoins >= tank.price;
+
+                return (
+                  <div
+                    key={tank.id}
+                    className={`p-4 rounded-2xl border-2 transition-all ${
+                      isEquipped
+                        ? 'border-sky-500 bg-sky-50/80 shadow-md ring-2 ring-sky-300'
+                        : isOwned
+                        ? 'border-teal-200 bg-teal-50/40 hover:border-teal-400'
+                        : 'border-slate-200 bg-white hover:border-sky-300'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="px-2.5 py-0.5 rounded-lg text-xs font-black text-white shadow-xs"
+                            style={{ backgroundColor: tank.accentColor }}
+                          >
+                            TIER {tank.tier}
+                          </span>
+                          <span className="font-black text-sm text-slate-800">
+                            {lang === 'th' ? tank.nameTh : tank.nameEn}
+                          </span>
+                          {isEquipped && (
+                            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-sky-500 text-white shadow-xs">
+                              {lang === 'th' ? 'ใช้งานอยู่' : 'EQUIPPED'}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-500 font-medium">
+                          {lang === 'th' ? tank.descriptionTh : tank.descriptionEn}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs font-bold pt-1">
+                          <span className="text-sky-700">
+                            🐠 {lang === 'th' ? 'โควต้าปลา:' : 'Capacity:'} <strong className="text-slate-900 font-black">{tank.capacity}</strong> {lang === 'th' ? 'ตัว' : 'fish'}
+                          </span>
+                          <span className="text-amber-600">
+                            ✨ {lang === 'th' ? 'โบนัสเหรียญ:' : 'Coin Multiplier:'} <strong className="text-slate-900 font-black">x{tank.coinMultiplier}</strong>
+                          </span>
+                          {tank.requiredLevel > 1 && (
+                            <span className={isLevelLocked ? 'text-rose-500' : 'text-slate-500'}>
+                              🎖️ Lv.{tank.requiredLevel}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="shrink-0 flex items-center justify-end">
+                        {isEquipped ? (
+                          <button
+                            disabled
+                            className="px-4 py-2 rounded-xl text-xs font-black bg-sky-100 text-sky-700 cursor-default"
+                          >
+                            ✓ {lang === 'th' ? 'กำลังแสดงผล' : 'Active'}
+                          </button>
+                        ) : isOwned ? (
+                          <button
+                            onClick={() => buyOrEquipAquariumTank(tank.tier)}
+                            className="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white shadow-md active:scale-95 transition"
+                          >
+                            {lang === 'th' ? 'สวมใส่ตู้นี้' : 'Equip Tank'}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => buyOrEquipAquariumTank(tank.tier)}
+                            disabled={isLevelLocked || !canAfford}
+                            className="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-slate-200 disabled:to-slate-300 text-white disabled:text-slate-400 shadow-md disabled:shadow-none active:scale-95 transition flex items-center gap-1.5"
+                          >
+                            <Coins className="w-3.5 h-3.5" />
+                            <span>{tank.price.toLocaleString()}</span>
+                            <span>{lang === 'th' ? 'ปลดล็อก' : 'Unlock'}</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Aquarium Fish Selection Modal (Pick from bag) */}
+      {showFishSelectModal && (
+        <Modal onClose={() => setShowFishSelectModal(false)} maxWidthClass="max-w-2xl">
+          <div className="p-4 sm:p-6 space-y-4 bg-white text-slate-800 rounded-3xl">
+            <div className="flex items-center justify-between border-b-2 border-sky-100 pb-3">
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-800 tracking-wider flex items-center gap-2">
+                  <span>🐠</span>
+                  <span>{lang === 'th' ? 'เลือกปลาใส่ตู้' : 'Add Fish to Aquarium'}</span>
+                  <span className="text-xs font-normal text-sky-600 bg-sky-50 px-2 py-0.5 rounded-lg border border-sky-200">
+                    {aquariumFishList.length}/{currentTank.capacity}
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {lang === 'th' ? 'ปลาในตู้จะไม่ถูกขายเมื่อกดขายทั้งหมด และจะว่ายน้ำแสดงให้ชม' : 'Fish in aquarium are protected from bulk sell and swim dynamically'}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  soundEngine.playClick();
+                  setShowFishSelectModal(false);
+                }}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 flex items-center justify-center transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="max-h-[55vh] overflow-y-auto space-y-2 pr-1">
+              {fishingState.caughtInventory.filter((f) => !f.isLockedInAquarium).length === 0 ? (
+                <div className="text-center py-10 text-slate-400">
+                  <div className="text-3xl mb-2">🪣</div>
+                  <div className="text-sm font-bold">{lang === 'th' ? 'ไม่มีปลาในกระเป๋าสำหรับใส่ตู้' : 'No available fish in your inventory'}</div>
+                  <div className="text-xs text-slate-400 mt-1">{lang === 'th' ? 'ออกไปตกปลาเพื่อนำมาใส่ตู้ปลาของคุณ!' : 'Go fishing to bring new species home!'}</div>
+                </div>
+              ) : (
+                fishingState.caughtInventory
+                  .filter((f) => !f.isLockedInAquarium)
+                  .map((item) => {
+                    const species = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === item.speciesId);
+                    const rarity = species?.rarity || 'Common';
+                    const rc = RARITY_CONFIG[rarity];
+                    const isFull = aquariumFishList.length >= currentTank.capacity;
+                    return (
+                      <div
+                        key={item.uid}
+                        className="p-3 rounded-2xl border-2 border-slate-100 hover:border-sky-200 bg-slate-50/50 flex items-center justify-between gap-3 transition"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-xl shadow-xs">
+                            {species?.category === 'creature' ? '🦑' : '🐟'}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-black text-xs text-slate-800">
+                                {species ? fishName(species, lang) : item.speciesId}
+                              </span>
+                              <span className={`text-[9px] font-black px-1.5 py-0.2 rounded border ${rc.borderColor} ${rc.badgeBg} ${rc.badgeText}`}>
+                                {rarity}
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+                              {item.weightKg.toFixed(2)} kg · {item.lengthCm.toFixed(1)} cm
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            handleToggleAquarium(item.uid);
+                          }}
+                          disabled={isFull}
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-sky-500 hover:bg-sky-600 disabled:bg-slate-200 text-white disabled:text-slate-400 shadow-sm active:scale-95 transition"
+                        >
+                          {lang === 'th' ? '+ นำเข้าตู้' : '+ Add'}
+                        </button>
+                      </div>
+                    );
+                  })
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {/* Bright Cute Anime Adventurer Guild HUD Header */}
       <header className="border-b-2 border-sky-100 bg-white/95 backdrop-blur-xl px-4 lg:px-8 py-2.5 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-[0_4px_20px_rgba(2,132,199,0.06)] text-slate-800">
         <div className="flex items-center gap-3">
@@ -3067,25 +3271,30 @@ const CostumeDetailModal: React.FC<{
           </div>
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex items-center gap-2.5 bg-sky-50 px-3 py-1.5 rounded-xl border border-sky-200 shadow-sm">
-            <span className="text-xs font-black text-sky-800 tracking-wider">RANK {fishingState.anglerLevel}</span>
-            <div className="w-16 sm:w-24 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300/40">
+        {/* Clean, Non-AI Boxed Top HUD Ribbon */}
+        <div className="flex items-center gap-4 sm:gap-6">
+          {/* Rank & EXP */}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-black tracking-wider text-sky-700 uppercase">Lv.{fishingState.anglerLevel}</span>
+            <div className="w-16 sm:w-20 h-2 bg-slate-100 rounded-full overflow-hidden ring-1 ring-sky-200/60">
               <div
-                className="h-full bg-gradient-to-r from-sky-500 to-teal-400 transition-all duration-500 rounded-full"
+                className="h-full bg-gradient-to-r from-sky-400 to-teal-400 transition-all duration-500 rounded-full"
                 style={{ width: `${Math.min(100, (fishingState.anglerExp / expForNextLevel) * 100)}%` }}
               />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm">
+
+          {/* Sea Coins */}
+          <div className="flex items-center gap-1.5 text-amber-600 font-black">
             <Coins className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-black font-mono">{fishingState.seaCoins.toLocaleString()}</span>
+            <span className="text-sm font-black font-mono tracking-tight">{fishingState.seaCoins.toLocaleString()}</span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-cyan-800 bg-cyan-50 px-2.5 py-1.5 rounded-xl border border-cyan-200 shadow-sm">
-            <BookOpen className="w-4 h-4 text-cyan-600" />
-            <span className="text-xs font-bold font-mono">
-              {discoveredCount}/{TOTAL_SPECIES}
-            </span>
+
+          {/* Species Dex */}
+          <div className="hidden sm:flex items-center gap-1.5 text-slate-500 text-xs font-bold" title="Species Discovered">
+            <BookOpen className="w-4 h-4 text-sky-500" />
+            <span className="font-mono text-slate-700">{discoveredCount}</span>
+            <span className="text-[10px] text-slate-400">/{TOTAL_SPECIES}</span>
           </div>
 
           {/* Central User Account Badge */}
@@ -3264,52 +3473,6 @@ const CostumeDetailModal: React.FC<{
                   {baitCount(equippedBait) === Infinity ? '∞' : `x${baitCount(equippedBait)}`}
                 </span>
                 <span className="text-[10px] text-sky-600 font-mono">▾</span>
-              </button>
-            </div>
-
-            {/* Top-Right Brass Mechanical Toggles */}
-            <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
-              <button
-                onClick={() => {
-                  soundEngine.playClick();
-                  setFastMode((v) => !v);
-                }}
-                className={`px-3 py-1 rounded-xl text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition shadow-sm ${
-                  fastMode
-                    ? 'border-amber-400 bg-amber-400 text-slate-900 shadow-md'
-                    : 'border-white/80 bg-white/80 text-slate-700 hover:bg-white'
-                }`}
-                title={t.fastMode}
-              >
-                ⚡ FAST
-              </button>
-              <button
-                onClick={() => {
-                  soundEngine.playClick();
-                  setAutoReel((v) => !v);
-                }}
-                className={`px-3 py-1 rounded-xl text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition shadow-sm ${
-                  autoReel
-                    ? 'border-emerald-400 bg-emerald-400 text-slate-900 shadow-md'
-                    : 'border-white/80 bg-white/80 text-slate-700 hover:bg-white'
-                }`}
-                title={t.autoReel}
-              >
-                🤖 AUTO
-              </button>
-              <button
-                onClick={() => {
-                  soundEngine.playClick();
-                  setViewMode((v) => (v === 'user' ? 'dev' : 'user'));
-                }}
-                className={`px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold border-2 backdrop-blur-md transition shadow-sm ${
-                  viewMode === 'dev'
-                    ? 'border-purple-400 bg-purple-400 text-slate-900 shadow-md'
-                    : 'border-white/80 bg-white/80 text-slate-700 hover:bg-white'
-                }`}
-                title="Toggle Dev Formula Stats"
-              >
-                {viewMode === 'dev' ? '🔬 DEV' : '🎮 RPG'}
               </button>
             </div>
 
@@ -3883,6 +4046,219 @@ const CostumeDetailModal: React.FC<{
                     </button>
                   );
                 })}
+              </div>
+            )}
+
+            {activeTab === 'exchange' && (
+              <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-3 text-xs text-amber-900 shadow-xs">
+                  <div className="font-black text-amber-950 flex items-center gap-1.5">
+                    <span>🏮</span>
+                    <span>{lang === 'th' ? 'ร้านค้าแลกเปลี่ยนสัตว์น้ำสมาคม' : 'Marine Exchange Guild'}</span>
+                  </div>
+                  <div className="text-[11px] text-amber-800/80 mt-1">
+                    {lang === 'th'
+                      ? 'นำปลาที่สะสมในกระเป๋ามาแลกเปลี่ยนเป็นชุดคอสตูมหายากได้ฟรี! ทยอยส่งมอบได้ (กระเป๋าถือได้ 10 ตัว)'
+                      : 'Trade caught marine fish from your bag for exclusive costumes! (Bag holds 10 max)'}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {FISH_EXCHANGE_SHOP.map((ex) => {
+                    const bagFish = fishingState.caughtInventory.filter((f) => !f.isLockedInAquarium);
+                    const isOwnedCostume = ex.type === 'costume' && fishingState.ownedCostumeIds.includes(ex.rewardItemId);
+                    const allReqMet = ex.requiredFish.every((req) => {
+                      const count = bagFish.filter((f) => f.speciesId === req.speciesId).length;
+                      return count >= req.count;
+                    });
+
+                    return (
+                      <div
+                        key={ex.id}
+                        className="p-3.5 rounded-2xl border-2 border-slate-100 bg-white hover:border-sky-200 shadow-xs space-y-2.5 transition"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-2xl">{ex.icon}</span>
+                            <div>
+                              <div className="font-black text-xs text-slate-800">
+                                {lang === 'th' ? ex.nameTh : ex.nameEn}
+                              </div>
+                              <div className="text-[10px] text-slate-500 font-medium">
+                                {lang === 'th' ? ex.descTh : ex.descEn}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Required Fish checklist */}
+                        <div className="bg-slate-50 rounded-xl p-2.5 space-y-1.5 border border-slate-100">
+                          <div className="text-[10px] font-black tracking-wider uppercase text-slate-400">
+                            {lang === 'th' ? 'ปลาที่ต้องใช้ (ในกระเป๋า):' : 'Required Fish (Bag):'}
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {ex.requiredFish.map((req) => {
+                              const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === req.speciesId);
+                              const currentCount = bagFish.filter((f) => f.speciesId === req.speciesId).length;
+                              const met = currentCount >= req.count;
+                              return (
+                                <div
+                                  key={req.speciesId}
+                                  className={`px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center justify-between ${
+                                    met
+                                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                                      : 'border-slate-200 bg-white text-slate-600'
+                                  }`}
+                                >
+                                  <span className="truncate">{sp ? fishName(sp, lang) : req.speciesId}</span>
+                                  <span className={met ? 'text-emerald-700 font-black' : 'text-amber-600 font-black'}>
+                                    {currentCount}/{req.count}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleExchangeFish(ex)}
+                          disabled={isOwnedCostume || !allReqMet}
+                          className={`w-full py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                            isOwnedCostume
+                              ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                              : allReqMet
+                              ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md active:scale-95'
+                              : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                          }`}
+                        >
+                          {isOwnedCostume
+                            ? (lang === 'th' ? '✓ ได้รับชุดนี้แล้ว' : '✓ Already Owned')
+                            : (lang === 'th' ? 'แลกเปลี่ยนของรางวัล' : 'Exchange Reward')}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'achieve' && (
+              <div className="flex-1 overflow-y-auto space-y-3.5 pr-1">
+                {/* Adventure Records Log */}
+                <div className="bg-gradient-to-br from-indigo-50 to-sky-50 border-2 border-indigo-100 rounded-2xl p-3 shadow-xs">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-indigo-700 mb-2 flex items-center gap-1.5">
+                    <span>📜</span>
+                    <span>{lang === 'th' ? 'บันทึกประวัติการผจญภัยนักตกปลา' : 'Angler Adventure Log'}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
+                      <div className="text-[10px] text-slate-400 font-bold">{lang === 'th' ? 'โยนเบ็ดทั้งหมด' : 'Total Casts'}</div>
+                      <div className="text-base font-black font-mono text-indigo-900">{fishingState.quests.stats.casts || 0}</div>
+                    </div>
+                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
+                      <div className="text-[10px] text-slate-400 font-bold">{lang === 'th' ? 'ตกได้สำเร็จ' : 'Total Catches'}</div>
+                      <div className="text-base font-black font-mono text-emerald-600">{fishingState.totalCatches}</div>
+                    </div>
+                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
+                      <div className="text-[10px] text-slate-400 font-bold">{lang === 'th' ? 'กระตุกเบ็ด (Jerk)' : 'Jerks'}</div>
+                      <div className="text-base font-black font-mono text-sky-600">{fishingState.quests.stats.jerks || 0}</div>
+                    </div>
+                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
+                      <div className="text-[10px] text-slate-400 font-bold">{lang === 'th' ? 'สำรวจสายพันธุ์' : 'Species'}</div>
+                      <div className="text-base font-black font-mono text-amber-600">{discoveredCount}/{TOTAL_SPECIES}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Achievement Cards Catalog */}
+                <div className="space-y-2">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-sky-700 px-1">
+                    {lang === 'th' ? 'เป้าหมายความสำเร็จ (18 รายการ)' : 'Achievements (18 Catalog)'}
+                  </div>
+                  {ACHIEVEMENT_CATALOG.map((ach) => {
+                    let currentVal = 0;
+                    if (ach.metric === 'cast') currentVal = fishingState.quests.stats.casts || 0;
+                    else if (ach.metric === 'catch') currentVal = fishingState.totalCatches;
+                    else if (ach.metric === 'jerk') currentVal = fishingState.quests.stats.jerks || 0;
+                    else if (ach.metric === 'aquarium_add') currentVal = fishingState.caughtInventory.filter((f) => f.isLockedInAquarium).length;
+                    else if (ach.metric === 'new_species') currentVal = discoveredCount;
+                    else if (ach.metric === 'earn_coins') currentVal = fishingState.quests.stats.earnedCoins || fishingState.seaCoins;
+                    else if (ach.metric === 'catch_rare_plus') {
+                      currentVal = Object.entries(fishingState.encyclopediaMap).reduce((acc, [id, r]) => {
+                        const s = TWENTY_OCEAN_FISH_SPECIES.find((x) => x.id === id);
+                        return s && ['Rare', 'Epic', 'Legendary', 'Secret'].includes(s.rarity) ? acc + r.count : acc;
+                      }, 0);
+                    } else if (ach.metric === 'catch_epic_plus') {
+                      currentVal = Object.entries(fishingState.encyclopediaMap).reduce((acc, [id, r]) => {
+                        const s = TWENTY_OCEAN_FISH_SPECIES.find((x) => x.id === id);
+                        return s && ['Epic', 'Legendary', 'Secret'].includes(s.rarity) ? acc + r.count : acc;
+                      }, 0);
+                    } else if (ach.metric === 'catch_legendary_plus') {
+                      currentVal = Object.entries(fishingState.encyclopediaMap).reduce((acc, [id, r]) => {
+                        const s = TWENTY_OCEAN_FISH_SPECIES.find((x) => x.id === id);
+                        return s && ['Legendary', 'Secret'].includes(s.rarity) ? acc + r.count : acc;
+                      }, 0);
+                    } else if (ach.metric === 'catch_secret') {
+                      currentVal = Object.entries(fishingState.encyclopediaMap).reduce((acc, [id, r]) => {
+                        const s = TWENTY_OCEAN_FISH_SPECIES.find((x) => x.id === id);
+                        return s && s.rarity === 'Secret' ? acc + r.count : acc;
+                      }, 0);
+                    }
+
+                    const isDone = currentVal >= ach.target;
+                    const pct = Math.min(100, Math.floor((currentVal / ach.target) * 100));
+
+                    return (
+                      <div
+                        key={ach.id}
+                        className={`p-3 rounded-2xl border-2 transition-all ${
+                          isDone
+                            ? 'border-emerald-300 bg-emerald-50/50 shadow-xs'
+                            : 'border-slate-100 bg-white hover:border-sky-200'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-2xl">{ach.icon}</span>
+                            <div>
+                              <div className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                <span>{lang === 'th' ? ach.titleTh : ach.titleEn}</span>
+                                {isDone && (
+                                  <span className="text-[9px] font-black bg-emerald-500 text-white px-1.5 py-0.2 rounded-md">
+                                    ✓ CLEAR
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-[10px] text-slate-500 font-medium">
+                                {lang === 'th' ? ach.descTh : ach.descEn}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="text-[10px] font-black text-amber-600 font-mono">
+                              +{ach.rewardCoins.toLocaleString()} 🪙
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mt-2 flex items-center gap-2">
+                          <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full transition-all duration-300 rounded-full ${
+                                isDone ? 'bg-emerald-500' : 'bg-sky-500'
+                              }`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-mono font-bold text-slate-500 shrink-0">
+                            {currentVal.toLocaleString()}/{ach.target.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
