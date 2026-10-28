@@ -15,3 +15,7 @@
 - **Palette:** Dark Charcoal (`#07070a`, `#0b0c14`) + Riot Crimson (`#ff4655`, `#d13639`) + Tech Amber (`#f59e0b`).
 - **Polygon Styling:** Sword Art Online (SAO) tech clipped corners (`polygon(12px 0, 100% 0, 100% calc(100% - 12px), ...)`).
 - **Text Density:** Keep UI labels and instructions concise, punchy, and production-ready.
+
+## 4. Execution & Queued Messages Workflow
+- **Continuous Dequeueing:** Complete all code edits, builds, and git commits/pushes synchronously to immediately dequeue and process incoming user queued messages without stalling.
+- **Daemon Isolation:** Keep long-running dev servers (e.g., Vite daemon on `localhost:3002`) running independently in the background so they do not block turn resolution or queued prompts.
