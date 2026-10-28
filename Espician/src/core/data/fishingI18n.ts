@@ -181,24 +181,24 @@ export function variantLabel(v: string, lang: GameLang) {
 export const rodWaitTextI18n = (r: FishingRodItem, lang: GameLang) => {
   if (lang === 'en') {
     return r.waitTimeReductionPct <= 0
-      ? 'Fish bite at the natural rhythm of the sea'
-      : r.waitTimeReductionPct < 20
-      ? 'Slightly reduces waiting time for bites'
-      : r.waitTimeReductionPct < 40
-      ? 'Noticeably faster fish bites'
-      : r.waitTimeReductionPct < 55
-      ? 'Very fast bites with minimal waiting'
-      : 'Fish can barely wait to strike your hook';
+      ? 'Fish bite at the natural rhythm of the sea (~60s)'
+      : r.waitTimeReductionPct <= 3
+      ? 'Subtly sharpens bite responsiveness (~58s)'
+      : r.waitTimeReductionPct <= 6
+      ? 'Subtly reduces wait time (~56s)'
+      : r.waitTimeReductionPct <= 8
+      ? 'Great bite responsiveness (~55s)'
+      : 'Maximum bite responsiveness (~54s)';
   }
   return r.waitTimeReductionPct <= 0
-    ? 'ปลากินเบ็ดตามจังหวะปกติของท้องทะเล'
-    : r.waitTimeReductionPct < 20
-    ? 'ช่วยให้ปลากินเบ็ดเร็วขึ้นเล็กน้อย'
-    : r.waitTimeReductionPct < 40
-    ? 'ปลากินเบ็ดเร็วขึ้นอย่างเห็นได้ชัด'
-    : r.waitTimeReductionPct < 55
-    ? 'ปลากินเบ็ดเร็วมาก ไม่ต้องรอนาน'
-    : 'ปลาแทบรอไม่ไหวที่จะเข้ามากินเบ็ด';
+    ? 'ปลากินเบ็ดตามจังหวะปกติของท้องทะเล (รอบละ 1 นาที)'
+    : r.waitTimeReductionPct <= 3
+    ? 'ช่วยเร่งจังหวะเบ็ดเร็วขึ้นเล็กน้อยอย่างกลมกลืน (~58 วิ)'
+    : r.waitTimeReductionPct <= 6
+    ? 'ช่วยลดเวลาเฝ้ารอลงอย่างเหมาะสม (~56 วิ)'
+    : r.waitTimeReductionPct <= 8
+    ? 'ตอบสนองต่อการกินเบ็ดได้อย่างดีเยี่ยม (~55 วิ)'
+    : 'เสริมการตอบสนองของสายเบ็ดระดับสูงสุด (~54 วิ)';
 };
 
 export const rodControlTextI18n = (r: FishingRodItem, lang: GameLang) => {

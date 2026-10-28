@@ -16,6 +16,7 @@ import {
   createCaughtFishInstance,
   getRealTimeOfDay,
   calculateBaseBiteChance,
+  calculateTickWaitTime,
   performBiteRoll,
   rollFishSpecies
 } from '../../core/data/fishingDatabase';
@@ -825,6 +826,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
   }, []);
 
   const waitRef = useRef({ total: 60, remaining: 60 });
+  const [waitSecondsRemaining, setWaitSecondsRemaining] = useState(60);
   const phaseRef = useRef<FishingPhase>('IDLE_READY');
   phaseRef.current = phase;
   const catchHueRef = useRef(0);
@@ -1010,8 +1012,9 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       if (left <= 0) notify(t.lastBait, 'bad');
     }
     castSeq.current += 1;
-    const initialWait = fastMode ? 6 : 60;
+    const initialWait = calculateTickWaitTime(equippedRod, equippedBait, fastMode);
     waitRef.current = { total: initialWait, remaining: initialWait };
+    setWaitSecondsRemaining(initialWait);
     setPendingSpecies(null);
     setLatestCatch(null);
     setFishingState((p) => ({ ...p, quests: trackQuest(p.quests, 'cast') }));
@@ -1033,6 +1036,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     if (phase !== 'WAITING_FOR_BITE') return;
     const timer = setInterval(() => {
       waitRef.current.remaining -= 1;
+      setWaitSecondsRemaining(Math.max(0, waitRef.current.remaining));
       if (waitRef.current.remaining <= 0) {
         // Regular 1-min roll
         const res = performBiteRoll(
@@ -1052,16 +1056,24 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           notify(t.fishBiting, 'rare');
         } else {
           setPityBonus(res.newPity);
-          const nextWait = fastMode ? 6 : 60;
+          const nextWait = calculateTickWaitTime(equippedRod, equippedBait, fastMode);
           waitRef.current = { total: nextWait, remaining: nextWait };
+          setWaitSecondsRemaining(nextWait);
           if (viewMode === 'dev') {
             notify(`[DEV] Regular check missed. Pity accumulated: +${(res.newPity * 100).toFixed(2)}%`, 'info');
+          } else {
+            notify(
+              lang === 'th'
+                ? '🌊 ยังไม่มีปลากินเบ็ด... แต่ปลาเริ่มว่ายวนเข้ามาตอมเหยื่อ (+โอกาส)'
+                : '🌊 No bite yet... fish circling around the bait (+Pity)',
+              'info'
+            );
           }
         }
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [phase, fastMode, equippedRod, equippedBait, pityBonus, fishingState.currentIslandId, realTimeOfDay, viewMode, notify, t.fishBiting]);
+  }, [phase, fastMode, equippedRod, equippedBait, pityBonus, fishingState.currentIslandId, realTimeOfDay, viewMode, lang, notify, t.fishBiting]);
 
   const handleJerk = () => {
     if (phase !== 'WAITING_FOR_BITE' || jerkCooling) return;
@@ -2868,18 +2880,49 @@ const CostumeDetailModal: React.FC<{
             )}
 
             {phase === 'WAITING_FOR_BITE' && (
-              <div className="absolute bottom-4 right-4">
-                <button
-                  onClick={handleJerk}
-                  disabled={jerkCooling}
-                  className="relative overflow-hidden px-6 py-3 bg-[#ff4655] hover:bg-[#ff5d6a] disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold text-sm shadow-xl transition active:scale-95 flex items-center gap-2"
-                  style={CUT_STYLE}
-                >
-                  <Waves className="w-4 h-4" />
-                  {t.jerkRod}
-                  {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-white/80" style={{ animation: 'cool 3.5s linear forwards' }} />}
-                </button>
-              </div>
+              <>
+                {/* Atmospheric Bite Waiting Pill & 1-Minute Countdown */}
+                <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-10 px-4">
+                  <div
+                    style={CUT_STYLE}
+                    className="pointer-events-auto px-4 py-2 bg-black/85 backdrop-blur-md border border-cyan-500/40 text-xs text-white shadow-2xl flex items-center gap-3"
+                  >
+                    <div className="flex items-center gap-1.5 text-cyan-300 font-bold font-mono">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                      <span>🎣 {lang === 'th' ? 'รอปลาดึงเบ็ดเอง' : 'Waiting for natural bite'}</span>
+                    </div>
+                    <div className="h-3 w-px bg-white/20" />
+                    <div className="text-zinc-300 font-mono text-[11px] flex items-center gap-1">
+                      <span>{lang === 'th' ? 'รอบถัดไป:' : 'Next roll:'}</span>
+                      <span className="text-amber-400 font-bold font-mono text-xs">
+                        {Math.floor(waitSecondsRemaining / 60)}:{String(waitSecondsRemaining % 60).padStart(2, '0')}
+                      </span>
+                    </div>
+                    {pityBonus > 0 && (
+                      <>
+                        <div className="h-3 w-px bg-white/20" />
+                        <div className="text-emerald-400 font-bold text-[10px] tracking-wider uppercase flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-emerald-400" />
+                          <span>{lang === 'th' ? 'ปลาระแวงเริ่มสนใจ (+โอกาส)' : 'Fish curious (+Pity)'}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="absolute bottom-4 right-4 z-10">
+                  <button
+                    onClick={handleJerk}
+                    disabled={jerkCooling}
+                    className="relative overflow-hidden px-6 py-3 bg-[#ff4655] hover:bg-[#ff5d6a] disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold text-sm shadow-xl transition active:scale-95 flex items-center gap-2"
+                    style={CUT_STYLE}
+                  >
+                    <Waves className="w-4 h-4" />
+                    {t.jerkRod}
+                    {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-white/80" style={{ animation: 'cool 3.5s linear forwards' }} />}
+                  </button>
+                </div>
+              </>
             )}
 
             {phase === 'FISH_BITING' && !autoReel && (

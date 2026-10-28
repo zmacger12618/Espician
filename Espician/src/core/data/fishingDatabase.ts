@@ -944,7 +944,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Breeze Oakwood Rod',
     price: 2500,
     requiredLevel: 5,
-    waitTimeReductionPct: 15,
+    waitTimeReductionPct: 2,
     sweetSpotSizeBonus: 16,
     lineStrengthBonus: 14,
     rarityBoostMultiplier: 1.35,
@@ -961,7 +961,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Azure Coral Carbon Rod',
     price: 18000,
     requiredLevel: 15,
-    waitTimeReductionPct: 28,
+    waitTimeReductionPct: 4,
     sweetSpotSizeBonus: 28,
     lineStrengthBonus: 26,
     rarityBoostMultiplier: 1.85,
@@ -978,7 +978,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Deep-Trench Titanium Rod',
     price: 85000,
     requiredLevel: 28,
-    waitTimeReductionPct: 40,
+    waitTimeReductionPct: 6,
     sweetSpotSizeBonus: 42,
     lineStrengthBonus: 40,
     rarityBoostMultiplier: 2.65,
@@ -995,7 +995,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Starlight Weaver Rod',
     price: 280000,
     requiredLevel: 42,
-    waitTimeReductionPct: 52,
+    waitTimeReductionPct: 8,
     sweetSpotSizeBonus: 56,
     lineStrengthBonus: 54,
     rarityBoostMultiplier: 3.85,
@@ -1012,7 +1012,7 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     nameEn: 'Chronos Sovereign Rod',
     price: 850000,
     requiredLevel: 55,
-    waitTimeReductionPct: 68,
+    waitTimeReductionPct: 10,
     sweetSpotSizeBonus: 75,
     lineStrengthBonus: 72,
     rarityBoostMultiplier: 6.2,
@@ -1050,7 +1050,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     nameEn: 'Fresh Coral Krill',
     pricePerPack: 250,
     packQuantity: 10,
-    waitTimeReductionPct: 10,
+    waitTimeReductionPct: 1,
     targetRarities: ['Common', 'Uncommon', 'Rare'],
     targetFishIds: ['fish_02_clownfish', 'creature_21_shrimp', 'fish_06_snapper', 'fish_07_parrotfish', 'fish_08_boxfish', 'fish_27_sunburst_dorado', 'fish_31_dawn_trout'],
     bonusWeightMultiplier: 1.8,
@@ -1065,7 +1065,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     nameEn: 'Bioluminescent Squid Strip',
     pricePerPack: 800,
     packQuantity: 10,
-    waitTimeReductionPct: 20,
+    waitTimeReductionPct: 2,
     targetRarities: ['Uncommon', 'Rare', 'Epic'],
     targetFishIds: [
       'creature_22_squid',
@@ -1090,7 +1090,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     nameEn: 'Prism Minnow Lure',
     pricePerPack: 2400,
     packQuantity: 8,
-    waitTimeReductionPct: 30,
+    waitTimeReductionPct: 3,
     targetRarities: ['Rare', 'Epic'],
     targetFishIds: [
       'fish_10_tuna',
@@ -1113,7 +1113,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     nameEn: 'Ancient Golden Essence',
     pricePerPack: 6500,
     packQuantity: 6,
-    waitTimeReductionPct: 40,
+    waitTimeReductionPct: 4,
     targetRarities: ['Epic', 'Legendary'],
     targetFishIds: [
       'fish_14_swordfish',
@@ -1134,7 +1134,7 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     nameEn: 'Astral Leviathan Nectar',
     pricePerPack: 18000,
     packQuantity: 5,
-    waitTimeReductionPct: 50,
+    waitTimeReductionPct: 5,
     targetRarities: ['Epic', 'Legendary', 'Secret'],
     targetFishIds: [
       'fish_15_angler',
@@ -1209,6 +1209,27 @@ export const OCEAN_MOODS: {
 export function getRealTimeOfDay(): 'day' | 'night' {
   const hour = new Date().getHours();
   return hour >= 6 && hour < 18 ? 'day' : 'night';
+}
+
+/**
+ * Calculates the waiting time for the automatic bite check.
+ * Standard baseline is 60 seconds (1 minute).
+ * Rods & baits provide only slight/subtle reductions so the player
+ * truly experiences the authentic, relaxing, long fishing pacing.
+ * In fastMode (dev/admin): 6 seconds.
+ */
+export function calculateTickWaitTime(
+  rod: FishingRodItem,
+  bait: FishingBaitItem,
+  isFastFocusMode: boolean = false
+): number {
+  if (isFastFocusMode) return 6;
+  const baseSec = 60; // Standard 1 minute
+  const rodRed = Math.min(10, Math.max(0, rod?.waitTimeReductionPct || 0));
+  const baitRed = Math.min(5, Math.max(0, bait?.waitTimeReductionPct || 0));
+  const totalReductionPct = Math.min(15, rodRed + baitRed);
+  const waitSec = Math.round(baseSec * (1 - totalReductionPct / 100));
+  return Math.max(50, waitSec); // Never falls below 50 seconds for true chill fishing!
 }
 
 /**
@@ -1357,8 +1378,8 @@ export function rollFishAndWaitTime(
   const tod = timeOfDay || getRealTimeOfDay();
   const chosen = rollFishSpecies(rod, bait, tod, islandId);
 
-  // 2. Calculate Wait Time (60s tick interval standard, or 6s fast mode)
-  let finalWaitSec = isFastFocusMode ? 6 : 60;
+  // 2. Calculate Wait Time (60s tick interval standard with subtle equipment reduction, or 6s fast mode)
+  let finalWaitSec = calculateTickWaitTime(rod, bait, isFastFocusMode);
 
   return {
     species: chosen,
