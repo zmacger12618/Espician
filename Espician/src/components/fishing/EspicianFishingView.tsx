@@ -239,10 +239,10 @@ const rodLuckText = (r: FishingRodItem) =>
     ? 'ปลาระดับ Epic และ Legendary เริ่มสนใจเหยื่อของคุณ'
     : 'เปิดประตูสู่ปลาและสัตว์ทะเลระดับ Secret';
 
-const PANEL = 'bg-[#0d0d12]/85 backdrop-blur-md border border-white/10';
+const PANEL =
+  'bg-gradient-to-b from-[#161c28]/95 via-[#0e141f]/95 to-[#080d14]/95 backdrop-blur-md border-2 border-[#b8860b]/40 rounded-xl shadow-[0_12px_36px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,235,165,0.15)]';
 const CUT_STYLE: React.CSSProperties = {
-  clipPath:
-    'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)'
+  borderRadius: '10px'
 };
 
 const FishPreviewCanvas: React.FC<{
@@ -443,14 +443,18 @@ const Modal: React.FC<{
   maxWidthClass?: string;
   children: React.ReactNode;
 }> = ({ onClose, hideCloseButton = false, maxWidthClass = 'max-w-lg', children }) => (
-  <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+  <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
     <div
       style={{ ...CUT_STYLE, animation: 'popIn .25s ease-out' }}
-      className={`relative bg-[#0b0b10] border border-[#ff4655]/40 w-full ${maxWidthClass} max-h-[92vh] overflow-y-auto`}
+      className={`relative bg-gradient-to-b from-[#1c1511] via-[#140f0c] to-[#0a0806] border-2 border-[#c29b38]/70 shadow-[0_25px_60px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,235,165,0.25)] rounded-2xl w-full ${maxWidthClass} max-h-[92vh] overflow-y-auto text-[#fef3c7]`}
       onClick={(e) => e.stopPropagation()}
     >
       {!hideCloseButton && (
-        <button onClick={onClose} className="absolute top-3 right-3 p-1.5 text-zinc-400 hover:text-white z-20">
+        <button
+          onClick={onClose}
+          className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-gradient-to-b from-[#991b1b] to-[#7f1d1d] border border-[#fca5a5] text-white flex items-center justify-center hover:scale-105 active:scale-95 shadow-md z-30 transition"
+          title="Close"
+        >
           <X className="w-4 h-4" />
         </button>
       )}
@@ -1552,12 +1556,12 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       }}
       className={`relative py-2.5 px-0.5 flex flex-col items-center justify-center gap-1 transition-all ${
         activeTab === id
-          ? 'text-white border-b-2 border-[#ff4655] bg-gradient-to-t from-[#ff4655]/15 to-transparent'
-          : 'text-zinc-500 border-b-2 border-transparent hover:text-zinc-300 hover:bg-white/[0.02]'
+          ? 'text-[#fef08a] border-b-2 border-amber-400 bg-gradient-to-t from-amber-500/20 to-transparent shadow-[inset_0_-2px_4px_rgba(245,158,11,0.2)]'
+          : 'text-zinc-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-white/[0.03]'
       }`}
     >
       <div className="flex items-center gap-1">
-        <span className={activeTab === id ? 'text-[#ff4655]' : ''}>{icon}</span>
+        <span className={activeTab === id ? 'text-amber-300' : ''}>{icon}</span>
         {badge}
       </div>
       <span className="text-[9px] font-black tracking-wider uppercase leading-none">
@@ -1629,8 +1633,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
             <button
               onClick={() => buyOrEquipRod(rod.id)}
               disabled={equipped || locked}
-              className="w-full py-3 bg-[#ff4655] hover:bg-[#ff5d6a] disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold text-sm transition"
-              style={CUT_STYLE}
+              className="w-full py-3 rounded-xl font-black text-sm uppercase tracking-wider transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] disabled:from-zinc-800 disabled:to-zinc-900 text-[#fffbeb] disabled:text-zinc-500 border-2 border-[#fef08a] disabled:border-zinc-700 shadow-[0_4px_0_#78350f] disabled:shadow-none active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
             >
               {equipped
                 ? t.equipped
@@ -1638,7 +1641,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
                 ? t.useRod
                 : locked
                 ? `${t.needLevel} ${rod.requiredLevel}`
-                : `${t.buy} · ${rod.price.toLocaleString()}`}
+                : `${t.buy} · ${rod.price.toLocaleString()} 🪙`}
             </button>
           </div>
         </Modal>
@@ -1660,39 +1663,39 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           </div>
           <div className="p-5 space-y-3">
             <div>
-              <div className="text-[10px] tracking-[0.25em] text-[#ff4655] uppercase">{t.bait}</div>
-              <h3 className="text-xl font-bold text-white">{baitName(bait, lang)}</h3>
-              <div className="text-xs text-zinc-500">{lang === 'th' ? bait.nameEn : shortName(bait.nameTh)}</div>
+              <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase font-serif font-black">{t.bait}</div>
+              <h3 className="text-xl font-serif font-black text-[#fef08a]">{baitName(bait, lang)}</h3>
+              <div className="text-xs text-zinc-400">{lang === 'th' ? bait.nameEn : shortName(bait.nameTh)}</div>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">{baitDesc(bait, lang)}</p>
+            <p className="text-sm text-[#ded7c8] leading-relaxed">{baitDesc(bait, lang)}</p>
             <div className="flex flex-wrap gap-1.5">
               {bait.targetFishIds.map((fid) => {
                 const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === fid);
                 const found = Boolean(fishingState.encyclopediaMap[fid]);
                 return (
-                  <span key={fid} className="text-[11px] px-2 py-0.5 border border-white/10 text-zinc-400">
+                  <span key={fid} className="text-[11px] px-2 py-0.5 rounded border border-[#b8860b]/30 bg-black/40 text-[#fef3c7]">
                     {found && sp ? fishName(sp, lang) : '???'}
                   </span>
                 );
               })}
             </div>
-            <div className="text-xs text-zinc-500">
+            <div className="text-xs text-amber-400/80 font-mono">
               {free ? t.unlimited : `${t.inStock} ${count} · ${t.perPack} ${bait.packQuantity}`}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => equipBait(bait.id)}
                 disabled={equipped || (!free && (count as number) <= 0)}
-                className="py-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 text-white font-bold text-sm transition"
+                className="py-3 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#2a1e16] to-[#18120d] border border-[#b8860b]/60 text-[#fef3c7] hover:border-amber-300 disabled:opacity-40 shadow-[0_2px_0_#0a0806] active:translate-y-0.5 active:shadow-none transition"
               >
                 {equipped ? t.usingBait : t.useBait}
               </button>
               {!free && (
                 <button
                   onClick={() => buyBait(bait.id)}
-                  className="py-3 bg-[#ff4655] hover:bg-[#ff5d6a] text-white font-bold text-sm transition"
+                  className="py-3 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_3px_0_#78350f] active:translate-y-0.5 active:shadow-none transition"
                 >
-                  {t.buy} · {bait.pricePerPack.toLocaleString()}
+                  {t.buy} · {bait.pricePerPack.toLocaleString()} 🪙
                 </button>
               )}
             </div>
@@ -1716,33 +1719,36 @@ const CostumeDetailModal: React.FC<{
   return (
     <Modal onClose={onClose}>
       {/* Abby-style Granblue Wiki Toggle Navigation */}
-      <div className="flex items-center gap-1.5 p-2.5 bg-black/80 border-b border-white/10 pr-11">
+      <div className="flex items-center gap-1.5 p-2.5 bg-[#140e0a] border-b-2 border-[#b8860b]/40 pr-12">
         <button
           onClick={() => setTab('base_sprite')}
-          className={`flex-1 py-1.5 px-2 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-            tab === 'base_sprite' ? 'bg-[#ff4655] text-white shadow' : 'bg-white/5 text-zinc-400 hover:text-white'
+          className={`flex-1 py-1.5 px-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            tab === 'base_sprite'
+              ? 'bg-gradient-to-b from-amber-500 to-amber-600 text-black border border-amber-300 shadow-md'
+              : 'bg-black/40 text-amber-200/70 hover:text-white border border-[#b8860b]/30'
           }`}
-          style={CUT_STYLE}
         >
           <Layers className="w-3.5 h-3.5" />
           <span>{lang === 'th' ? 'ตัวละครขยับ (Base Sprite)' : 'Base Sprite'}</span>
         </button>
         <button
           onClick={() => setTab('base_art')}
-          className={`flex-1 py-1.5 px-2 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-            tab === 'base_art' ? 'bg-[#ff4655] text-white shadow' : 'bg-white/5 text-zinc-400 hover:text-white'
+          className={`flex-1 py-1.5 px-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            tab === 'base_art'
+              ? 'bg-gradient-to-b from-amber-500 to-amber-600 text-black border border-amber-300 shadow-md'
+              : 'bg-black/40 text-amber-200/70 hover:text-white border border-[#b8860b]/30'
           }`}
-          style={CUT_STYLE}
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>{lang === 'th' ? 'ภาพวาดอาร์ต (Base Art)' : 'Base Art'}</span>
         </button>
         <button
           onClick={() => setTab('scene')}
-          className={`py-1.5 px-3 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-            tab === 'scene' ? 'bg-[#ff4655] text-white shadow' : 'bg-white/5 text-zinc-400 hover:text-white'
+          className={`py-1.5 px-3 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            tab === 'scene'
+              ? 'bg-gradient-to-b from-amber-500 to-amber-600 text-black border border-amber-300 shadow-md'
+              : 'bg-black/40 text-amber-200/70 hover:text-white border border-[#b8860b]/30'
           }`}
-          style={CUT_STYLE}
           title={lang === 'th' ? 'ฉากริมทะเล' : 'Ocean Scene'}
         >
           <Compass className="w-3.5 h-3.5" />
@@ -1752,7 +1758,7 @@ const CostumeDetailModal: React.FC<{
       {/* Tab Visuals */}
       {tab === 'base_art' ? (
         <div className="relative bg-[#07070a] flex items-center justify-center p-4 border-b border-white/10 overflow-hidden">
-          <div className="relative max-w-[280px] aspect-[3/4] rounded-lg overflow-hidden border border-[#ff4655]/40 shadow-2xl bg-black/60">
+          <div className="relative max-w-[280px] aspect-[3/4] rounded-xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-black/60">
             <img
               src={`/assets/fishing/sprites/${costume.id}/art.png`}
               alt={costumeName(costume, lang)}
@@ -1770,11 +1776,11 @@ const CostumeDetailModal: React.FC<{
           </div>
         </div>
       ) : tab === 'base_sprite' ? (
-        <div className="border-b border-white/10">
+        <div className="border-b border-[#b8860b]/30">
           <SpritePreviewStage costume={costume} rod={rod} action={action} />
           {/* Action pose selector buttons (GBF Animation Player style) */}
-          <div className="p-2 bg-black/60 flex items-center justify-start sm:justify-center gap-1 border-t border-white/5 overflow-x-auto">
-            <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1 flex-shrink-0">Pose:</span>
+          <div className="p-2 bg-[#120d09] flex items-center justify-start sm:justify-center gap-1 border-t border-[#b8860b]/30 overflow-x-auto">
+            <span className="text-[10px] uppercase font-bold text-amber-400/80 mr-1 flex-shrink-0 font-serif">Pose:</span>
             {[
               { id: 'idle', labelTh: 'ปกติ', labelEn: 'Idle' },
               { id: 'walk', labelTh: 'เดิน', labelEn: 'Walk' },
@@ -1789,12 +1795,11 @@ const CostumeDetailModal: React.FC<{
               <button
                 key={p.id}
                 onClick={() => setAction(p.id as any)}
-                className={`px-2.5 py-1 text-[11px] font-bold transition border ${
+                className={`px-2.5 py-1 text-[11px] font-black rounded-md transition-all border ${
                   action === p.id
-                    ? 'border-[#ff4655] bg-[#ff4655]/20 text-[#ff4655]'
-                    : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'
+                    ? 'border-amber-400 bg-amber-500/25 text-amber-300 shadow-sm'
+                    : 'border-[#b8860b]/30 bg-black/40 text-zinc-400 hover:text-white'
                 }`}
-                style={CUT_STYLE}
               >
                 {lang === 'th' ? p.labelTh : p.labelEn}
               </button>
@@ -1806,24 +1811,23 @@ const CostumeDetailModal: React.FC<{
       )}
 
       {/* Info & Action Buttons */}
-      <div className="p-5 space-y-3">
+      <div className="p-5 space-y-3 bg-gradient-to-b from-[#18120e] to-[#0e0a07]">
         <div>
-          <div className="text-[10px] tracking-[0.25em] text-[#ff4655] uppercase">{t.costume}</div>
-          <h3 className="text-xl font-bold text-white flex items-center justify-between">
+          <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase font-serif font-black">{t.costume}</div>
+          <h3 className="text-xl font-serif font-black text-[#fef08a] flex items-center justify-between">
             <span>{costumeName(costume, lang)}</span>
             {worn && (
-              <span className="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 uppercase">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase font-bold">
                 {t.wearing}
               </span>
             )}
           </h3>
         </div>
-        <p className="text-sm text-zinc-300 leading-relaxed">{costumeDesc(costume, lang)}</p>
+        <p className="text-sm text-[#ded7c8] leading-relaxed">{costumeDesc(costume, lang)}</p>
         <button
           onClick={onBuyOrWear}
           disabled={worn}
-          className="w-full py-3 bg-[#ff4655] hover:bg-[#ff5d6a] disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold text-sm transition"
-          style={CUT_STYLE}
+          className="w-full py-3 rounded-xl font-black text-sm uppercase tracking-wider bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] disabled:from-zinc-800 disabled:to-zinc-900 text-[#fffbeb] disabled:text-zinc-500 border-2 border-[#fef08a] disabled:border-zinc-700 shadow-[0_4px_0_#78350f] disabled:shadow-none active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
         >
           {worn ? t.wearing : owned ? t.wear : `${t.buy} · ${costume.price.toLocaleString()}`}
         </button>
@@ -1879,7 +1883,7 @@ const CostumeDetailModal: React.FC<{
     }
 
     return (
-      <div className={`px-3 py-2.5 border ${claimed ? 'border-white/5 opacity-40' : locked ? 'border-white/10 opacity-30' : 'border-white/15 bg-black/40'}`}>
+      <div className={`px-3 py-2.5 rounded-lg border-2 ${claimed ? 'border-white/5 opacity-40' : locked ? 'border-white/10 opacity-30' : 'border-[#b8860b]/30 bg-gradient-to-r from-[#17110c] to-[#0f0b08]'}`}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {npc && (
@@ -1902,12 +1906,12 @@ const CostumeDetailModal: React.FC<{
                     onOpenStory();
                   }
                 }}
-                className={`text-xs text-zinc-200 truncate ${npc ? 'cursor-pointer hover:text-amber-300' : ''}`}
+                className={`text-xs font-semibold text-zinc-200 truncate ${npc ? 'cursor-pointer hover:text-amber-300' : ''}`}
               >
                 {questLabel(def, lang)}
               </div>
               {npc && (
-                <div className="text-[9px] text-amber-400 font-mono">
+                <div className="text-[9px] text-amber-400 font-serif">
                   {lang === 'th' ? npc.nameTh : npc.nameEn}
                 </div>
               )}
@@ -1922,21 +1926,23 @@ const CostumeDetailModal: React.FC<{
             <button
               onClick={() => claimQuest(kind, def)}
               disabled={!done}
-              className={`px-2.5 py-1 text-[11px] font-bold transition ${
-                done ? 'bg-[#ff4655] text-white hover:bg-[#ff5d6a] animate-pulse' : 'bg-zinc-800 text-zinc-500'
+              className={`px-3 py-1 rounded-md text-[11px] font-black transition-all ${
+                done
+                  ? 'bg-gradient-to-b from-amber-400 to-amber-600 border border-amber-200 text-black shadow-md animate-pulse active:scale-95'
+                  : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
               }`}
             >
-              {done ? t.claim : `${def.coins.toLocaleString()}`}
+              {done ? t.claim : `${def.coins.toLocaleString()} 🪙`}
             </button>
           )}
         </div>
-        <div className="mt-2 h-[3px] bg-white/10">
+        <div className="mt-2 h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
           <div
-            className="h-full bg-[#ff4655] transition-all duration-500"
+            className="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-500 rounded-full"
             style={{ width: `${(prog / def.target) * 100}%` }}
           />
         </div>
-        <div className="mt-1 text-[10px] text-zinc-500 text-right">
+        <div className="mt-1 text-[10px] text-zinc-400 font-mono text-right">
           {prog.toLocaleString()} / {def.target.toLocaleString()}
         </div>
       </div>
@@ -2194,10 +2200,9 @@ const CostumeDetailModal: React.FC<{
                 soundEngine.playNpcBlip();
                 setSelectedNpcQuest(null);
               }}
-              className="w-full py-2.5 bg-gradient-to-r from-[#ff4655] to-[#d13639] hover:from-[#ff5d6a] hover:to-[#ff4655] text-white font-extrabold text-xs tracking-wider uppercase transition shadow-lg"
-              style={CUT_STYLE}
+              className="w-full py-3 rounded-xl font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_4px_0_#78350f] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
             >
-              {lang === 'th' ? 'รับทราบและออกเดินทาง!' : 'Acknowledge & Set Sail!'}
+              <span>⛵ {lang === 'th' ? 'รับทราบและออกเดินทาง!' : 'Acknowledge & Set Sail!'}</span>
             </button>
           </div>
         </Modal>
@@ -2206,22 +2211,24 @@ const CostumeDetailModal: React.FC<{
       {/* Illustrated Fantasy Nautical World Map Modal */}
       {isIslandMapOpen && (
         <Modal onClose={() => setIsIslandMapOpen(false)} hideCloseButton maxWidthClass="max-w-4xl">
-          <div className="p-4 sm:p-6 space-y-4 max-w-4xl bg-[#080910] border border-cyan-500/40 text-white">
+          <div className="p-4 sm:p-6 space-y-4 max-w-4xl bg-gradient-to-b from-[#1b1511] via-[#140f0c] to-[#0a0806] border-2 border-[#c29b38]/70 text-[#fef3c7] rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center gap-2.5">
-                <Compass className="w-6 h-6 text-cyan-400 animate-spin-slow" />
+            <div className="flex items-center justify-between border-b-2 border-[#b8860b]/40 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 border-2 border-amber-300 flex items-center justify-center shadow-md">
+                  <Compass className="w-6 h-6 text-amber-100 animate-spin-slow" />
+                </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-white tracking-wider uppercase flex items-center gap-2">
-                    <span>{lang === 'th' ? 'แผนที่เดินเรือหมู่เกาะเอสพิเชียน' : 'Espician Archipelago Sea Chart'}</span>
-                    <span className="text-[10px] px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono">
-                      NAUTICAL MAP
+                  <h3 className="text-base sm:text-lg font-serif font-black text-[#fef08a] tracking-wider uppercase flex items-center gap-2 drop-shadow">
+                    <span>{lang === 'th' ? '📜 แผนที่เดินเรือมหาขุมทรัพย์แห่งเอสพิเชียน' : '📜 Espician Ancient Nautical Treasure Chart'}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-serif">
+                      ⚓ CAPTAIN'S CHART
                     </span>
                   </h3>
-                  <p className="text-[11px] text-zinc-400">
+                  <p className="text-[11px] text-amber-200/70 font-medium">
                     {lang === 'th'
-                      ? 'คลิกเลือกเกาะบนแผนที่เพื่อดูข้อมูลและออกเรือเดินทาง'
-                      : 'Select an island on the nautical chart to inspect and set sail'}
+                      ? 'กางแผนที่เดินเรือบนโต๊ะกัปตัน · เลือกเกาะเป้าหมายเพื่อตรวจความพร้อมและกางใบเรือออกสำรวจ'
+                      : 'Unfurl ancient sea chart · Select an island to inspect marine fauna and set sail'}
                   </p>
                 </div>
               </div>
@@ -2230,97 +2237,118 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setIsIslandMapOpen(false);
                 }}
-                className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded transition"
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-[#991b1b] to-[#7f1d1d] border border-[#fca5a5] text-white flex items-center justify-center hover:scale-105 active:scale-95 shadow-md transition"
+                title="Close Chart"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Interactive SVG Nautical Chart */}
-            <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] bg-[#070b16] rounded border border-cyan-500/30 overflow-hidden shadow-2xl">
-              {/* Parchment Grid & Waves Texture */}
+            {/* Interactive Antique Nautical Chart Viewport */}
+            <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-xl overflow-hidden border-2 border-[#c29b38] shadow-[inset_0_0_40px_rgba(0,0,0,0.85),0_12px_30px_rgba(0,0,0,0.8)] bg-gradient-to-br from-[#1b1510] via-[#241c14] to-[#120e0a]">
+              {/* Parchment Nautical Grid Texture */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25">
                 <defs>
-                  <pattern id="nauticalGrid" width="60" height="60" patternUnits="userSpaceOnUse">
-                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#38bdf8" strokeWidth="0.5" strokeDasharray="3 3" />
+                  <pattern id="nauticalChartGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#d4af37" strokeWidth="0.5" strokeDasharray="3 3" />
                   </pattern>
                 </defs>
-                <rect width="100%" height="100%" fill="url(#nauticalGrid)" />
+                <rect width="100%" height="100%" fill="url(#nauticalChartGrid)" />
               </svg>
 
-              {/* Decorative Compass Rose (Upper Right) */}
-              <div className="absolute top-3 right-3 pointer-events-none opacity-40">
-                <svg width="64" height="64" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="42" fill="none" stroke="#38bdf8" strokeWidth="1" strokeDasharray="2 4" />
-                  <circle cx="50" cy="50" r="32" fill="none" stroke="#38bdf8" strokeWidth="0.8" />
-                  <path d="M 50 10 L 54 44 L 88 50 L 54 56 L 50 90 L 46 56 L 12 50 L 46 44 Z" fill="#38bdf8" opacity="0.6" />
-                  <text x="50" y="8" fill="#38bdf8" fontSize="8" fontWeight="bold" textAnchor="middle">N</text>
-                  <text x="96" y="53" fill="#38bdf8" fontSize="8" fontWeight="bold" textAnchor="middle">E</text>
-                  <text x="50" y="98" fill="#38bdf8" fontSize="8" fontWeight="bold" textAnchor="middle">S</text>
-                  <text x="6" y="53" fill="#38bdf8" fontSize="8" fontWeight="bold" textAnchor="middle">W</text>
+              {/* Antique 16-point Compass Rose with Fleur-de-lis (Top Right) */}
+              <div className="absolute top-3 right-3 pointer-events-none opacity-60">
+                <svg width="76" height="76" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="2 3" />
+                  <circle cx="50" cy="50" r="34" fill="none" stroke="#b45309" strokeWidth="0.8" />
+                  <circle cx="50" cy="50" r="2" fill="#d4af37" />
+                  {/* Principal Points */}
+                  <polygon points="50,6 54,44 50,50 46,44" fill="#d4af37" />
+                  <polygon points="50,6 50,50 46,44" fill="#b45309" />
+                  <polygon points="50,94 54,56 50,50 46,56" fill="#d4af37" />
+                  <polygon points="50,94 50,50 46,56" fill="#b45309" />
+                  <polygon points="94,50 56,54 50,50 56,46" fill="#d4af37" />
+                  <polygon points="94,50 50,50 56,46" fill="#b45309" />
+                  <polygon points="6,50 44,54 50,50 44,46" fill="#d4af37" />
+                  <polygon points="6,50 50,50 44,46" fill="#b45309" />
+                  {/* Cardinal Labels */}
+                  <text x="50" y="5" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">N</text>
+                  <text x="98" y="52" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">E</text>
+                  <text x="50" y="99" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">S</text>
+                  <text x="2" y="52" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">W</text>
                 </svg>
               </div>
 
-              {/* Dotted Sea Sailing Routes */}
+              {/* Hand-drawn Mythical Kraken & Galleon Watermarks */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 1000 450">
+                <g stroke="#d4af37" strokeWidth="1.5" fill="none">
+                  <path d="M 440 280 Q 420 220 460 190 Q 480 170 470 150 Q 460 140 450 160" />
+                  <path d="M 460 290 Q 480 230 510 210 Q 530 200 520 180" />
+                  <path d="M 430 310 Q 390 270 400 240 Q 410 220 390 200" />
+                  <text x="450" y="325" fill="#d4af37" fontSize="11" fontFamily="serif" fontStyle="italic" textAnchor="middle">
+                    ~ Terra Incognita · Leviathan Deep ~
+                  </text>
+                </g>
+                <g stroke="#d4af37" strokeWidth="1.2" fill="none" transform="translate(260, 200) scale(0.65)">
+                  <path d="M 0 30 Q 30 45 60 30 L 50 15 L 10 15 Z" fill="#d4af37" fillOpacity="0.2" />
+                  <line x1="20" y1="15" x2="20" y2="-15" strokeWidth="1.5" />
+                  <line x1="40" y1="15" x2="40" y2="-20" strokeWidth="1.5" />
+                  <path d="M 20 -10 Q 30 -5 20 5 Z" fill="#d4af37" fillOpacity="0.3" />
+                  <path d="M 40 -15 Q 52 -10 40 5 Z" fill="#d4af37" fillOpacity="0.3" />
+                </g>
+              </svg>
+
+              {/* Dotted Golden Sea Sailing Routes */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none">
                 <path
                   d="M 18% 66% Q 27% 48%, 37% 38% T 58% 70% T 76% 32% T 88% 58%"
                   fill="none"
-                  stroke="rgba(56, 189, 248, 0.45)"
+                  stroke="#f59e0b"
                   strokeWidth="2.5"
                   strokeDasharray="6 6"
                   className="animate-pulse"
+                  opacity="0.8"
                 />
               </svg>
 
-              {/* 5 Illustrated Island Nodes */}
+              {/* 5 Illustrated Island Medallions (No cyber emojis!) */}
               {[
                 {
                   id: 'island_emerald_haven',
                   x: 18,
                   y: 66,
-                  color: '#10b981',
-                  glow: '#34d399',
-                  icon: '🌴',
+                  stage: 1,
                   label: lang === 'th' ? 'เกาะมรกต' : 'Emerald Haven'
                 },
                 {
                   id: 'island_coral_sanctuary',
                   x: 37,
                   y: 38,
-                  color: '#06b6d4',
-                  glow: '#22d3ee',
-                  icon: '🪸',
-                  label: lang === 'th' ? 'รังปะการัง' : 'Coral Lagoon'
+                  stage: 2,
+                  label: lang === 'th' ? 'รังปะการังเรืองแสง' : 'Coral Lagoon'
                 },
                 {
                   id: 'island_volcanic_atoll',
                   x: 58,
                   y: 70,
-                  color: '#ef4444',
-                  glow: '#f97316',
-                  icon: '🌋',
-                  label: lang === 'th' ? 'ภูเขาไฟ' : 'Volcanic Atoll'
+                  stage: 3,
+                  label: lang === 'th' ? 'อ่าวภูเขาไฟลาวา' : 'Volcanic Atoll'
                 },
                 {
                   id: 'island_aurora_fjord',
                   x: 76,
                   y: 32,
-                  color: '#a855f7',
-                  glow: '#c084fc',
-                  icon: '❄️',
-                  label: lang === 'th' ? 'ธารออโรร่า' : 'Aurora Fjord'
+                  stage: 4,
+                  label: lang === 'th' ? 'ธารน้ำแข็งออโรร่า' : 'Aurora Fjord'
                 },
                 {
                   id: 'island_celestial_archipelago',
                   x: 88,
                   y: 58,
-                  color: '#f59e0b',
-                  glow: '#fbbf24',
-                  icon: '✨',
+                  stage: 5,
                   label: lang === 'th' ? 'แดนดาราสวรรค์' : 'Celestial Void'
                 }
-              ].map((node, idx) => {
+              ].map((node) => {
                 const isle = ALL_ISLANDS.find((i) => i.id === node.id)!;
                 const isCurrent = fishingState.currentIslandId === node.id;
                 const isUnlocked = fishingState.unlockedIslandIds.includes(node.id);
@@ -2334,61 +2362,75 @@ const CostumeDetailModal: React.FC<{
                       setSelectedIslandId(node.id);
                     }}
                     style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 group transition-transform ${
-                      isSelected ? 'scale-125 z-20' : 'hover:scale-110 z-10'
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 group transition-all duration-300 ${
+                      isSelected ? 'scale-115 z-30' : 'hover:scale-105 z-10'
                     }`}
                   >
-                    {/* Refined Calm Anchor Ring (No wide blinding ping) */}
+                    {/* Golden Anchor Beacon Aura for Current Island */}
                     {isCurrent && (
-                      <span className="absolute -inset-1 rounded-full border-2 border-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.45)] pointer-events-none" />
+                      <span className="absolute -inset-2 rounded-full border-2 border-amber-400/90 shadow-[0_0_16px_rgba(251,191,36,0.6)] animate-pulse pointer-events-none" />
                     )}
 
-                    {/* Island Pin Body */}
+                    {/* Cameo Medallion Frame with Actual Painted Background */}
                     <div
-                      className={`relative w-11 h-11 sm:w-13 sm:h-13 rounded-full flex flex-col items-center justify-center border-2 transition shadow-xl ${
+                      className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 transition-all shadow-[0_8px_18px_rgba(0,0,0,0.85)] ${
                         isCurrent
-                          ? 'border-amber-400 bg-amber-950/80 ring-4 ring-amber-400/30'
+                          ? 'border-amber-300 ring-4 ring-amber-400/40'
                           : isSelected
-                          ? 'border-cyan-400 bg-cyan-950/90 ring-4 ring-cyan-400/40'
+                          ? 'border-sky-300 ring-4 ring-sky-400/50 scale-105'
                           : isUnlocked
-                          ? 'border-white/40 bg-black/75 hover:border-cyan-400'
-                          : 'border-white/20 bg-black/80 opacity-60'
+                          ? 'border-[#d4af37] hover:border-amber-300'
+                          : 'border-stone-600 opacity-60'
                       }`}
                     >
-                      <span className="text-base sm:text-lg select-none">{node.icon}</span>
+                      <img
+                        src={`/assets/fishing/backgrounds/${node.id}.jpg`}
+                        alt={node.label}
+                        className={`w-full h-full object-cover transition duration-300 ${
+                          !isUnlocked ? 'grayscale contrast-125' : 'group-hover:scale-110'
+                        }`}
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-                      {/* Status indicator badge */}
+                      {/* Status Badge */}
                       {isCurrent ? (
-                        <span className="absolute -top-1 -right-1 p-0.5 rounded-full bg-amber-400 text-black">
+                        <span className="absolute top-0 right-0 p-1 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-black shadow-md border border-amber-200">
                           <Anchor className="w-3 h-3" />
                         </span>
                       ) : !isUnlocked ? (
-                        <span className="absolute -top-1 -right-1 p-0.5 rounded-full bg-zinc-700 text-zinc-300">
+                        <span className="absolute top-0 right-0 p-1 rounded-full bg-stone-900 text-stone-300 shadow-md border border-stone-600">
                           <Lock className="w-3 h-3" />
                         </span>
-                      ) : null}
+                      ) : (
+                        <span className="absolute top-0 right-0 p-0.5 px-1 rounded-full bg-emerald-600 text-white shadow-md border border-emerald-300 text-[8px] font-bold">
+                          ✓
+                        </span>
+                      )}
                     </div>
 
-                    {/* Island Label Pill */}
+                    {/* Fantasy Ribbon Name Banner */}
                     <div
-                      className={`mt-1.5 px-2 py-0.5 rounded text-[10px] font-extrabold whitespace-nowrap border shadow transition ${
+                      className={`mt-1.5 px-2 sm:px-2.5 py-0.5 rounded text-[10px] sm:text-[11px] font-black whitespace-nowrap shadow-lg transition-all border flex items-center justify-center gap-1 ${
                         isCurrent
-                          ? 'bg-amber-500/20 border-amber-400 text-amber-300'
+                          ? 'bg-gradient-to-r from-[#92400e] via-[#b45309] to-[#92400e] border-[#fef08a] text-[#fffbeb] ring-1 ring-amber-400/40'
                           : isSelected
-                          ? 'bg-cyan-500/30 border-cyan-400 text-cyan-200'
+                          ? 'bg-gradient-to-r from-[#0369a1] via-[#0284c7] to-[#0369a1] border-[#bae6fd] text-white ring-2 ring-sky-400/50'
                           : isUnlocked
-                          ? 'bg-black/80 border-white/20 text-zinc-200'
-                          : 'bg-black/80 border-white/10 text-zinc-500'
+                          ? 'bg-gradient-to-r from-[#292524] to-[#1c1917] border-[#d6d3d1]/40 text-[#f5f5f4]'
+                          : 'bg-black/85 border-stone-800 text-stone-500'
                       }`}
                     >
-                      <span>Stage {idx + 1}: {node.label}</span>
+                      <span>เกาะที่ {node.stage} : {node.label}</span>
                     </div>
                   </button>
                 );
               })}
             </div>
 
-            {/* Selected Island Inspection Panel */}
+            {/* Selected Island Inspection Panel (Captain's Log Dossier) */}
             {(() => {
               const curId = selectedIslandId || fishingState.currentIslandId;
               const isle = ALL_ISLANDS.find((i) => i.id === curId) || ALL_ISLANDS[0];
@@ -2398,9 +2440,9 @@ const CostumeDetailModal: React.FC<{
               const canUnlockNow = !isUnlocked && reqCheck.unlocked;
 
               return (
-                <div className="bg-black/60 border border-white/10 p-4 sm:p-5 flex flex-col md:flex-row gap-4 items-stretch" style={CUT_STYLE}>
+                <div className="bg-gradient-to-b from-[#1e1713] to-[#120d0a] border-2 border-[#b45309]/60 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row gap-5 items-stretch shadow-2xl">
                   {/* Island Biome Preview Banner */}
-                  <div className="relative w-full md:w-56 h-36 rounded overflow-hidden border border-white/15 flex-shrink-0 bg-black">
+                  <div className="relative w-full md:w-60 h-40 rounded-lg overflow-hidden border-2 border-[#c29b38] flex-shrink-0 shadow-lg bg-black">
                     <img
                       src={`/assets/fishing/backgrounds/${isle.id}.jpg`}
                       alt={isle.nameEn}
@@ -2409,14 +2451,14 @@ const CostumeDetailModal: React.FC<{
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/75 border border-white/20 text-[10px] font-mono font-bold text-cyan-400">
-                      STAGE {isle.order}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded bg-black/80 border border-[#d4af37] text-[10px] font-black text-[#fde68a] shadow">
+                      เกาะที่ {isle.order}
                     </div>
                     {isCurrent && (
-                      <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-amber-500/90 text-black text-[10px] font-extrabold flex items-center gap-1">
-                        <Anchor className="w-3 h-3" />
-                        <span>{lang === 'th' ? 'ประจำการอยู่' : 'CURRENT'}</span>
+                      <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[11px] font-black flex items-center gap-1 shadow-md">
+                        <Anchor className="w-3.5 h-3.5" />
+                        <span>{lang === 'th' ? 'ประจำการอยู่' : 'ANCHORED'}</span>
                       </div>
                     )}
                   </div>
@@ -2424,34 +2466,38 @@ const CostumeDetailModal: React.FC<{
                   {/* Island Details & Lore */}
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="text-base font-extrabold text-white">
-                          {lang === 'th' ? isle.nameTh : isle.nameEn}
+                      <div className="flex items-center justify-between mb-1.5 border-b border-[#b45309]/30 pb-1.5">
+                        <h4 className="text-lg font-serif font-black text-[#fef08a] flex items-center gap-2">
+                          <span>{lang === 'th' ? isle.nameTh : isle.nameEn}</span>
                         </h4>
-                        <span className="text-xs text-cyan-400 font-bold">
+                        <span className="text-xs text-amber-400/90 font-bold">
                           {lang === 'th' ? isle.subtitleTh : isle.subtitleEn}
                         </span>
                       </div>
-                      <p className="text-xs text-zinc-300 leading-relaxed mb-3">
+                      <p className="text-xs text-[#ded7c8] leading-relaxed mb-3">
                         {lang === 'th' ? isle.descriptionTh : isle.descriptionEn}
                       </p>
 
-                      {/* Endemic Fish Pool Preview */}
+                      {/* Endemic Fish Specimen Badges */}
                       <div className="mb-3">
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">
-                          {lang === 'th' ? 'สัตว์น้ำประจำถิ่น (Endemic Species):' : 'Endemic Species:'}
+                        <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider block mb-1.5">
+                          {lang === 'th' ? '🐟 สัตว์น้ำประจำถิ่น (Endemic Marine Species):' : 'Endemic Species:'}
                         </span>
                         <div className="flex flex-wrap gap-1.5">
                           {isle.endemicFishIds.map((fId) => {
                             const f = TWENTY_OCEAN_FISH_SPECIES.find((x: FishSpeciesData) => x.id === fId);
                             if (!f) return null;
+                            const rc = RARITY_CONFIG[f.rarity];
                             return (
                               <span
                                 key={fId}
-                                className="px-2 py-0.5 rounded text-[10px] bg-white/5 border border-white/10 text-zinc-300 flex items-center gap-1"
+                                className="px-2 py-0.5 rounded text-[11px] bg-[#291f17] border border-[#b45309]/50 text-[#fef3c7] flex items-center gap-1.5 shadow-sm"
                               >
                                 <span>{f.category === 'creature' ? '🦑' : '🐟'}</span>
-                                <span>{lang === 'th' ? f.nameTh : f.nameEn}</span>
+                                <span className="font-bold">{lang === 'th' ? f.nameTh : f.nameEn}</span>
+                                <span className={`text-[9px] px-1 rounded font-extrabold ${rc.badgeBg} ${rc.badgeText}`}>
+                                  {f.rarity}
+                                </span>
                               </span>
                             );
                           })}
@@ -2460,24 +2506,24 @@ const CostumeDetailModal: React.FC<{
 
                       {/* Unlock Requirements if Locked */}
                       {!isUnlocked && (
-                        <div className="p-2.5 bg-black/60 border border-white/10 text-xs space-y-1 mb-2">
-                          <div className="text-[10px] font-bold uppercase text-zinc-400">
-                            {lang === 'th' ? 'เงื่อนไขการปลดล็อคเกาะ:' : 'Unlock Requirements:'}
+                        <div className="p-3 bg-[#17110c] border border-[#b45309]/40 rounded-lg text-xs space-y-1 mb-2">
+                          <div className="text-[10px] font-black uppercase text-amber-400">
+                            {lang === 'th' ? 'เงื่อนไขการปลดล็อคเส้นทางเดินเรือ:' : 'Unlock Requirements:'}
                           </div>
                           <div className={`flex items-center justify-between ${fishingState.anglerLevel >= isle.requiredLevel ? 'text-emerald-400' : 'text-zinc-500'}`}>
                             <span>• {lang === 'th' ? 'เลเวลนักตกปลา' : 'Angler Level'} {isle.requiredLevel}</span>
-                            <span>{fishingState.anglerLevel} / {isle.requiredLevel}</span>
+                            <span className="font-mono font-bold">{fishingState.anglerLevel} / {isle.requiredLevel}</span>
                           </div>
                           {isle.requiredCoins > 0 && (
                             <div className={`flex items-center justify-between ${fishingState.seaCoins >= isle.requiredCoins ? 'text-emerald-400' : 'text-zinc-500'}`}>
                               <span>• {lang === 'th' ? 'เหรียญทะเล' : 'Coins'} {isle.requiredCoins.toLocaleString()}</span>
-                              <span>{fishingState.seaCoins.toLocaleString()}</span>
+                              <span className="font-mono font-bold">{fishingState.seaCoins.toLocaleString()}</span>
                             </div>
                           )}
                           {isle.requiredRodId && (
                             <div className={`flex items-center justify-between ${fishingState.ownedRodIds.includes(isle.requiredRodId) ? 'text-emerald-400' : 'text-zinc-500'}`}>
                               <span>• {rodName(FISHING_RODS_CATALOG.find((r) => r.id === isle.requiredRodId) || FISHING_RODS_CATALOG[0], lang)}</span>
-                              <span>{fishingState.ownedRodIds.includes(isle.requiredRodId) ? '✓' : '✗'}</span>
+                              <span>{fishingState.ownedRodIds.includes(isle.requiredRodId) ? '✓ ครบถ้วน' : '✗ ขาดคันเบ็ดนี้'}</span>
                             </div>
                           )}
                         </div>
@@ -2487,8 +2533,8 @@ const CostumeDetailModal: React.FC<{
                     {/* Action Button */}
                     <div className="pt-2">
                       {isCurrent ? (
-                        <div className="text-center py-2 text-xs font-bold text-amber-300 border border-amber-500/40 bg-amber-950/40">
-                          {lang === 'th' ? '⚓ ปัจจุบันกำลังตกปลาอยู่ที่เกาะนี้' : '⚓ Currently Anchored at this Island'}
+                        <div className="text-center py-2.5 rounded-lg text-xs font-black text-[#fef08a] border-2 border-[#b45309]/50 bg-[#251b14] shadow-inner">
+                          {lang === 'th' ? '⚓ ปัจจุบันกำลังทอดสมอตกปลาอยู่ที่เกาะนี้' : '⚓ Currently Anchored at this Island'}
                         </div>
                       ) : isUnlocked ? (
                         <button
@@ -2504,11 +2550,10 @@ const CostumeDetailModal: React.FC<{
                             );
                             setIsIslandMapOpen(false);
                           }}
-                          className="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-500 hover:to-sky-500 text-white font-extrabold text-xs tracking-wider uppercase transition shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2"
-                          style={CUT_STYLE}
+                          className="w-full py-3 rounded-lg font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#075985] hover:from-[#38bdf8] hover:to-[#0284c7] text-[#f0f9ff] border-2 border-[#bae6fd] shadow-[0_4px_0_#082f49,0_8px_16px_rgba(0,0,0,0.6)] active:translate-y-1 active:shadow-[0_1px_0_#082f49] flex items-center justify-center gap-2"
                         >
-                          <Compass className="w-4 h-4" />
-                          <span>{lang === 'th' ? `ออกเรือเดินทางสู่ ${isle.nameTh}` : `Set Sail to ${isle.nameEn}`}</span>
+                          <Compass className="w-4 h-4 text-cyan-200" />
+                          <span>{lang === 'th' ? `⛵ กางใบเรือออกสำรวจ ${isle.nameTh} (SET SAIL)` : `⛵ Set Sail to ${isle.nameEn}`}</span>
                         </button>
                       ) : canUnlockNow ? (
                         <button
@@ -2529,24 +2574,22 @@ const CostumeDetailModal: React.FC<{
                             );
                             setIsIslandMapOpen(false);
                           }}
-                          className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs tracking-wider uppercase transition shadow-lg shadow-amber-500/20 animate-pulse flex items-center justify-center gap-2"
-                          style={CUT_STYLE}
+                          className="w-full py-3 rounded-lg font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_4px_0_#78350f,0_8px_16px_rgba(0,0,0,0.6)] active:translate-y-1 active:shadow-[0_1px_0_#78350f] animate-pulse flex items-center justify-center gap-2"
                         >
-                          <Sparkles className="w-4 h-4" />
+                          <Sparkles className="w-4 h-4 text-amber-200" />
                           <span>
                             {lang === 'th'
-                              ? `ปลดล็อคเกาะและออกเดินทาง (${isle.requiredCoins.toLocaleString()} เหรียญ)`
-                              : `Unlock & Set Sail (${isle.requiredCoins.toLocaleString()} Coins)`}
+                              ? `✨ ปลดล็อคเส้นทางเดินเรือ & กางใบเรือทันที (${isle.requiredCoins.toLocaleString()} เหรียญ)`
+                              : `✨ Unlock Sea Chart & Set Sail (${isle.requiredCoins.toLocaleString()} Coins)`}
                           </span>
                         </button>
                       ) : (
                         <button
                           disabled
-                          className="w-full py-2 bg-zinc-800 text-zinc-500 font-bold text-xs tracking-wider uppercase cursor-not-allowed flex items-center justify-center gap-2"
-                          style={CUT_STYLE}
+                          className="w-full py-2.5 rounded-lg bg-[#1a1715] text-zinc-500 border border-zinc-700/50 font-bold text-xs tracking-wider uppercase cursor-not-allowed flex items-center justify-center gap-2"
                         >
                           <Lock className="w-3.5 h-3.5" />
-                          <span>{lang === 'th' ? 'ยังไม่ผ่านเงื่อนไขการปลดล็อค' : 'Requirements Unmet (Locked)'}</span>
+                          <span>{lang === 'th' ? '🔒 ยังไม่ผ่านเงื่อนไขการเดินเรือของสมาคม' : 'Requirements Unmet (Locked)'}</span>
                         </button>
                       )}
                     </div>
@@ -2558,8 +2601,8 @@ const CostumeDetailModal: React.FC<{
         </Modal>
       )}
 
-      {/* JRPG HUD Header */}
-      <header className="border-b border-white/10 bg-[#0a0a0e]/95 backdrop-blur-md px-4 lg:px-8 py-2.5 flex items-center justify-between gap-3 sticky top-0 z-30">
+      {/* Fantasy Adventurer Guild HUD Header */}
+      <header className="border-b-2 border-[#b8860b]/40 bg-gradient-to-r from-[#0b1320]/95 via-[#121f33]/95 to-[#0b1320]/95 backdrop-blur-md px-4 lg:px-8 py-2.5 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-lg">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -2567,79 +2610,78 @@ const CostumeDetailModal: React.FC<{
               onBackToPortal();
             }}
             title={t.home}
-            className="p-2 border border-white/10 hover:border-[#ff4655] hover:text-[#ff4655] text-zinc-400 transition"
-            style={CUT_STYLE}
+            className="p-2 rounded-lg border border-[#b8860b]/40 bg-[#162235] hover:border-amber-400 hover:text-amber-300 text-zinc-300 transition shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-2">
-            <Anchor className="w-4 h-4 text-[#ff4655]" />
-            <span className="text-sm font-bold tracking-[0.2em] uppercase">Espician <span className="text-[#ff4655]">Fishing</span></span>
+            <Anchor className="w-4 h-4 text-amber-400" />
+            <span className="text-sm font-serif font-black tracking-wider text-[#fef08a] uppercase drop-shadow">
+              Espician <span className="text-amber-400">Fishing</span>
+            </span>
           </div>
 
-          {/* Integrated Nautical Island & Day/Night Breadcrumb */}
-          <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-white/10">
+          {/* Integrated Nautical Island & Day/Night Talisman */}
+          <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-[#b8860b]/30">
             <button
               onClick={() => {
                 soundEngine.playClick();
                 setIsIslandMapOpen(true);
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-sky-950/60 to-cyan-950/60 border border-cyan-400/50 hover:border-cyan-300 text-cyan-200 text-xs font-bold tracking-wider uppercase transition shadow-sm hover:shadow-cyan-500/20"
-              style={CUT_STYLE}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-b from-[#1e293b] to-[#0f172a] border-2 border-[#fbbf24]/70 hover:border-[#fde68a] text-[#fef3c7] text-xs font-bold tracking-wider uppercase transition shadow-[0_3px_0_#090d16,0_4px_10px_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none"
               title={lang === 'th' ? 'เปิดแผนที่เดินเรือหมู่เกาะ' : 'Open Nautical Sea Chart'}
             >
-              <Compass className="w-3.5 h-3.5 text-cyan-400 animate-spin-slow" />
+              <Compass className="w-4 h-4 text-amber-300 animate-spin-slow" />
               <span>{lang === 'th' ? currentIsland.nameTh : currentIsland.nameEn}</span>
-              <span className="text-[9px] text-cyan-400/70 font-mono">// 海図</span>
+              <span className="text-[10px] text-amber-400/80 font-serif">⚓ แผนที่</span>
             </button>
 
             <div
-              className={`flex items-center gap-1.5 px-2.5 py-1 border text-xs font-mono font-bold tracking-wider shadow-sm transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-bold tracking-wider shadow-sm transition ${
                 realTimeOfDay === 'day'
-                  ? 'border-amber-400/40 bg-amber-950/30 text-amber-300'
-                  : 'border-indigo-400/40 bg-indigo-950/30 text-indigo-200'
+                  ? 'border-amber-400/60 bg-amber-950/40 text-amber-300'
+                  : 'border-indigo-400/60 bg-indigo-950/40 text-indigo-200'
               }`}
-              style={CUT_STYLE}
             >
               <span className={`w-2 h-2 rounded-full animate-pulse ${realTimeOfDay === 'day' ? 'bg-amber-400' : 'bg-cyan-400'}`} />
-              <span>{realTimeOfDay === 'day' ? '☀️ DAY' : '🌙 NIGHT'}</span>
+              <span>{realTimeOfDay === 'day' ? '☀️ กลางวัน (DAY)' : '🌙 กลางคืน (NIGHT)'}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="text-xs font-bold text-white tracking-wider">LV {fishingState.anglerLevel}</span>
-            <div className="w-16 sm:w-24 h-[3px] bg-white/10">
+          <div className="flex items-center gap-2.5 bg-black/40 px-3 py-1.5 rounded-lg border border-[#b8860b]/30">
+            <span className="text-xs font-serif font-black text-amber-300 tracking-wider">RANK {fishingState.anglerLevel}</span>
+            <div className="w-16 sm:w-24 h-2 bg-black/60 rounded-full overflow-hidden border border-white/10">
               <div
-                className="h-full bg-[#ff4655] transition-all duration-500"
+                className="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-500 rounded-full"
                 style={{ width: `${Math.min(100, (fishingState.anglerExp / expForNextLevel) * 100)}%` }}
               />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-amber-300">
-            <Coins className="w-4 h-4" />
-            <span className="text-sm font-bold font-mono">{fishingState.seaCoins.toLocaleString()}</span>
+          <div className="flex items-center gap-1.5 text-amber-300 bg-amber-950/30 px-3 py-1.5 rounded-lg border border-amber-500/40 shadow-inner">
+            <Coins className="w-4 h-4 text-amber-400" />
+            <span className="text-sm font-bold font-mono text-[#fef08a]">{fishingState.seaCoins.toLocaleString()}</span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-zinc-400">
-            <BookOpen className="w-4 h-4" />
-            <span className="text-xs font-semibold">
+          <div className="hidden sm:flex items-center gap-1.5 text-zinc-300 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/10">
+            <BookOpen className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs font-bold font-mono">
               {discoveredCount}/{TOTAL_SPECIES}
             </span>
           </div>
 
           {/* Central User Account Badge */}
-          <div className="hidden md:flex items-center gap-2 pl-3 border-l border-white/10">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#ff4655] to-amber-400 flex items-center justify-center text-[10px] font-bold text-white uppercase shadow-sm">
+          <div className="hidden md:flex items-center gap-2 pl-3 border-l border-[#b8860b]/30">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 border border-amber-200 flex items-center justify-center text-[11px] font-black text-black uppercase shadow-md">
               {currentUser?.username?.[0] || 'U'}
             </div>
             <div className="text-left">
               <div className="text-[11px] font-bold text-white leading-tight flex items-center gap-1">
                 <span>{currentUser?.username || (userEmail ? userEmail.split('@')[0] : 'Guest Angler')}</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" title="Cloud Synced" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" title="Cloud Synced" />
               </div>
-              <div className="text-[9px] text-zinc-400 tracking-wider font-mono">
-                {currentUser?.club_name || 'Espician Main Account'}
+              <div className="text-[9px] text-amber-400/70 tracking-wider font-mono">
+                {currentUser?.club_name || 'Espician Guild'}
               </div>
             </div>
           </div>
@@ -2652,8 +2694,7 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setShowAdminModal(true);
                 }}
-                className="px-2 py-1 border border-amber-500/80 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-mono font-bold tracking-wider uppercase transition shadow-[0_0_8px_rgba(245,158,11,0.25)] animate-pulse"
-                style={CUT_STYLE}
+                className="px-2.5 py-1 rounded-md border-2 border-amber-400 bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-[10px] font-black tracking-wider uppercase transition shadow-md animate-pulse"
               >
                 ⚡ ADMIN
               </button>
@@ -2661,8 +2702,7 @@ const CostumeDetailModal: React.FC<{
             <button
               onClick={toggleLang}
               title={t.language}
-              className="px-2 py-1 border border-white/15 hover:border-[#ff4655] text-xs font-extrabold tracking-wider text-zinc-200 hover:text-[#ff4655] transition"
-              style={CUT_STYLE}
+              className="px-2.5 py-1 rounded-md border border-[#b8860b]/50 bg-[#162235] hover:border-amber-400 text-xs font-black tracking-wider text-amber-200 transition"
             >
               {lang.toUpperCase()}
             </button>
@@ -2672,14 +2712,13 @@ const CostumeDetailModal: React.FC<{
                 soundEngine.playClick();
               }}
               title={t.muteAll}
-              className={`p-1.5 border transition ${
+              className={`p-1.5 rounded-md border transition ${
                 soundSettings.muted
-                  ? 'border-[#ff4655]/60 text-[#ff4655] bg-[#ff4655]/10'
-                  : 'border-white/15 text-zinc-300 hover:border-[#ff4655] hover:text-white'
+                  ? 'border-rose-500 text-rose-400 bg-rose-950/40'
+                  : 'border-[#b8860b]/50 bg-[#162235] text-zinc-300 hover:border-amber-400 hover:text-white'
               }`}
-              style={CUT_STYLE}
             >
-              {soundSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              {soundSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-300" />}
             </button>
             <button
               onClick={() => {
@@ -2687,8 +2726,7 @@ const CostumeDetailModal: React.FC<{
                 setShowSettingsModal(true);
               }}
               title={t.settingsTitle}
-              className="p-1.5 border border-white/15 text-zinc-300 hover:border-[#ff4655] hover:text-[#ff4655] transition"
-              style={CUT_STYLE}
+              className="p-1.5 rounded-md border border-[#b8860b]/50 bg-[#162235] text-zinc-300 hover:border-amber-400 hover:text-amber-300 transition"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -2708,8 +2746,7 @@ const CostumeDetailModal: React.FC<{
             ).length;
             return (
               <div
-                style={CUT_STYLE}
-                className="p-3 bg-black/95 border border-purple-500/50 rounded flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-300 shadow-2xl"
+                className="p-3 bg-gradient-to-r from-[#170e24] to-[#0c0814] border-2 border-purple-500/50 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-300 shadow-2xl"
               >
                 <div className="flex items-center gap-3.5 flex-wrap">
                   <span className="text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -2734,7 +2771,7 @@ const CostumeDetailModal: React.FC<{
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold border ${
+                    className={`px-2 py-0.5 text-[10px] font-bold border rounded ${
                       isAutoFishing
                         ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)]'
                         : 'border-white/10 bg-white/5 text-zinc-400'
@@ -2747,7 +2784,7 @@ const CostumeDetailModal: React.FC<{
                       setPityBonus(0);
                       notify('Pity bonus reset to 0%', 'info');
                     }}
-                    className="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] border border-white/15"
+                    className="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] border border-white/15 rounded"
                   >
                     Reset Pity
                   </button>
@@ -2756,7 +2793,7 @@ const CostumeDetailModal: React.FC<{
             );
           })()}
 
-          <div className="relative overflow-hidden border border-white/10 bg-black aspect-[16/9]" style={CUT_STYLE}>
+          <div className="relative overflow-hidden border-2 border-[#b8860b]/50 rounded-xl bg-black aspect-[16/9] shadow-2xl">
             <canvas
               ref={mainCanvasRef}
               width={960}
@@ -2773,26 +2810,24 @@ const CostumeDetailModal: React.FC<{
               <div className="absolute bottom-4 inset-x-0 flex justify-center z-10">
                 <button
                   onClick={skipEntranceCutscene}
-                  style={CUT_STYLE}
-                  className="px-6 py-2.5 bg-black/80 backdrop-blur-md border border-[#ff4655]/50 text-white font-bold text-xs tracking-wide shadow-xl flex items-center gap-2 hover:bg-[#ff4655]/20 transition animate-pulse"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-[#2a1e16] to-[#140e0a] border-2 border-[#f59e0b]/70 text-[#fef3c7] font-serif font-black text-xs tracking-wide shadow-2xl flex items-center gap-2 hover:border-[#fde68a] transition animate-pulse"
                 >
                   <span>🚶 {t.arrivingAtPier}</span>
                 </button>
               </div>
             )}
 
-            {/* Top-Left Tactical Loadout Capsule: Rod & Bait */}
+            {/* Top-Left Tactical Loadout Tackle Belt: Rod & Bait */}
             <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
               <button
                 onClick={() => {
                   soundEngine.playClick();
                   setDetail({ kind: 'rod', id: equippedRod.id });
                 }}
-                className="bg-[#07070a]/90 backdrop-blur-md border border-white/15 hover:border-[#ff4655] px-3 py-1.5 flex items-center gap-2 text-xs transition shadow-lg"
-                style={CUT_STYLE}
+                className="bg-gradient-to-b from-[#1c1612]/95 to-[#100d0a]/95 backdrop-blur-md border-2 border-[#b8860b]/60 hover:border-amber-300 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs transition shadow-lg"
               >
-                <span className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: equippedRod.rodColor }} />
-                <span className="font-extrabold text-white tracking-wide">{rodName(equippedRod, lang)}</span>
+                <span className="w-2.5 h-2.5 rounded-full shadow-sm ring-1 ring-white/40" style={{ backgroundColor: equippedRod.rodColor }} />
+                <span className="font-extrabold text-[#fef08a] tracking-wide">{rodName(equippedRod, lang)}</span>
               </button>
 
               <button
@@ -2802,30 +2837,30 @@ const CostumeDetailModal: React.FC<{
                   const nextBait = ownedBaits[(idx + 1) % ownedBaits.length];
                   if (nextBait) equipBait(nextBait.id);
                 }}
-                className="bg-[#07070a]/90 backdrop-blur-md border border-white/15 hover:border-cyan-400 px-3 py-1.5 flex items-center gap-2 text-xs transition text-zinc-300 hover:text-white shadow-lg"
-                style={CUT_STYLE}
+                className="bg-gradient-to-b from-[#1c1612]/95 to-[#100d0a]/95 backdrop-blur-md border-2 border-[#b8860b]/60 hover:border-amber-300 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs transition text-zinc-300 hover:text-white shadow-lg"
                 title={lang === 'th' ? 'คลิกเพื่อสลับเหยื่อตกปลา' : 'Click to cycle bait'}
               >
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: equippedBait.iconColor }} />
-                <span className="font-bold text-xs">{baitName(equippedBait, lang)}</span>
-                <span className="font-mono text-[10px] text-amber-400">
+                <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white/40" style={{ backgroundColor: equippedBait.iconColor }} />
+                <span className="font-bold text-xs text-[#fef3c7]">{baitName(equippedBait, lang)}</span>
+                <span className="font-mono font-bold text-[10px] text-amber-400">
                   {baitCount(equippedBait) === Infinity ? '∞' : `x${baitCount(equippedBait)}`}
                 </span>
-                <span className="text-[9px] text-zinc-500 font-mono">▾</span>
+                <span className="text-[10px] text-amber-300 font-mono">▾</span>
               </button>
             </div>
 
-            {/* Top-Right SAO Tactical Micro-Cluster */}
+            {/* Top-Right Brass Mechanical Toggles */}
             <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
               <button
                 onClick={() => {
                   soundEngine.playClick();
                   setFastMode((v) => !v);
                 }}
-                className={`px-2.5 py-1 text-[11px] font-mono font-bold tracking-wider border backdrop-blur-md transition ${
-                  fastMode ? 'border-amber-400 bg-amber-400/25 text-amber-300 shadow-sm' : 'border-white/10 bg-black/60 text-zinc-400 hover:text-white'
+                className={`px-3 py-1 rounded-md text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition ${
+                  fastMode
+                    ? 'border-amber-400 bg-amber-400/30 text-amber-300 shadow-md'
+                    : 'border-[#b8860b]/50 bg-black/70 text-zinc-400 hover:text-white'
                 }`}
-                style={CUT_STYLE}
                 title={t.fastMode}
               >
                 ⚡ FAST
@@ -2835,10 +2870,11 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setAutoReel((v) => !v);
                 }}
-                className={`px-2.5 py-1 text-[11px] font-mono font-bold tracking-wider border backdrop-blur-md transition ${
-                  autoReel ? 'border-emerald-400 bg-emerald-400/25 text-emerald-300 shadow-sm' : 'border-white/10 bg-black/60 text-zinc-400 hover:text-white'
+                className={`px-3 py-1 rounded-md text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition ${
+                  autoReel
+                    ? 'border-emerald-400 bg-emerald-400/30 text-emerald-300 shadow-md'
+                    : 'border-[#b8860b]/50 bg-black/70 text-zinc-400 hover:text-white'
                 }`}
-                style={CUT_STYLE}
                 title={t.autoReel}
               >
                 🤖 AUTO
@@ -2848,10 +2884,11 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setViewMode((v) => (v === 'user' ? 'dev' : 'user'));
                 }}
-                className={`px-2 py-1 text-[10px] font-mono font-bold border backdrop-blur-md transition ${
-                  viewMode === 'dev' ? 'border-purple-400 bg-purple-950/60 text-purple-300 shadow-sm' : 'border-white/10 bg-black/60 text-zinc-400 hover:text-white'
+                className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold border-2 backdrop-blur-md transition ${
+                  viewMode === 'dev'
+                    ? 'border-purple-400 bg-purple-950/70 text-purple-300 shadow-md'
+                    : 'border-[#b8860b]/50 bg-black/70 text-zinc-400 hover:text-white'
                 }`}
-                style={CUT_STYLE}
                 title="Toggle Dev Formula Stats"
               >
                 {viewMode === 'dev' ? '🔬 DEV' : '🎮 RPG'}
@@ -2866,8 +2903,7 @@ const CostumeDetailModal: React.FC<{
                   playEntranceCutscene();
                 }}
                 title={t.replayEntrance}
-                className="absolute bottom-4 left-4 z-10 px-2.5 py-1.5 bg-black/70 hover:bg-black/90 border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white text-xs font-mono transition flex items-center gap-1 shadow-md"
-                style={CUT_STYLE}
+                className="absolute bottom-4 left-4 z-10 px-3 py-1.5 rounded-lg bg-black/80 hover:bg-black/95 border-2 border-[#b8860b]/50 text-amber-200 hover:text-white text-xs font-serif transition flex items-center gap-1.5 shadow-lg"
               >
                 <span>🚶 {lang === 'th' ? 'เดินเข้าสะพาน' : 'Walk'}</span>
               </button>
@@ -2878,19 +2914,18 @@ const CostumeDetailModal: React.FC<{
                 {/* Atmospheric Bite Waiting Pill without exposing roll timers */}
                 <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-10 px-4">
                   <div
-                    style={CUT_STYLE}
-                    className="pointer-events-auto px-4 py-2 bg-black/85 backdrop-blur-md border border-cyan-500/30 text-xs text-white shadow-2xl flex items-center gap-2.5"
+                    className="pointer-events-auto px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#1a1410]/95 to-[#0e0b08]/95 backdrop-blur-md border-2 border-[#b8860b]/60 text-xs text-[#fef3c7] shadow-2xl flex items-center gap-3"
                   >
-                    <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                      <span>{lang === 'th' ? 'สายเบ็ดลอยในกระแสน้ำ...' : 'Line drifting in ocean current...'}</span>
+                    <div className="flex items-center gap-2 text-amber-300 font-semibold">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#f59e0b]" />
+                      <span>{lang === 'th' ? '🌊 สายเบ็ดลอยในกระแสน้ำ...' : 'Line drifting in ocean current...'}</span>
                     </div>
                     {pityBonus > 0 && (
                       <>
-                        <div className="h-3 w-px bg-white/20" />
-                        <div className="text-emerald-400 font-semibold text-[11px] flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 text-emerald-400 animate-pulse" />
-                          <span>{lang === 'th' ? 'ผิวน้ำกระเพื่อม... ปลาระแวงเริ่มสนใจ' : 'Water ripples... fish showing interest'}</span>
+                        <div className="h-3.5 w-px bg-amber-500/30" />
+                        <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
+                          <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                          <span>{lang === 'th' ? '✨ ผิวน้ำกระเพื่อม... ปลาระแวงเริ่มสนใจ' : 'Water ripples... fish showing interest'}</span>
                         </div>
                       </>
                     )}
@@ -2901,12 +2936,11 @@ const CostumeDetailModal: React.FC<{
                   <button
                     onClick={handleJerk}
                     disabled={jerkCooling}
-                    className="relative overflow-hidden px-6 py-3 bg-[#ff4655] hover:bg-[#ff5d6a] disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold text-sm shadow-xl transition active:scale-95 flex items-center gap-2"
-                    style={CUT_STYLE}
+                    className="relative overflow-hidden px-6 py-3 rounded-xl font-black text-sm tracking-wide transition-all bg-gradient-to-b from-[#b45309] via-[#92400e] to-[#78350f] hover:from-[#d97706] hover:to-[#92400e] disabled:from-zinc-800 disabled:to-zinc-900 border-2 border-[#fde68a] disabled:border-zinc-700 text-[#fffbeb] shadow-[0_4px_0_#451a03,0_8px_16px_rgba(0,0,0,0.6)] active:translate-y-1 active:shadow-none flex items-center gap-2"
                   >
-                    <Waves className="w-4 h-4" />
-                    {t.jerkRod}
-                    {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-white/80" style={{ animation: 'cool 3.5s linear forwards' }} />}
+                    <Waves className="w-4 h-4 text-[#fde68a]" />
+                    <span>{t.jerkRod}</span>
+                    {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-[#fde68a]" style={{ animation: 'cool 3.5s linear forwards' }} />}
                   </button>
                 </div>
               </>
@@ -2916,10 +2950,10 @@ const CostumeDetailModal: React.FC<{
               <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-none">
                 <button
                   onClick={startReeling}
-                  style={{ animation: 'hookPulse .5s ease-in-out infinite', ...CUT_STYLE }}
-                  className="pointer-events-auto px-12 py-4 bg-[#ff4655] text-white font-extrabold text-lg shadow-2xl shadow-[#ff4655]/40"
+                  className="pointer-events-auto px-14 py-4 rounded-xl font-black text-xl tracking-wider uppercase transition-all bg-gradient-to-b from-[#ef4444] via-[#dc2626] to-[#991b1b] hover:from-[#f87171] hover:to-[#b91c1c] text-white border-2 border-[#fca5a5] shadow-[0_6px_0_#450a0a,0_12px_24px_rgba(0,0,0,0.8)] active:translate-y-1.5 active:shadow-[0_1px_0_#450a0a] animate-bounce flex items-center gap-3"
                 >
-                  {t.pullHook}
+                  <Sparkles className="w-6 h-6 text-amber-300 animate-spin" />
+                  <span>{t.pullHook}</span>
                 </button>
               </div>
             )}
@@ -2931,28 +2965,27 @@ const CostumeDetailModal: React.FC<{
             )}
 
             {phase === 'CATCH_REVEAL' && latestCatch && latestCatchSpecies && (
-              <div className="absolute inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 z-20">
+              <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-20">
                 <div
                   ref={cardRef}
-                  style={CUT_STYLE}
-                  className="bg-[#0b0b10] border border-[#ff4655]/50 p-5 max-w-sm w-full text-center"
+                  className="bg-gradient-to-b from-[#1c1612] via-[#14100d] to-[#0c0907] border-2 border-[#b8860b] rounded-2xl p-5 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,235,165,0.3)]"
                 >
                   <span
                     data-pop
-                    className={`text-[11px] px-3 py-0.5 font-bold border tracking-wider ${RARITY_CONFIG[latestCatchSpecies.rarity].badgeBg} ${RARITY_CONFIG[latestCatchSpecies.rarity].badgeText} ${RARITY_CONFIG[latestCatchSpecies.rarity].borderColor}`}
+                    className={`text-[11px] px-3 py-0.5 rounded-full font-black border tracking-wider ${RARITY_CONFIG[latestCatchSpecies.rarity].badgeBg} ${RARITY_CONFIG[latestCatchSpecies.rarity].badgeText} ${RARITY_CONFIG[latestCatchSpecies.rarity].borderColor}`}
                   >
                     {latestCatchSpecies.rarity.toUpperCase()}
                   </span>
-                  <h3 data-pop className="text-xl font-extrabold text-white mt-2">
+                  <h3 data-pop className="text-xl font-serif font-black text-[#fef08a] mt-2 drop-shadow">
                     {fishName(latestCatchSpecies, lang)}
                   </h3>
-                  <div className="my-2 bg-black/60 border border-white/5 p-2">
+                  <div className="my-2 bg-black/60 border border-[#b8860b]/30 rounded-xl p-2 shadow-inner">
                     <FishPreviewCanvas species={latestCatchSpecies} hueShiftDeg={latestCatch.hueShiftDeg} width={280} height={130} scale={1.3} />
                   </div>
-                  <div data-pop className="text-sm text-zinc-300">
+                  <div data-pop className="text-sm font-semibold text-zinc-300">
                     {latestCatch.weightKg} kg · {latestCatch.sizeTier}
                   </div>
-                  <div data-pop className="text-xs text-amber-300 mb-4">
+                  <div data-pop className="text-xs text-amber-300 mb-4 font-serif">
                     {variantLabel(latestCatch.variantTitle, lang)}
                   </div>
                   <div data-pop className="grid grid-cols-3 gap-2">
@@ -2961,7 +2994,7 @@ const CostumeDetailModal: React.FC<{
                         handleSellFish(latestCatch.uid);
                         setPhase('IDLE_READY');
                       }}
-                      className="py-2.5 bg-[#ff4655] hover:bg-[#ff5d6a] text-white font-bold text-xs"
+                      className="py-2.5 rounded-lg font-black text-xs bg-gradient-to-b from-[#d97706] to-[#92400e] border border-[#fde68a] text-white shadow-[0_3px_0_#451a03] active:translate-y-0.5 active:shadow-none"
                     >
                       {t.sell} {latestCatch.sellPrice.toLocaleString()}
                     </button>
@@ -2971,7 +3004,7 @@ const CostumeDetailModal: React.FC<{
                         setPhase('IDLE_READY');
                         setActiveTab('aquarium');
                       }}
-                      className="py-2.5 border border-white/20 hover:border-white text-zinc-200 font-bold text-xs"
+                      className="py-2.5 rounded-lg font-black text-xs bg-gradient-to-b from-[#0284c7] to-[#075985] border border-[#bae6fd] text-white shadow-[0_3px_0_#082f49] active:translate-y-0.5 active:shadow-none"
                     >
                       {t.aquarium}
                     </button>
@@ -2980,7 +3013,7 @@ const CostumeDetailModal: React.FC<{
                         soundEngine.playClick();
                         setPhase('IDLE_READY');
                       }}
-                      className="py-2.5 border border-white/10 hover:border-white/40 text-zinc-400 font-semibold text-xs"
+                      className="py-2.5 rounded-lg font-bold text-xs bg-gradient-to-b from-[#2a221b] to-[#18130f] border border-[#b45309]/50 text-[#fde68a] shadow-[0_2px_0_#0a0806] active:translate-y-0.5 active:shadow-none"
                     >
                       {t.keep}
                     </button>
@@ -2993,10 +3026,10 @@ const CostumeDetailModal: React.FC<{
               <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none">
                 <button
                   onClick={handleCastLine}
-                  style={CUT_STYLE}
-                  className="pointer-events-auto px-10 py-3.5 bg-[#ff4655] hover:bg-[#ff5d6a] active:scale-95 text-white font-extrabold text-base tracking-wide shadow-xl shadow-[#ff4655]/30 transition"
+                  className="pointer-events-auto px-12 py-3.5 rounded-xl font-black text-base sm:text-lg tracking-wider uppercase transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#92400e] hover:from-[#fbbf24] hover:to-[#b45309] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_5px_0_#451a03,0_10px_20px_rgba(0,0,0,0.7)] active:translate-y-1 active:shadow-[0_1px_0_#451a03] flex items-center gap-3 drop-shadow"
                 >
-                  {t.castLine}
+                  <Anchor className="w-5 h-5 text-[#fef08a]" />
+                  <span>{t.castLine}</span>
                 </button>
               </div>
             )}
@@ -3004,21 +3037,21 @@ const CostumeDetailModal: React.FC<{
         </div>
 
         {/* JRPG Command Deck Side Panel */}
-        <div className={`lg:col-span-4 ${PANEL} flex flex-col h-[640px]`} style={CUT_STYLE}>
-          <div className="grid grid-cols-6 border-b border-white/10 px-1">
-            {tabBtn('bag', <Fish className="w-3.5 h-3.5" />, lang === 'th' ? 'คลังปลา' : 'BAG', <span className="text-[10px] font-mono text-zinc-400">({fishingState.caughtInventory.length})</span>)}
+        <div className={`lg:col-span-4 ${PANEL} flex flex-col h-[640px]`}>
+          <div className="grid grid-cols-6 border-b border-[#b8860b]/30 px-1">
+            {tabBtn('bag', <Fish className="w-3.5 h-3.5" />, lang === 'th' ? 'คลังปลา' : 'BAG', <span className="text-[10px] font-mono text-amber-400">({fishingState.caughtInventory.length})</span>)}
             {tabBtn('shop', <ShoppingBag className="w-3.5 h-3.5" />, lang === 'th' ? 'ร้านค้า' : 'SHOP')}
             {tabBtn('wardrobe', <Shirt className="w-3.5 h-3.5" />, lang === 'th' ? 'คอสตูม' : 'STYLE')}
-            {tabBtn('encyclopedia', <BookOpen className="w-3.5 h-3.5" />, lang === 'th' ? 'สมุดปลา' : 'CODEX', <span className="text-[10px] font-mono text-zinc-400">{discoveredCount}</span>)}
+            {tabBtn('encyclopedia', <BookOpen className="w-3.5 h-3.5" />, lang === 'th' ? 'สมุดปลา' : 'CODEX', <span className="text-[10px] font-mono text-amber-400">{discoveredCount}</span>)}
             {tabBtn(
               'quests',
               <Target className="w-3.5 h-3.5" />,
               lang === 'th' ? 'เควส' : 'QUEST',
               questClaimable > 0 ? (
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff4655] animate-pulse shadow-[0_0_6px_#ff4655]" />
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_#f59e0b]" />
               ) : undefined
             )}
-            {tabBtn('aquarium', <Layers className="w-3.5 h-3.5" />, lang === 'th' ? 'ตู้ปลา' : 'AQUA', <span className="text-[10px] font-mono text-zinc-400">{aquariumFishList.length}</span>)}
+            {tabBtn('aquarium', <Layers className="w-3.5 h-3.5" />, lang === 'th' ? 'ตู้ปลา' : 'AQUA', <span className="text-[10px] font-mono text-amber-400">{aquariumFishList.length}</span>)}
           </div>
 
           <div className="flex-1 overflow-hidden p-3 flex flex-col">
@@ -3026,9 +3059,10 @@ const CostumeDetailModal: React.FC<{
               <>
                 <button
                   onClick={handleSellAll}
-                  className="mb-2 py-2 border border-[#ff4655]/50 text-[#ff4655] hover:bg-[#ff4655]/10 text-xs font-bold transition"
+                  className="w-full mb-2.5 py-2.5 rounded-lg font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#b45309] to-[#78350f] hover:from-[#d97706] hover:to-[#92400e] text-[#fef3c7] border-2 border-[#fde68a]/70 shadow-[0_3px_0_#451a03] active:translate-y-0.5 active:shadow-none transition flex items-center justify-center gap-2"
                 >
-                  {t.sellAll}
+                  <Coins className="w-4 h-4 text-amber-300" />
+                  <span>{t.sellAll}</span>
                 </button>
                 <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
                   {fishingState.caughtInventory.length === 0 ? (
@@ -3039,31 +3073,32 @@ const CostumeDetailModal: React.FC<{
                       if (!sp) return null;
                       const rc = RARITY_CONFIG[sp.rarity];
                       return (
-                        <div key={item.uid} className="bg-black/30 border border-white/10 p-2 flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-14 h-11 bg-black/50 overflow-hidden">
+                        <div key={item.uid} className="bg-gradient-to-r from-[#17110c] to-[#0f0b08] border border-[#b8860b]/30 hover:border-amber-400/50 rounded-lg p-2 flex items-center justify-between gap-2 shadow-sm transition">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-14 h-11 bg-black/60 rounded overflow-hidden border border-[#b8860b]/20">
                               <FishPreviewCanvas species={sp} hueShiftDeg={item.hueShiftDeg} width={56} height={44} scale={0.4} />
                             </div>
                             <div>
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold">{fishName(sp, lang)}</span>
-                                <span className={`text-[9px] px-1.5 ${rc.badgeBg} ${rc.badgeText}`}>{sp.rarity}</span>
+                                <span className="text-xs font-bold text-[#fef08a]">{fishName(sp, lang)}</span>
+                                <span className={`text-[9px] px-1.5 rounded font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
                               </div>
-                              <div className="text-[11px] text-zinc-500">{item.weightKg} kg</div>
+                              <div className="text-[11px] text-zinc-400 font-mono">{item.weightKg} kg</div>
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1">
                             <button
                               onClick={() => handleToggleAquarium(item.uid)}
-                              className={`text-[10px] px-2 py-0.5 border ${
-                                item.isLockedInAquarium ? 'border-[#ff4655] text-[#ff4655]' : 'border-white/15 text-zinc-500'
+                              className={`text-[10px] px-2 py-0.5 rounded border transition ${
+                                item.isLockedInAquarium ? 'border-amber-400 text-amber-300 bg-amber-950/40' : 'border-zinc-700 text-zinc-400 hover:text-white'
                               }`}
+                              title="Aquarium Lock"
                             >
                               <Layers className="w-3 h-3" />
                             </button>
                             {!item.isLockedInAquarium && (
-                              <button onClick={() => handleSellFish(item.uid)} className="text-xs font-bold text-amber-300 hover:underline">
-                                +{item.sellPrice.toLocaleString()}
+                              <button onClick={() => handleSellFish(item.uid)} className="text-xs font-bold text-amber-300 hover:text-amber-200 font-mono">
+                                +{item.sellPrice.toLocaleString()} 🪙
                               </button>
                             )}
                           </div>
@@ -3078,6 +3113,9 @@ const CostumeDetailModal: React.FC<{
             {activeTab === 'shop' && (
               <div className="flex-1 overflow-y-auto space-y-4 pr-1">
                 <div className="space-y-1.5">
+                  <div className="text-[10px] tracking-[0.2em] text-amber-400 uppercase font-serif font-black px-1">
+                    🎣 {lang === 'th' ? 'คันเบ็ดตกปลาโบราณ' : 'FISHING RODS'}
+                  </div>
                   {FISHING_RODS_CATALOG.map((rod) => {
                     const owned = fishingState.ownedRodIds.includes(rod.id);
                     const equipped = fishingState.equippedRodId === rod.id;
@@ -3089,22 +3127,27 @@ const CostumeDetailModal: React.FC<{
                           soundEngine.playClick();
                           setDetail({ kind: 'rod', id: rod.id });
                         }}
-                        className={`w-full text-left px-3 py-2 border flex items-center justify-between gap-2 transition ${
-                          equipped ? 'border-[#ff4655] bg-[#ff4655]/10' : 'border-white/10 bg-black/30 hover:border-white/30'
+                        className={`w-full text-left px-3 py-2.5 rounded-lg border-2 flex items-center justify-between gap-2 transition-all ${
+                          equipped
+                            ? 'border-amber-400 bg-amber-950/40 shadow-sm'
+                            : 'border-[#b8860b]/30 bg-black/40 hover:border-amber-400/50'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: rod.rodColor }} />
-                          <span className="text-xs font-bold">{rodName(rod, lang)}</span>
+                          <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white/30" style={{ backgroundColor: rod.rodColor }} />
+                          <span className="text-xs font-bold text-[#fef3c7]">{rodName(rod, lang)}</span>
                         </div>
-                        <span className={`text-[11px] font-semibold ${equipped ? 'text-[#ff4655]' : owned ? 'text-zinc-400' : locked ? 'text-zinc-600' : 'text-amber-300'}`}>
-                          {equipped ? <Check className="w-4 h-4" /> : owned ? t.owned : locked ? `Lv.${rod.requiredLevel}` : rod.price.toLocaleString()}
+                        <span className={`text-[11px] font-bold ${equipped ? 'text-amber-300' : owned ? 'text-zinc-400' : locked ? 'text-zinc-600' : 'text-amber-300 font-mono'}`}>
+                          {equipped ? <Check className="w-4 h-4 text-amber-300" /> : owned ? t.owned : locked ? `Lv.${rod.requiredLevel}` : rod.price.toLocaleString()}
                         </span>
                       </button>
                     );
                   })}
                 </div>
                 <div className="space-y-1.5">
+                  <div className="text-[10px] tracking-[0.2em] text-amber-400 uppercase font-serif font-black px-1">
+                    🪱 {lang === 'th' ? 'เหยื่อตกปลาสูตรลับ' : 'BAITS & LURES'}
+                  </div>
                   {FISHING_BAITS_CATALOG.map((bait) => {
                     const n = baitCount(bait);
                     const equipped = fishingState.equippedBaitId === bait.id;
@@ -3115,17 +3158,19 @@ const CostumeDetailModal: React.FC<{
                           soundEngine.playClick();
                           setDetail({ kind: 'bait', id: bait.id });
                         }}
-                        className={`w-full text-left px-3 py-2 border flex items-center justify-between gap-2 transition ${
-                          equipped ? 'border-[#ff4655] bg-[#ff4655]/10' : 'border-white/10 bg-black/30 hover:border-white/30'
+                        className={`w-full text-left px-3 py-2.5 rounded-lg border-2 flex items-center justify-between gap-2 transition-all ${
+                          equipped
+                            ? 'border-amber-400 bg-amber-950/40 shadow-sm'
+                            : 'border-[#b8860b]/30 bg-black/40 hover:border-amber-400/50'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: bait.iconColor }} />
-                          <span className="text-xs font-bold">{baitName(bait, lang)}</span>
+                          <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white/30" style={{ backgroundColor: bait.iconColor }} />
+                          <span className="text-xs font-bold text-[#fef3c7]">{baitName(bait, lang)}</span>
                         </div>
-                        <span className="text-[11px] text-zinc-400 font-mono">
+                        <span className="text-[11px] text-zinc-300 font-mono">
                           {n === Infinity ? '∞' : `x${n}`}
-                          {bait.pricePerPack > 0 && <span className="text-amber-300 ml-2">{bait.pricePerPack.toLocaleString()}</span>}
+                          {bait.pricePerPack > 0 && <span className="text-amber-300 ml-2 font-bold">{bait.pricePerPack.toLocaleString()}</span>}
                         </span>
                       </button>
                     );
@@ -3148,18 +3193,18 @@ const CostumeDetailModal: React.FC<{
                         soundEngine.playClick();
                         setExpanded(open ? null : sp.id);
                       }}
-                      className="w-full text-left bg-black/30 border border-white/10 hover:border-white/30 p-2.5 transition"
+                      className="w-full text-left bg-gradient-to-r from-[#17110c] to-[#0f0b08] border-2 border-[#b8860b]/30 hover:border-amber-400/60 rounded-xl p-2.5 transition shadow-sm"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-serif font-black text-[#fef08a]">
                           #{sp.indexNumber} {found ? fishName(sp, lang) : '???'}
-                          {sp.category === 'creature' && <span className="ml-1.5 text-[9px] text-[#ff4655]">{t.specialTag}</span>}
+                          {sp.category === 'creature' && <span className="ml-1.5 text-[9px] text-amber-400">✨ {t.specialTag}</span>}
                         </span>
-                        <span className={`text-[9px] px-1.5 border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
+                        <span className={`text-[9px] px-1.5 py-0.2 rounded font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
                       </div>
                       <FishPreviewCanvas species={sp} discovered={found} width={150} height={66} scale={0.62} />
                       {open && (
-                        <div className="mt-1 text-[11px] text-zinc-400 space-y-0.5">
+                        <div className="mt-1 text-[11px] text-[#ded7c8] space-y-0.5 border-t border-[#b8860b]/20 pt-1">
                           {found && <p>{fishDesc(sp, lang)}</p>}
                           <p>
                             {fishHabitat(sp, lang)} · {sp.minWeightKg}–{sp.maxWeightKg} kg
@@ -3175,8 +3220,8 @@ const CostumeDetailModal: React.FC<{
 
             {activeTab === 'aquarium' && (
               <div className="flex-1 flex flex-col gap-2">
-                <div className="text-right text-xs font-bold text-amber-300">+{passiveCoinsPerMin} {t.perMin}</div>
-                <div className="border border-white/10 bg-black">
+                <div className="text-right text-xs font-bold text-amber-300 font-serif">+{passiveCoinsPerMin} {t.perMin}</div>
+                <div className="border-2 border-[#b8860b]/40 rounded-xl overflow-hidden bg-black shadow-lg">
                   <canvas ref={aquariumCanvasRef} width={420} height={420} className="w-full block" />
                 </div>
               </div>
@@ -3185,7 +3230,7 @@ const CostumeDetailModal: React.FC<{
             {activeTab === 'quests' && (
               <div className="flex-1 overflow-y-auto space-y-4 pr-1">
                 <div>
-                  <div className="text-[10px] tracking-[0.25em] text-[#ff4655] uppercase mb-1.5">{t.daily}</div>
+                  <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase mb-1.5 font-serif font-black">{t.daily}</div>
                   <div className="space-y-1.5">
                     {fishingState.quests.daily.ids.map((id) => {
                       const d = DAILY_POOL.find((x) => x.id === id);
@@ -3194,7 +3239,7 @@ const CostumeDetailModal: React.FC<{
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] tracking-[0.25em] text-[#ff4655] uppercase mb-1.5">{t.main}</div>
+                  <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase mb-1.5 font-serif font-black">{t.main}</div>
                   <div className="space-y-1.5">
                     {MAIN_QUESTS.map((m, i) => {
                       const claimed = fishingState.quests.mainClaimed[m.id];
@@ -3230,11 +3275,13 @@ const CostumeDetailModal: React.FC<{
                         soundEngine.playClick();
                         setDetail({ kind: 'costume', id: c.id });
                       }}
-                      className={`text-left p-2.5 border transition ${
-                        worn ? 'border-[#ff4655] bg-[#ff4655]/10' : 'border-white/10 bg-black/30 hover:border-white/30'
+                      className={`text-left p-2.5 rounded-xl border-2 transition-all ${
+                        worn
+                          ? 'border-amber-400 bg-amber-950/40 shadow-sm'
+                          : 'border-[#b8860b]/30 bg-black/40 hover:border-amber-400/50'
                       }`}
                     >
-                      <div className="w-full h-24 mb-2 overflow-hidden bg-gradient-to-b from-[#1a0a14] to-[#0b0b12] border border-white/10 relative">
+                      <div className="w-full h-24 mb-2 rounded-lg overflow-hidden bg-gradient-to-b from-[#1a0a14] to-[#0b0b12] border border-[#b8860b]/30 relative shadow-inner">
                         <img
                           src={`/assets/fishing/sprites/${c.id}/art.png`}
                           alt={costumeName(c, lang)}
@@ -3249,8 +3296,8 @@ const CostumeDetailModal: React.FC<{
                           ))}
                         </div>
                       </div>
-                      <div className="text-xs font-bold leading-snug">{costumeName(c, lang)}</div>
-                      <div className={`text-[11px] mt-1 ${worn ? 'text-[#ff4655]' : owned ? 'text-zinc-500' : 'text-amber-300'}`}>
+                      <div className="text-xs font-bold leading-snug text-[#fef08a]">{costumeName(c, lang)}</div>
+                      <div className={`text-[11px] mt-1 font-bold ${worn ? 'text-amber-300' : owned ? 'text-zinc-500' : 'text-amber-300 font-mono'}`}>
                         {worn ? t.wornNow : owned ? t.owned : c.price.toLocaleString()}
                       </div>
                     </button>

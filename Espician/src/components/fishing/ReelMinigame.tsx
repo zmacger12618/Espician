@@ -27,7 +27,7 @@ const TUNING: Record<
 };
 
 const CUT_STYLE = {
-  clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)'
+  borderRadius: '10px'
 };
 
 export const ReelMinigame: React.FC<Props> = ({
@@ -246,56 +246,55 @@ export const ReelMinigame: React.FC<Props> = ({
   const rar = RARITY_CONFIG[species.rarity] || RARITY_CONFIG.Common;
 
   return (
-    <div className="w-full max-w-[340px] sm:max-w-[380px] bg-[#07070d]/90 backdrop-blur-md border border-[#ff4655]/40 p-2.5 shadow-2xl select-none" style={CUT_STYLE}>
+    <div className="w-full max-w-[340px] sm:max-w-[380px] bg-gradient-to-b from-[#1c1612]/95 via-[#130f0c]/95 to-[#0b0806]/95 backdrop-blur-md border-2 border-[#b8860b]/70 p-3 shadow-[0_12px_32px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,235,165,0.2)] rounded-xl select-none">
       {/* Top Header: Target Fish & Capture Gauge */}
-      <div className="flex items-center justify-between text-[11px] mb-1.5 px-0.5">
+      <div className="flex items-center justify-between text-[11px] mb-2 px-0.5">
         <div className="flex items-center gap-1.5">
-          <span className={`px-1.5 py-0.2 rounded text-[9px] font-extrabold border ${rar.badgeBg} ${rar.badgeText} ${rar.borderColor}`}>
+          <span className={`px-2 py-0.5 rounded text-[9px] font-black border ${rar.badgeBg} ${rar.badgeText} ${rar.borderColor}`}>
             {species.rarity.toUpperCase()}
           </span>
-          <span className="font-extrabold text-white truncate max-w-[130px]">
+          <span className="font-extrabold text-[#fef08a] truncate max-w-[130px] drop-shadow-sm">
             {fishName(species, lang)}
           </span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={`text-[10px] font-mono font-bold ${isInside ? 'text-amber-300' : 'text-zinc-400'}`}>
+        <div className="flex items-center gap-1.5">
+          <span className={`text-[11px] font-mono font-bold ${isInside ? 'text-amber-300' : 'text-zinc-400'}`}>
             {Math.round(displayProgress * 100)}%
           </span>
-          <span className={`text-[9px] uppercase font-bold tracking-wider ${isInside ? 'text-amber-400 animate-pulse' : 'text-zinc-500'}`}>
+          <span className={`text-[9px] uppercase font-black px-1.5 py-0.2 rounded border tracking-wider ${isInside ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 animate-pulse' : 'bg-black/40 text-zinc-500 border-zinc-700'}`}>
             {isInside ? 'HOOKED' : 'TENSION'}
           </span>
         </div>
       </div>
 
       {/* Tension Track Canvas */}
-      <canvas ref={canvasRef} width={360} height={42} className="w-full block" />
+      <canvas ref={canvasRef} width={360} height={42} className="w-full block rounded-lg shadow-inner" />
 
       {/* Sleek Capture Progress Bar */}
-      <div className="w-full h-1.5 bg-black/80 rounded-full overflow-hidden mt-1 mb-2 border border-white/10">
+      <div className="w-full h-2 bg-black/80 rounded-full overflow-hidden mt-2 mb-2.5 border border-[#b8860b]/40 shadow-inner">
         <div
           className={`h-full transition-all duration-75 ${
             isInside
               ? 'bg-gradient-to-r from-amber-400 via-rose-500 to-emerald-400'
-              : 'bg-gradient-to-r from-zinc-600 to-rose-600'
+              : 'bg-gradient-to-r from-zinc-700 via-amber-700 to-rose-600'
           }`}
           style={{ width: `${Math.max(4, displayProgress * 100)}%` }}
         />
       </div>
 
-      {/* Modern Compact Hold Button */}
+      {/* Tactile 3D Fantasy Hold Button */}
       <button
         onPointerDown={press(true)}
         onPointerUp={press(false)}
         onPointerLeave={press(false)}
         onPointerCancel={press(false)}
-        style={CUT_STYLE}
-        className={`w-full py-2 text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 touch-none shadow-md ${
+        className={`w-full py-2.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-2 touch-none shadow-md ${
           heldRef.current || isInside
-            ? 'bg-gradient-to-r from-[#ff4655] to-[#e11d48] text-white shadow-[#ff4655]/40 scale-[0.99]'
-            : 'bg-gradient-to-r from-zinc-800 to-zinc-900 hover:from-[#ff4655]/80 hover:to-[#c1272d] text-zinc-200 hover:text-white border border-white/10'
+            ? 'bg-gradient-to-b from-[#ef4444] via-[#dc2626] to-[#991b1b] border-2 border-[#fca5a5] text-white shadow-[0_3px_0_#450a0a] scale-[0.98]'
+            : 'bg-gradient-to-b from-[#2a1e16] to-[#18120d] hover:from-[#3a2b20] hover:to-[#221a13] text-[#fef3c7] border border-[#b8860b]/60 shadow-[0_2px_0_#0a0806]'
         }`}
       >
-        <Zap className={`w-3.5 h-3.5 ${isInside ? 'text-amber-300 animate-bounce' : 'text-zinc-400'}`} />
+        <Zap className={`w-3.5 h-3.5 ${isInside ? 'text-amber-300 animate-bounce' : 'text-amber-500'}`} />
         <span>{lang === 'th' ? 'กดค้าง [SPACE] เพื่อเย่อเบ็ด' : 'HOLD [SPACE] TO REEL'}</span>
       </button>
     </div>
