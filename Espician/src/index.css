@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Default Riot Games Black & Crimson Dark Mode */
+  html.dark body {
+    background-color: #0a0a0c;
+    color: #f4f4f5;
+  }
+
+  /* Riot Clean Light Mode */
+  html.light body {
+    background-color: #f4f4f6;
+    color: #111111;
+  }
+
+  body {
+    font-family: 'Prompt', 'Plus Jakarta Sans', system-ui, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* ==========================================================================
+   RIOT GAMES BLACK & RED THEME ENGINE (Dark Mode Surface & Accent Mapping)
+   ========================================================================== */
+html.dark .bg-\[\#070b14\] {
+  background-color: #0a0a0c !important;
+}
+
+html.dark .bg-\[\#0c1220\],
+html.dark .bg-\[\#0f1524\]\/95 {
+  background-color: #111115 !important;
+  border-color: #24242c !important;
+}
+
+html.dark .bg-\[\#0e1424\],
+html.dark .bg-\[\#121826\],
+html.dark .bg-\[\#141b2e\],
+html.dark .bg-\[\#141c2e\],
+html.dark .bg-\[\#182032\] {
+  background-color: #16161b !important;
+  border-color: #272730 !important;
+}
+
+html.dark .border-\[\#1b263b\],
+html.dark .border-\[\#1e2a44\],
+html.dark .border-\[\#212d47\],
+html.dark .border-\[\#23314d\] {
+  border-color: #272730 !important;
+}
+
+html.dark .bg-slate-900\/60,
+html.dark .bg-slate-900\/50,
+html.dark .bg-slate-900\/40,
+html.dark .bg-slate-900 {
+  background-color: #111115 !important;
+  border-color: #24242c !important;
+}
+
+html.dark .bg-slate-800,
+html.dark .bg-slate-800\/60,
+html.dark .bg-slate-800\/40 {
+  background-color: #1e1e26 !important;
+}
+
+/* Map Primary Indigo/Violet Accents to Riot Games Crimson Red (#d13639 / #ff4655) */
+.bg-indigo-600 {
+  background-color: #d13639 !important;
+}
+.hover\:bg-indigo-500:hover,
+.hover\:bg-indigo-600:hover {
+  background-color: #e03e41 !important;
+}
+.text-indigo-400,
+.text-indigo-300 {
+  color: #ff4655 !important;
+}
+.border-indigo-500,
+.border-indigo-500\/50,
+.border-indigo-500\/40,
+.border-indigo-500\/30 {
+  border-color: rgba(209, 54, 57, 0.55) !important;
+}
+.bg-indigo-500\/10,
+.bg-indigo-500\/15,
+.bg-indigo-500\/20,
+.bg-indigo-600\/20 {
+  background-color: rgba(209, 54, 57, 0.15) !important;
+}
+.from-indigo-600 {
+  --tw-gradient-from: #d13639 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(209 54 57 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.to-violet-600,
+.to-violet-500 {
+  --tw-gradient-to: #991b1b var(--tw-gradient-to-position) !important;
+}
+.shadow-indigo-600\/25,
+.shadow-indigo-600\/30 {
+  --tw-shadow-color: rgba(209, 54, 57, 0.35) !important;
+}
+
+/* ==========================================================================
+   RIOT LIGHT MODE OVERRIDES
+   ========================================================================== */
+html.light .bg-\[\#070b14\],
+html.light .bg-\[\#0a0a0c\] {
+  background-color: #f4f4f6 !important;
+}
+
+html.light .bg-\[\#0c1220\],
+html.light .bg-\[\#111115\],
+html.light .bg-\[\#0f1524\]\/95 {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+}
+
+html.light .border-\[\#1b263b\],
+html.light .border-\[\#1e2a44\],
+html.light .border-\[\#212d47\],
+html.light .border-\[\#23314d\],
+html.light .border-\[\#272730\],
+html.light .border-\[\#24242c\] {
+  border-color: #e4e4e7 !important;
+}
+
+html.light .bg-\[\#0e1424\],
+html.light .bg-\[\#121826\],
+html.light .bg-\[\#141b2e\],
+html.light .bg-\[\#141c2e\],
+html.light .bg-\[\#182032\],
+html.light .bg-\[\#16161b\] {
+  background-color: #ffffff !important;
+  border-color: #d4d4d8 !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+}
+
+html.light .text-white {
+  color: #111111 !important;
+}
+
+html.light .text-slate-200,
+html.light .text-slate-300,
+html.light .text-zinc-200,
+html.light .text-zinc-300 {
+  color: #27272a !important;
+}
+
+html.light .text-slate-400,
+html.light .text-zinc-400 {
+  color: #52525b !important;
+}
+
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/40,
+html.light .bg-slate-900 {
+  background-color: #fafafa !important;
+  border-color: #e4e4e7 !important;
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/40 {
+  background-color: #e4e4e7 !important;
+  color: #18181b !important;
+}
+
+/* Custom Riot Red Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d13639;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff4655;
+}

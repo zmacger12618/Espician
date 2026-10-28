@@ -1,0 +1,18 @@
+{
+  "sheets": {
+    "costume_brown": "C:/Users/Thana/.gemini/antigravity/brain/c6022c48-cadc-4e9f-ae11-1c15052e6dca/chibi_girl_fishing_spritesheet_1793176116095.jpg",
+    "costume_cream": "C:/Users/Thana/.gemini/antigravity/brain/c6022c48-cadc-4e9f-ae11-1c15052e6dca/chibi_girl_fishing_spritesheet_1793176048182.jpg",
+    "costume_crimson": "C:/Users/Thana/.gemini/antigravity/brain/c6022c48-cadc-4e9f-ae11-1c15052e6dca/chibi_fishing_spritesheet_1793176045878.jpg",
+    "costume_sailor": "C:/Users/Thana/.gemini/antigravity/brain/c6022c48-cadc-4e9f-ae11-1c15052e6dca/chibi_fishing_spritesheet_1793176049332.jpg",
+    "costume_yukata": "C:/Users/Thana/.gemini/antigravity/brain/c6022c48-cadc-4e9f-ae11-1c15052e6dca/chibi_yukata_fishing_spritesheet_1793176043163.jpg",
+    "costume_starlight": "C:/Users/Thana/.gemini/antigravity/brain/c6022c48-cadc-4e9f-ae11-1c15052e6dca/chibi_fishing_spritesheet_1793176047156.jpg"
+  },
+  "art": {
+    "costume_brown": "public/assets/fishing/char_costume_brown.jpg",
+    "costume_cream": "public/assets/fishing/char_costume_cream.jpg",
+    "costume_crimson": "public/assets/fishing/char_costume_crimson.jpg",
+    "costume_sailor": "public/assets/fishing/char_costume_sailor.jpg",
+    "costume_yukata": "public/assets/fishing/char_costume_yukata.jpg",
+    "costume_starlight": "public/assets/fishing/char_costume_starlight.jpg"
+  }
+}

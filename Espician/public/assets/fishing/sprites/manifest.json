@@ -1,0 +1,1781 @@
+{
+  "unitPx": 340,
+  "costumes": {
+    "costume_brown": {
+      "frames": {
+        "walk_1": {
+          "file": "walk_1.png",
+          "w": 218,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 109,
+          "anchorY": 344
+        },
+        "walk_2": {
+          "file": "walk_2.png",
+          "w": 216,
+          "h": 347,
+          "top": 6,
+          "bottom": 340,
+          "anchorX": 108,
+          "anchorY": 340
+        },
+        "walk_3": {
+          "file": "walk_3.png",
+          "w": 222,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 111,
+          "anchorY": 344
+        },
+        "walk_4": {
+          "file": "walk_4.png",
+          "w": 217,
+          "h": 359,
+          "top": 6,
+          "bottom": 352,
+          "anchorX": 109,
+          "anchorY": 352
+        },
+        "idle": {
+          "file": "idle.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "kneeX": 180,
+          "tipX": 270,
+          "tipY": 52
+        },
+        "bite": {
+          "file": "bite.png",
+          "w": 302,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 151,
+          "anchorY": 230,
+          "tipX": 300,
+          "tipY": 93
+        },
+        "reel": {
+          "file": "reel.png",
+          "w": 308,
+          "h": 340,
+          "top": 6,
+          "bottom": 333,
+          "anchorX": 154,
+          "anchorY": 222,
+          "tipX": 302,
+          "tipY": 16
+        },
+        "victory": {
+          "file": "victory.png",
+          "w": 229,
+          "h": 354,
+          "top": 6,
+          "bottom": 347,
+          "anchorX": 115,
+          "anchorY": 347
+        },
+        "idle_1": {
+          "file": "idle_1.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 270,
+          "tipY": 52
+        },
+        "idle_2": {
+          "file": "idle_2.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 272,
+          "tipY": 49
+        },
+        "idle_3": {
+          "file": "idle_3.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 273,
+          "tipY": 48
+        },
+        "idle_4": {
+          "file": "idle_4.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 271,
+          "tipY": 51
+        },
+        "bite_1": {
+          "file": "bite_1.png",
+          "w": 302,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 151,
+          "anchorY": 230,
+          "tipX": 304,
+          "tipY": 101
+        },
+        "bite_2": {
+          "file": "bite_2.png",
+          "w": 302,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 151,
+          "anchorY": 230,
+          "tipX": 296,
+          "tipY": 87
+        },
+        "bite_3": {
+          "file": "bite_3.png",
+          "w": 302,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 151,
+          "anchorY": 230,
+          "tipX": 307,
+          "tipY": 105
+        },
+        "bite_4": {
+          "file": "bite_4.png",
+          "w": 302,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 151,
+          "anchorY": 230,
+          "tipX": 299,
+          "tipY": 93
+        },
+        "reel_1": {
+          "file": "reel_1.png",
+          "w": 308,
+          "h": 340,
+          "top": 6,
+          "bottom": 333,
+          "anchorX": 154,
+          "anchorY": 222,
+          "tipX": 296,
+          "tipY": 6
+        },
+        "reel_2": {
+          "file": "reel_2.png",
+          "w": 308,
+          "h": 340,
+          "top": 6,
+          "bottom": 333,
+          "anchorX": 154,
+          "anchorY": 222,
+          "tipX": 306,
+          "tipY": 22
+        },
+        "reel_3": {
+          "file": "reel_3.png",
+          "w": 308,
+          "h": 340,
+          "top": 6,
+          "bottom": 333,
+          "anchorX": 154,
+          "anchorY": 222,
+          "tipX": 302,
+          "tipY": 16
+        },
+        "reel_4": {
+          "file": "reel_4.png",
+          "w": 308,
+          "h": 340,
+          "top": 6,
+          "bottom": 333,
+          "anchorX": 154,
+          "anchorY": 222,
+          "tipX": 310,
+          "tipY": 30
+        },
+        "victory_1": {
+          "file": "victory_1.png",
+          "w": 229,
+          "h": 354,
+          "top": 6,
+          "bottom": 347,
+          "anchorX": 115,
+          "anchorY": 347
+        },
+        "victory_2": {
+          "file": "victory_2.png",
+          "w": 229,
+          "h": 354,
+          "top": 6,
+          "bottom": 347,
+          "anchorX": 115,
+          "anchorY": 347
+        },
+        "victory_3": {
+          "file": "victory_3.png",
+          "w": 229,
+          "h": 354,
+          "top": 6,
+          "bottom": 347,
+          "anchorX": 115,
+          "anchorY": 347
+        },
+        "victory_4": {
+          "file": "victory_4.png",
+          "w": 229,
+          "h": 354,
+          "top": 6,
+          "bottom": 347,
+          "anchorX": 115,
+          "anchorY": 347
+        },
+        "jerk_1": {
+          "file": "jerk_1.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 264,
+          "tipY": 38
+        },
+        "jerk_2": {
+          "file": "jerk_2.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 260,
+          "tipY": 30
+        },
+        "jerk_3": {
+          "file": "jerk_3.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 267,
+          "tipY": 44
+        },
+        "jerk_4": {
+          "file": "jerk_4.png",
+          "w": 277,
+          "h": 332,
+          "top": 5,
+          "bottom": 325,
+          "anchorX": 139,
+          "anchorY": 230,
+          "tipX": 270,
+          "tipY": 51
+        }
+      },
+      "art": "art.png"
+    },
+    "costume_cream": {
+      "frames": {
+        "walk_1": {
+          "file": "walk_1.png",
+          "w": 263,
+          "h": 352,
+          "top": 7,
+          "bottom": 346,
+          "anchorX": 132,
+          "anchorY": 346
+        },
+        "walk_2": {
+          "file": "walk_2.png",
+          "w": 263,
+          "h": 351,
+          "top": 7,
+          "bottom": 344,
+          "anchorX": 132,
+          "anchorY": 344
+        },
+        "walk_3": {
+          "file": "walk_3.png",
+          "w": 263,
+          "h": 352,
+          "top": 7,
+          "bottom": 346,
+          "anchorX": 132,
+          "anchorY": 346
+        },
+        "walk_4": {
+          "file": "walk_4.png",
+          "w": 263,
+          "h": 355,
+          "top": 7,
+          "bottom": 349,
+          "anchorX": 132,
+          "anchorY": 349
+        },
+        "idle": {
+          "file": "idle.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "kneeX": 203,
+          "tipX": 286,
+          "tipY": 31
+        },
+        "bite": {
+          "file": "bite.png",
+          "w": 321,
+          "h": 354,
+          "top": 7,
+          "bottom": 347,
+          "anchorX": 161,
+          "anchorY": 232,
+          "tipX": 315,
+          "tipY": 78
+        },
+        "reel": {
+          "file": "reel.png",
+          "w": 366,
+          "h": 346,
+          "top": 7,
+          "bottom": 339,
+          "anchorX": 183,
+          "anchorY": 227,
+          "tipX": 345,
+          "tipY": 39
+        },
+        "victory": {
+          "file": "victory.png",
+          "w": 237,
+          "h": 355,
+          "top": 7,
+          "bottom": 348,
+          "anchorX": 119,
+          "anchorY": 348
+        },
+        "idle_1": {
+          "file": "idle_1.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 286,
+          "tipY": 31
+        },
+        "idle_2": {
+          "file": "idle_2.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 288,
+          "tipY": 28
+        },
+        "idle_3": {
+          "file": "idle_3.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 289,
+          "tipY": 27
+        },
+        "idle_4": {
+          "file": "idle_4.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 287,
+          "tipY": 30
+        },
+        "bite_1": {
+          "file": "bite_1.png",
+          "w": 321,
+          "h": 354,
+          "top": 7,
+          "bottom": 347,
+          "anchorX": 161,
+          "anchorY": 232,
+          "tipX": 319,
+          "tipY": 86
+        },
+        "bite_2": {
+          "file": "bite_2.png",
+          "w": 321,
+          "h": 354,
+          "top": 7,
+          "bottom": 347,
+          "anchorX": 161,
+          "anchorY": 232,
+          "tipX": 311,
+          "tipY": 72
+        },
+        "bite_3": {
+          "file": "bite_3.png",
+          "w": 321,
+          "h": 354,
+          "top": 7,
+          "bottom": 347,
+          "anchorX": 161,
+          "anchorY": 232,
+          "tipX": 322,
+          "tipY": 90
+        },
+        "bite_4": {
+          "file": "bite_4.png",
+          "w": 321,
+          "h": 354,
+          "top": 7,
+          "bottom": 347,
+          "anchorX": 161,
+          "anchorY": 232,
+          "tipX": 314,
+          "tipY": 78
+        },
+        "reel_1": {
+          "file": "reel_1.png",
+          "w": 366,
+          "h": 346,
+          "top": 7,
+          "bottom": 339,
+          "anchorX": 183,
+          "anchorY": 227,
+          "tipX": 339,
+          "tipY": 29
+        },
+        "reel_2": {
+          "file": "reel_2.png",
+          "w": 366,
+          "h": 346,
+          "top": 7,
+          "bottom": 339,
+          "anchorX": 183,
+          "anchorY": 227,
+          "tipX": 349,
+          "tipY": 45
+        },
+        "reel_3": {
+          "file": "reel_3.png",
+          "w": 366,
+          "h": 346,
+          "top": 7,
+          "bottom": 339,
+          "anchorX": 183,
+          "anchorY": 227,
+          "tipX": 345,
+          "tipY": 39
+        },
+        "reel_4": {
+          "file": "reel_4.png",
+          "w": 366,
+          "h": 346,
+          "top": 7,
+          "bottom": 339,
+          "anchorX": 183,
+          "anchorY": 227,
+          "tipX": 353,
+          "tipY": 53
+        },
+        "victory_1": {
+          "file": "victory_1.png",
+          "w": 237,
+          "h": 355,
+          "top": 7,
+          "bottom": 348,
+          "anchorX": 119,
+          "anchorY": 348
+        },
+        "victory_2": {
+          "file": "victory_2.png",
+          "w": 237,
+          "h": 355,
+          "top": 7,
+          "bottom": 348,
+          "anchorX": 119,
+          "anchorY": 348
+        },
+        "victory_3": {
+          "file": "victory_3.png",
+          "w": 237,
+          "h": 355,
+          "top": 7,
+          "bottom": 348,
+          "anchorX": 119,
+          "anchorY": 348
+        },
+        "victory_4": {
+          "file": "victory_4.png",
+          "w": 237,
+          "h": 355,
+          "top": 7,
+          "bottom": 348,
+          "anchorX": 119,
+          "anchorY": 348
+        },
+        "jerk_1": {
+          "file": "jerk_1.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 280,
+          "tipY": 17
+        },
+        "jerk_2": {
+          "file": "jerk_2.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 276,
+          "tipY": 9
+        },
+        "jerk_3": {
+          "file": "jerk_3.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 283,
+          "tipY": 23
+        },
+        "jerk_4": {
+          "file": "jerk_4.png",
+          "w": 293,
+          "h": 341,
+          "top": 7,
+          "bottom": 334,
+          "anchorX": 147,
+          "anchorY": 237,
+          "tipX": 286,
+          "tipY": 30
+        }
+      },
+      "art": "art.png"
+    },
+    "costume_crimson": {
+      "frames": {
+        "walk_1": {
+          "file": "walk_1.png",
+          "w": 231,
+          "h": 352,
+          "top": 6,
+          "bottom": 345,
+          "anchorX": 116,
+          "anchorY": 345
+        },
+        "walk_2": {
+          "file": "walk_2.png",
+          "w": 231,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 116,
+          "anchorY": 343
+        },
+        "walk_3": {
+          "file": "walk_3.png",
+          "w": 219,
+          "h": 352,
+          "top": 5,
+          "bottom": 345,
+          "anchorX": 110,
+          "anchorY": 345
+        },
+        "walk_4": {
+          "file": "walk_4.png",
+          "w": 226,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 113,
+          "anchorY": 344
+        },
+        "idle": {
+          "file": "idle.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "kneeX": 183,
+          "tipX": 272,
+          "tipY": 66
+        },
+        "bite": {
+          "file": "bite.png",
+          "w": 306,
+          "h": 348,
+          "top": 6,
+          "bottom": 341,
+          "anchorX": 153,
+          "anchorY": 228,
+          "tipX": 276,
+          "tipY": 94
+        },
+        "reel": {
+          "file": "reel.png",
+          "w": 316,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 158,
+          "anchorY": 224,
+          "tipX": 248,
+          "tipY": 287
+        },
+        "victory": {
+          "file": "victory.png",
+          "w": 226,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 113,
+          "anchorY": 346
+        },
+        "idle_1": {
+          "file": "idle_1.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 272,
+          "tipY": 66
+        },
+        "idle_2": {
+          "file": "idle_2.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 274,
+          "tipY": 63
+        },
+        "idle_3": {
+          "file": "idle_3.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 275,
+          "tipY": 62
+        },
+        "idle_4": {
+          "file": "idle_4.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 273,
+          "tipY": 65
+        },
+        "bite_1": {
+          "file": "bite_1.png",
+          "w": 306,
+          "h": 348,
+          "top": 6,
+          "bottom": 341,
+          "anchorX": 153,
+          "anchorY": 228,
+          "tipX": 280,
+          "tipY": 102
+        },
+        "bite_2": {
+          "file": "bite_2.png",
+          "w": 306,
+          "h": 348,
+          "top": 6,
+          "bottom": 341,
+          "anchorX": 153,
+          "anchorY": 228,
+          "tipX": 272,
+          "tipY": 88
+        },
+        "bite_3": {
+          "file": "bite_3.png",
+          "w": 306,
+          "h": 348,
+          "top": 6,
+          "bottom": 341,
+          "anchorX": 153,
+          "anchorY": 228,
+          "tipX": 283,
+          "tipY": 106
+        },
+        "bite_4": {
+          "file": "bite_4.png",
+          "w": 306,
+          "h": 348,
+          "top": 6,
+          "bottom": 341,
+          "anchorX": 153,
+          "anchorY": 228,
+          "tipX": 275,
+          "tipY": 94
+        },
+        "reel_1": {
+          "file": "reel_1.png",
+          "w": 316,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 158,
+          "anchorY": 224,
+          "tipX": 242,
+          "tipY": 277
+        },
+        "reel_2": {
+          "file": "reel_2.png",
+          "w": 316,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 158,
+          "anchorY": 224,
+          "tipX": 252,
+          "tipY": 293
+        },
+        "reel_3": {
+          "file": "reel_3.png",
+          "w": 316,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 158,
+          "anchorY": 224,
+          "tipX": 248,
+          "tipY": 287
+        },
+        "reel_4": {
+          "file": "reel_4.png",
+          "w": 316,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 158,
+          "anchorY": 224,
+          "tipX": 256,
+          "tipY": 301
+        },
+        "victory_1": {
+          "file": "victory_1.png",
+          "w": 226,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 113,
+          "anchorY": 346
+        },
+        "victory_2": {
+          "file": "victory_2.png",
+          "w": 226,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 113,
+          "anchorY": 346
+        },
+        "victory_3": {
+          "file": "victory_3.png",
+          "w": 226,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 113,
+          "anchorY": 346
+        },
+        "victory_4": {
+          "file": "victory_4.png",
+          "w": 226,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 113,
+          "anchorY": 346
+        },
+        "jerk_1": {
+          "file": "jerk_1.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 266,
+          "tipY": 52
+        },
+        "jerk_2": {
+          "file": "jerk_2.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 262,
+          "tipY": 44
+        },
+        "jerk_3": {
+          "file": "jerk_3.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 269,
+          "tipY": 58
+        },
+        "jerk_4": {
+          "file": "jerk_4.png",
+          "w": 282,
+          "h": 326,
+          "top": 6,
+          "bottom": 319,
+          "anchorX": 141,
+          "anchorY": 226,
+          "tipX": 272,
+          "tipY": 65
+        }
+      },
+      "art": "art.png"
+    },
+    "costume_sailor": {
+      "frames": {
+        "walk_1": {
+          "file": "walk_1.png",
+          "w": 238,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 119,
+          "anchorY": 343
+        },
+        "walk_2": {
+          "file": "walk_2.png",
+          "w": 238,
+          "h": 344,
+          "top": 5,
+          "bottom": 337,
+          "anchorX": 119,
+          "anchorY": 337
+        },
+        "walk_3": {
+          "file": "walk_3.png",
+          "w": 237,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 119,
+          "anchorY": 343
+        },
+        "walk_4": {
+          "file": "walk_4.png",
+          "w": 237,
+          "h": 362,
+          "top": 6,
+          "bottom": 356,
+          "anchorX": 119,
+          "anchorY": 356
+        },
+        "idle": {
+          "file": "idle.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "kneeX": 267,
+          "tipX": 269,
+          "tipY": 66
+        },
+        "bite": {
+          "file": "bite.png",
+          "w": 314,
+          "h": 346,
+          "top": 5,
+          "bottom": 339,
+          "anchorX": 279,
+          "anchorY": 226,
+          "tipX": 290,
+          "tipY": 92
+        },
+        "reel": {
+          "file": "reel.png",
+          "w": 316,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 158,
+          "anchorY": 226,
+          "tipX": 304,
+          "tipY": 9
+        },
+        "victory": {
+          "file": "victory.png",
+          "w": 242,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 121,
+          "anchorY": 344
+        },
+        "idle_1": {
+          "file": "idle_1.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 269,
+          "tipY": 66
+        },
+        "idle_2": {
+          "file": "idle_2.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 271,
+          "tipY": 63
+        },
+        "idle_3": {
+          "file": "idle_3.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 272,
+          "tipY": 62
+        },
+        "idle_4": {
+          "file": "idle_4.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 270,
+          "tipY": 65
+        },
+        "bite_1": {
+          "file": "bite_1.png",
+          "w": 314,
+          "h": 346,
+          "top": 5,
+          "bottom": 339,
+          "anchorX": 279,
+          "anchorY": 226,
+          "tipX": 294,
+          "tipY": 100
+        },
+        "bite_2": {
+          "file": "bite_2.png",
+          "w": 314,
+          "h": 346,
+          "top": 5,
+          "bottom": 339,
+          "anchorX": 279,
+          "anchorY": 226,
+          "tipX": 286,
+          "tipY": 86
+        },
+        "bite_3": {
+          "file": "bite_3.png",
+          "w": 314,
+          "h": 346,
+          "top": 5,
+          "bottom": 339,
+          "anchorX": 279,
+          "anchorY": 226,
+          "tipX": 297,
+          "tipY": 104
+        },
+        "bite_4": {
+          "file": "bite_4.png",
+          "w": 314,
+          "h": 346,
+          "top": 5,
+          "bottom": 339,
+          "anchorX": 279,
+          "anchorY": 226,
+          "tipX": 289,
+          "tipY": 92
+        },
+        "reel_1": {
+          "file": "reel_1.png",
+          "w": 316,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 158,
+          "anchorY": 226,
+          "tipX": 298,
+          "tipY": -1
+        },
+        "reel_2": {
+          "file": "reel_2.png",
+          "w": 316,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 158,
+          "anchorY": 226,
+          "tipX": 308,
+          "tipY": 15
+        },
+        "reel_3": {
+          "file": "reel_3.png",
+          "w": 316,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 158,
+          "anchorY": 226,
+          "tipX": 304,
+          "tipY": 9
+        },
+        "reel_4": {
+          "file": "reel_4.png",
+          "w": 316,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 158,
+          "anchorY": 226,
+          "tipX": 312,
+          "tipY": 23
+        },
+        "victory_1": {
+          "file": "victory_1.png",
+          "w": 242,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 121,
+          "anchorY": 344
+        },
+        "victory_2": {
+          "file": "victory_2.png",
+          "w": 242,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 121,
+          "anchorY": 344
+        },
+        "victory_3": {
+          "file": "victory_3.png",
+          "w": 242,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 121,
+          "anchorY": 344
+        },
+        "victory_4": {
+          "file": "victory_4.png",
+          "w": 242,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 121,
+          "anchorY": 344
+        },
+        "jerk_1": {
+          "file": "jerk_1.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 263,
+          "tipY": 52
+        },
+        "jerk_2": {
+          "file": "jerk_2.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 259,
+          "tipY": 44
+        },
+        "jerk_3": {
+          "file": "jerk_3.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 266,
+          "tipY": 58
+        },
+        "jerk_4": {
+          "file": "jerk_4.png",
+          "w": 276,
+          "h": 348,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 138,
+          "anchorY": 232,
+          "tipX": 269,
+          "tipY": 65
+        }
+      },
+      "art": "art.png"
+    },
+    "costume_yukata": {
+      "frames": {
+        "walk_1": {
+          "file": "walk_1.png",
+          "w": 217,
+          "h": 351,
+          "top": 5,
+          "bottom": 343,
+          "anchorX": 109,
+          "anchorY": 343
+        },
+        "walk_2": {
+          "file": "walk_2.png",
+          "w": 217,
+          "h": 352,
+          "top": 5,
+          "bottom": 345,
+          "anchorX": 109,
+          "anchorY": 345
+        },
+        "walk_3": {
+          "file": "walk_3.png",
+          "w": 216,
+          "h": 351,
+          "top": 5,
+          "bottom": 344,
+          "anchorX": 108,
+          "anchorY": 344
+        },
+        "walk_4": {
+          "file": "walk_4.png",
+          "w": 216,
+          "h": 352,
+          "top": 5,
+          "bottom": 345,
+          "anchorX": 108,
+          "anchorY": 345
+        },
+        "idle": {
+          "file": "idle.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "kneeX": 180,
+          "tipX": 265,
+          "tipY": 50
+        },
+        "bite": {
+          "file": "bite.png",
+          "w": 319,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 160,
+          "anchorY": 224,
+          "tipX": 298,
+          "tipY": 75
+        },
+        "reel": {
+          "file": "reel.png",
+          "w": 301,
+          "h": 343,
+          "top": 5,
+          "bottom": 336,
+          "anchorX": 151,
+          "anchorY": 224,
+          "tipX": 291,
+          "tipY": 9
+        },
+        "victory": {
+          "file": "victory.png",
+          "w": 225,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 177,
+          "anchorY": 343
+        },
+        "idle_1": {
+          "file": "idle_1.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 265,
+          "tipY": 50
+        },
+        "idle_2": {
+          "file": "idle_2.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 267,
+          "tipY": 47
+        },
+        "idle_3": {
+          "file": "idle_3.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 268,
+          "tipY": 46
+        },
+        "idle_4": {
+          "file": "idle_4.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 266,
+          "tipY": 49
+        },
+        "bite_1": {
+          "file": "bite_1.png",
+          "w": 319,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 160,
+          "anchorY": 224,
+          "tipX": 302,
+          "tipY": 83
+        },
+        "bite_2": {
+          "file": "bite_2.png",
+          "w": 319,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 160,
+          "anchorY": 224,
+          "tipX": 294,
+          "tipY": 69
+        },
+        "bite_3": {
+          "file": "bite_3.png",
+          "w": 319,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 160,
+          "anchorY": 224,
+          "tipX": 305,
+          "tipY": 87
+        },
+        "bite_4": {
+          "file": "bite_4.png",
+          "w": 319,
+          "h": 343,
+          "top": 6,
+          "bottom": 336,
+          "anchorX": 160,
+          "anchorY": 224,
+          "tipX": 297,
+          "tipY": 75
+        },
+        "reel_1": {
+          "file": "reel_1.png",
+          "w": 301,
+          "h": 343,
+          "top": 5,
+          "bottom": 336,
+          "anchorX": 151,
+          "anchorY": 224,
+          "tipX": 285,
+          "tipY": -1
+        },
+        "reel_2": {
+          "file": "reel_2.png",
+          "w": 301,
+          "h": 343,
+          "top": 5,
+          "bottom": 336,
+          "anchorX": 151,
+          "anchorY": 224,
+          "tipX": 295,
+          "tipY": 15
+        },
+        "reel_3": {
+          "file": "reel_3.png",
+          "w": 301,
+          "h": 343,
+          "top": 5,
+          "bottom": 336,
+          "anchorX": 151,
+          "anchorY": 224,
+          "tipX": 291,
+          "tipY": 9
+        },
+        "reel_4": {
+          "file": "reel_4.png",
+          "w": 301,
+          "h": 343,
+          "top": 5,
+          "bottom": 336,
+          "anchorX": 151,
+          "anchorY": 224,
+          "tipX": 299,
+          "tipY": 23
+        },
+        "victory_1": {
+          "file": "victory_1.png",
+          "w": 225,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 177,
+          "anchorY": 343
+        },
+        "victory_2": {
+          "file": "victory_2.png",
+          "w": 225,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 177,
+          "anchorY": 343
+        },
+        "victory_3": {
+          "file": "victory_3.png",
+          "w": 225,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 177,
+          "anchorY": 343
+        },
+        "victory_4": {
+          "file": "victory_4.png",
+          "w": 225,
+          "h": 350,
+          "top": 6,
+          "bottom": 343,
+          "anchorX": 177,
+          "anchorY": 343
+        },
+        "jerk_1": {
+          "file": "jerk_1.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 259,
+          "tipY": 36
+        },
+        "jerk_2": {
+          "file": "jerk_2.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 255,
+          "tipY": 28
+        },
+        "jerk_3": {
+          "file": "jerk_3.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 262,
+          "tipY": 42
+        },
+        "jerk_4": {
+          "file": "jerk_4.png",
+          "w": 272,
+          "h": 338,
+          "top": 6,
+          "bottom": 331,
+          "anchorX": 136,
+          "anchorY": 234,
+          "tipX": 265,
+          "tipY": 49
+        }
+      },
+      "art": "art.png"
+    },
+    "costume_starlight": {
+      "frames": {
+        "walk_1": {
+          "file": "walk_1.png",
+          "w": 218,
+          "h": 349,
+          "top": 5,
+          "bottom": 342,
+          "anchorX": 109,
+          "anchorY": 342
+        },
+        "walk_2": {
+          "file": "walk_2.png",
+          "w": 218,
+          "h": 349,
+          "top": 5,
+          "bottom": 342,
+          "anchorX": 109,
+          "anchorY": 342
+        },
+        "walk_3": {
+          "file": "walk_3.png",
+          "w": 218,
+          "h": 351,
+          "top": 6,
+          "bottom": 344,
+          "anchorX": 109,
+          "anchorY": 344
+        },
+        "walk_4": {
+          "file": "walk_4.png",
+          "w": 218,
+          "h": 357,
+          "top": 6,
+          "bottom": 351,
+          "anchorX": 109,
+          "anchorY": 351
+        },
+        "idle": {
+          "file": "idle.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "kneeX": 211,
+          "tipX": 281,
+          "tipY": 34
+        },
+        "bite": {
+          "file": "bite.png",
+          "w": 334,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 167,
+          "anchorY": 226,
+          "tipX": 313,
+          "tipY": 114
+        },
+        "reel": {
+          "file": "reel.png",
+          "w": 343,
+          "h": 335,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 172,
+          "anchorY": 219,
+          "tipX": 311,
+          "tipY": 33
+        },
+        "victory": {
+          "file": "victory.png",
+          "w": 236,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 118,
+          "anchorY": 346
+        },
+        "idle_1": {
+          "file": "idle_1.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 281,
+          "tipY": 34
+        },
+        "idle_2": {
+          "file": "idle_2.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 283,
+          "tipY": 31
+        },
+        "idle_3": {
+          "file": "idle_3.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 284,
+          "tipY": 30
+        },
+        "idle_4": {
+          "file": "idle_4.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 282,
+          "tipY": 33
+        },
+        "bite_1": {
+          "file": "bite_1.png",
+          "w": 334,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 167,
+          "anchorY": 226,
+          "tipX": 317,
+          "tipY": 122
+        },
+        "bite_2": {
+          "file": "bite_2.png",
+          "w": 334,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 167,
+          "anchorY": 226,
+          "tipX": 309,
+          "tipY": 108
+        },
+        "bite_3": {
+          "file": "bite_3.png",
+          "w": 334,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 167,
+          "anchorY": 226,
+          "tipX": 320,
+          "tipY": 126
+        },
+        "bite_4": {
+          "file": "bite_4.png",
+          "w": 334,
+          "h": 346,
+          "top": 6,
+          "bottom": 339,
+          "anchorX": 167,
+          "anchorY": 226,
+          "tipX": 312,
+          "tipY": 114
+        },
+        "reel_1": {
+          "file": "reel_1.png",
+          "w": 343,
+          "h": 335,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 172,
+          "anchorY": 219,
+          "tipX": 305,
+          "tipY": 23
+        },
+        "reel_2": {
+          "file": "reel_2.png",
+          "w": 343,
+          "h": 335,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 172,
+          "anchorY": 219,
+          "tipX": 315,
+          "tipY": 39
+        },
+        "reel_3": {
+          "file": "reel_3.png",
+          "w": 343,
+          "h": 335,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 172,
+          "anchorY": 219,
+          "tipX": 311,
+          "tipY": 33
+        },
+        "reel_4": {
+          "file": "reel_4.png",
+          "w": 343,
+          "h": 335,
+          "top": 6,
+          "bottom": 328,
+          "anchorX": 172,
+          "anchorY": 219,
+          "tipX": 319,
+          "tipY": 47
+        },
+        "victory_1": {
+          "file": "victory_1.png",
+          "w": 236,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 118,
+          "anchorY": 346
+        },
+        "victory_2": {
+          "file": "victory_2.png",
+          "w": 236,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 118,
+          "anchorY": 346
+        },
+        "victory_3": {
+          "file": "victory_3.png",
+          "w": 236,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 118,
+          "anchorY": 346
+        },
+        "victory_4": {
+          "file": "victory_4.png",
+          "w": 236,
+          "h": 353,
+          "top": 6,
+          "bottom": 346,
+          "anchorX": 118,
+          "anchorY": 346
+        },
+        "jerk_1": {
+          "file": "jerk_1.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 275,
+          "tipY": 20
+        },
+        "jerk_2": {
+          "file": "jerk_2.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 271,
+          "tipY": 12
+        },
+        "jerk_3": {
+          "file": "jerk_3.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 278,
+          "tipY": 26
+        },
+        "jerk_4": {
+          "file": "jerk_4.png",
+          "w": 288,
+          "h": 327,
+          "top": 6,
+          "bottom": 320,
+          "anchorX": 124,
+          "anchorY": 227,
+          "tipX": 281,
+          "tipY": 33
+        }
+      },
+      "art": "art.png"
+    }
+  }
+}
