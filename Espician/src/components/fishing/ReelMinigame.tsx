@@ -138,17 +138,17 @@ export const ReelMinigame: React.FC<Props> = ({
           const pad = 6;
           const trackW = W - pad * 2;
 
-          // Track slot
-          ctx.fillStyle = 'rgba(6, 8, 14, 0.9)';
+          // Translucent track slot
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.45)';
           ctx.beginPath();
-          ctx.roundRect(pad, trackY, trackW, trackH, 6);
+          ctx.roundRect(pad, trackY, trackW, trackH, 8);
           ctx.fill();
-          ctx.strokeStyle = inside ? 'rgba(255, 70, 85, 0.5)' : 'rgba(255, 255, 255, 0.12)';
-          ctx.lineWidth = 1.2;
+          ctx.strokeStyle = inside ? 'rgba(52, 211, 153, 0.9)' : 'rgba(255, 255, 255, 0.5)';
+          ctx.lineWidth = 1.5;
           ctx.stroke();
 
           // Tick markers on track
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
           ctx.lineWidth = 1;
           for (let step = 1; step < 10; step++) {
             const tx = pad + (step / 10) * trackW;
@@ -165,24 +165,24 @@ export const ReelMinigame: React.FC<Props> = ({
           ctx.save();
           const barGrad = ctx.createLinearGradient(bx, 0, bx + bw, 0);
           if (inside) {
-            barGrad.addColorStop(0, 'rgba(255, 70, 85, 0.25)');
-            barGrad.addColorStop(0.5, 'rgba(255, 70, 85, 0.45)');
-            barGrad.addColorStop(1, 'rgba(255, 70, 85, 0.25)');
-            ctx.shadowColor = '#ff4655';
-            ctx.shadowBlur = 10;
+            barGrad.addColorStop(0, 'rgba(52, 211, 153, 0.35)');
+            barGrad.addColorStop(0.5, 'rgba(52, 211, 153, 0.65)');
+            barGrad.addColorStop(1, 'rgba(52, 211, 153, 0.35)');
+            ctx.shadowColor = '#34d399';
+            ctx.shadowBlur = 12;
           } else {
-            barGrad.addColorStop(0, 'rgba(56, 189, 248, 0.15)');
-            barGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.3)');
-            barGrad.addColorStop(1, 'rgba(56, 189, 248, 0.15)');
+            barGrad.addColorStop(0, 'rgba(56, 189, 248, 0.25)');
+            barGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.45)');
+            barGrad.addColorStop(1, 'rgba(56, 189, 248, 0.25)');
           }
 
           ctx.fillStyle = barGrad;
           ctx.beginPath();
-          ctx.roundRect(bx, trackY + 2, bw, trackH - 4, 4);
+          ctx.roundRect(bx, trackY + 2, bw, trackH - 4, 6);
           ctx.fill();
 
-          ctx.strokeStyle = inside ? '#ff4655' : 'rgba(56, 189, 248, 0.8)';
-          ctx.lineWidth = 1.6;
+          ctx.strokeStyle = inside ? '#10b981' : '#38bdf8';
+          ctx.lineWidth = 2;
           ctx.stroke();
 
           // Left/Right Bracket indicators on sweet-spot
@@ -246,55 +246,67 @@ export const ReelMinigame: React.FC<Props> = ({
   const rar = RARITY_CONFIG[species.rarity] || RARITY_CONFIG.Common;
 
   return (
-    <div className="w-full max-w-[340px] sm:max-w-[380px] bg-gradient-to-b from-[#1c1612]/95 via-[#130f0c]/95 to-[#0b0806]/95 backdrop-blur-md border-2 border-[#b8860b]/70 p-3 shadow-[0_12px_32px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,235,165,0.2)] rounded-xl select-none">
-      {/* Top Header: Target Fish & Capture Gauge */}
+    <div className="w-full max-w-[340px] sm:max-w-[380px] bg-white/75 dark:bg-slate-900/60 backdrop-blur-xl border-2 border-white/90 shadow-[0_12px_36px_rgba(2,132,199,0.2)] rounded-2xl p-3 select-none text-slate-800">
+      {/* Top Header: Target Fish & Status */}
       <div className="flex items-center justify-between text-[11px] mb-2 px-0.5">
         <div className="flex items-center gap-1.5">
-          <span className={`px-2 py-0.5 rounded text-[9px] font-black border ${rar.badgeBg} ${rar.badgeText} ${rar.borderColor}`}>
+          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${rar.badgeBg} ${rar.badgeText} ${rar.borderColor}`}>
             {species.rarity.toUpperCase()}
           </span>
-          <span className="font-extrabold text-[#fef08a] truncate max-w-[130px] drop-shadow-sm">
+          <span className="font-extrabold text-slate-900 dark:text-white truncate max-w-[140px] drop-shadow-sm">
             {fishName(species, lang)}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className={`text-[11px] font-mono font-bold ${isInside ? 'text-amber-300' : 'text-zinc-400'}`}>
-            {Math.round(displayProgress * 100)}%
-          </span>
-          <span className={`text-[9px] uppercase font-black px-1.5 py-0.2 rounded border tracking-wider ${isInside ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 animate-pulse' : 'bg-black/40 text-zinc-500 border-zinc-700'}`}>
-            {isInside ? 'HOOKED' : 'TENSION'}
+          <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full border tracking-wider transition-all ${
+            isInside
+              ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-emerald-400 animate-pulse'
+              : 'bg-rose-500/15 text-rose-600 dark:text-rose-300 border-rose-300'
+          }`}>
+            {isInside ? '✨ LOCK-ON' : '⚠️ OUT OF SYNC'}
           </span>
         </div>
       </div>
 
-      {/* Tension Track Canvas */}
-      <canvas ref={canvasRef} width={360} height={42} className="w-full block rounded-lg shadow-inner" />
+      {/* Tension Track Canvas (Translucent) */}
+      <canvas ref={canvasRef} width={360} height={42} className="w-full block rounded-xl shadow-inner" />
 
-      {/* Sleek Capture Progress Bar */}
-      <div className="w-full h-2 bg-black/80 rounded-full overflow-hidden mt-2 mb-2.5 border border-[#b8860b]/40 shadow-inner">
-        <div
-          className={`h-full transition-all duration-75 ${
-            isInside
-              ? 'bg-gradient-to-r from-amber-400 via-rose-500 to-emerald-400'
-              : 'bg-gradient-to-r from-zinc-700 via-amber-700 to-rose-600'
-          }`}
-          style={{ width: `${Math.max(4, displayProgress * 100)}%` }}
-        />
+      {/* Labeled Capture Progress Bar (Clearly tells user what this bar is!) */}
+      <div className="mt-2 mb-2 px-0.5">
+        <div className="flex items-center justify-between text-[10px] font-bold text-slate-700 dark:text-slate-200 mb-1">
+          <span className="flex items-center gap-1 text-sky-700 dark:text-sky-300 font-black">
+            <span>🎣</span>
+            <span>{lang === 'th' ? 'ดึงปลาขึ้นสู่ผิวน้ำ (Reel Progress):' : 'Reel Progress:'}</span>
+          </span>
+          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
+            {Math.round(displayProgress * 100)}% / 100%
+          </span>
+        </div>
+        <div className="w-full h-2.5 bg-slate-200/80 dark:bg-black/50 rounded-full overflow-hidden border border-white/80 shadow-inner">
+          <div
+            className={`h-full transition-all duration-75 rounded-full ${
+              isInside
+                ? 'bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]'
+                : 'bg-gradient-to-r from-rose-400 to-amber-400'
+            }`}
+            style={{ width: `${Math.max(4, displayProgress * 100)}%` }}
+          />
+        </div>
       </div>
 
-      {/* Tactile 3D Fantasy Hold Button */}
+      {/* Juicy 3D Cute Game Button */}
       <button
         onPointerDown={press(true)}
         onPointerUp={press(false)}
         onPointerLeave={press(false)}
         onPointerCancel={press(false)}
-        className={`w-full py-2.5 text-xs font-black uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-2 touch-none shadow-md ${
+        className={`w-full py-2.5 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 touch-none shadow-md ${
           heldRef.current || isInside
-            ? 'bg-gradient-to-b from-[#ef4444] via-[#dc2626] to-[#991b1b] border-2 border-[#fca5a5] text-white shadow-[0_3px_0_#450a0a] scale-[0.98]'
-            : 'bg-gradient-to-b from-[#2a1e16] to-[#18120d] hover:from-[#3a2b20] hover:to-[#221a13] text-[#fef3c7] border border-[#b8860b]/60 shadow-[0_2px_0_#0a0806]'
+            ? 'bg-gradient-to-b from-[#10b981] to-[#059669] text-white shadow-[0_3px_0_#047857] scale-[0.98]'
+            : 'bg-gradient-to-b from-[#ff6b81] to-[#ff4757] hover:brightness-105 text-white shadow-[0_3px_0_#c23616]'
         }`}
       >
-        <Zap className={`w-3.5 h-3.5 ${isInside ? 'text-amber-300 animate-bounce' : 'text-amber-500'}`} />
+        <Zap className={`w-3.5 h-3.5 ${isInside ? 'text-yellow-200 animate-bounce' : 'text-white'}`} />
         <span>{lang === 'th' ? 'กดค้าง [SPACE] เพื่อเย่อเบ็ด' : 'HOLD [SPACE] TO REEL'}</span>
       </button>
     </div>

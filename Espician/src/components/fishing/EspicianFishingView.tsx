@@ -240,9 +240,9 @@ const rodLuckText = (r: FishingRodItem) =>
     : 'เปิดประตูสู่ปลาและสัตว์ทะเลระดับ Secret';
 
 const PANEL =
-  'bg-gradient-to-b from-[#161c28]/95 via-[#0e141f]/95 to-[#080d14]/95 backdrop-blur-md border-2 border-[#b8860b]/40 rounded-xl shadow-[0_12px_36px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,235,165,0.15)]';
+  'bg-white/95 backdrop-blur-xl border-2 border-sky-100 rounded-3xl shadow-[0_12px_36px_rgba(2,132,199,0.08)] text-slate-800';
 const CUT_STYLE: React.CSSProperties = {
-  borderRadius: '10px'
+  borderRadius: '14px'
 };
 
 const FishPreviewCanvas: React.FC<{
@@ -443,16 +443,16 @@ const Modal: React.FC<{
   maxWidthClass?: string;
   children: React.ReactNode;
 }> = ({ onClose, hideCloseButton = false, maxWidthClass = 'max-w-lg', children }) => (
-  <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
+  <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
     <div
       style={{ ...CUT_STYLE, animation: 'popIn .25s ease-out' }}
-      className={`relative bg-gradient-to-b from-[#1c1511] via-[#140f0c] to-[#0a0806] border-2 border-[#c29b38]/70 shadow-[0_25px_60px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,235,165,0.25)] rounded-2xl w-full ${maxWidthClass} max-h-[92vh] overflow-y-auto text-[#fef3c7]`}
+      className={`relative bg-white/98 backdrop-blur-2xl border-2 border-sky-100 shadow-[0_25px_60px_rgba(2,132,199,0.2)] rounded-3xl w-full ${maxWidthClass} max-h-[92vh] overflow-y-auto text-slate-800`}
       onClick={(e) => e.stopPropagation()}
     >
       {!hideCloseButton && (
         <button
           onClick={onClose}
-          className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-gradient-to-b from-[#991b1b] to-[#7f1d1d] border border-[#fca5a5] text-white flex items-center justify-center hover:scale-105 active:scale-95 shadow-md z-30 transition"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 border border-slate-200 flex items-center justify-center hover:scale-105 active:scale-95 shadow-sm z-30 transition"
           title="Close"
         >
           <X className="w-4 h-4" />
@@ -495,59 +495,58 @@ const AdminCheatModal: React.FC<{
   if (!isOpen) return null;
   return (
     <Modal onClose={onClose} maxWidthClass="max-w-2xl">
-      <div className="p-6 space-y-6 bg-[#0a0a0f] text-white">
+      <div className="p-6 space-y-5 bg-white text-slate-800">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-amber-500/40 pb-4">
+        <div className="flex items-center justify-between border-b-2 border-sky-100 pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded bg-amber-500/20 border border-amber-500 flex items-center justify-center text-amber-400 font-bold text-lg">
+            <div className="w-10 h-10 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-600 font-bold text-lg shadow-sm">
               ⚡
             </div>
             <div>
-              <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase font-mono font-bold">
+              <div className="text-[10px] tracking-[0.2em] text-amber-600 uppercase font-mono font-black">
                 DEVELOPER GOD-MODE CONSOLE
               </div>
-              <h2 className="text-xl font-black text-white">
+              <h2 className="text-lg font-black text-slate-800">
                 ADMIN CONTROL PANEL · MACGA GARRY
               </h2>
             </div>
           </div>
-          <span className="px-2.5 py-1 text-[11px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50">
+          <span className="px-2.5 py-1 text-[11px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300 rounded-xl">
             ROOT ACCESS: GRANTED
           </span>
         </div>
 
         {/* 1. AUTO-FISHING TOGGLE */}
-        <div className="p-4 bg-gradient-to-r from-emerald-950/40 to-black border border-emerald-500/40 rounded flex items-center justify-between">
+        <div className="p-4 bg-emerald-50/70 border-2 border-emerald-200 rounded-2xl flex items-center justify-between shadow-sm">
           <div>
-            <div className="text-sm font-bold text-emerald-300 flex items-center gap-2">
-              <Bot className="w-4 h-4 text-emerald-400" />
+            <div className="text-sm font-black text-emerald-800 flex items-center gap-2">
+              <Bot className="w-4 h-4 text-emerald-600" />
               <span>ระบบตกปลาอัตโนมัติ (Auto-Fish God Mode)</span>
             </div>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               เหวี่ยงเบ็ดอัตโนมัติ → ล่อปลาฮุบทันที → กรอสายชนะ 100% → เก็บปลาวนลูปต่อเนื่อง
             </p>
           </div>
           <button
             onClick={onToggleAutoFishing}
-            className={`px-5 py-2.5 font-bold text-xs tracking-wider transition ${
+            className={`px-5 py-2.5 font-black text-xs tracking-wider transition rounded-xl shadow-sm ${
               isAutoFishing
-                ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]'
-                : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
+                ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-200'
+                : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
             }`}
-            style={CUT_STYLE}
           >
             {isAutoFishing ? '🟢 AUTO-FISHING: ON' : '⚪ AUTO-FISHING: OFF'}
           </button>
         </div>
 
         {/* 2. STAT VIEW MODE (USER vs DEV) */}
-        <div className="p-4 bg-gradient-to-r from-purple-950/40 to-black border border-purple-500/40 rounded flex items-center justify-between">
+        <div className="p-4 bg-purple-50/70 border-2 border-purple-200 rounded-2xl flex items-center justify-between shadow-sm">
           <div>
-            <div className="text-sm font-bold text-purple-300 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-400" />
+            <div className="text-sm font-black text-purple-900 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-600" />
               <span>สลับมุมมองสถิติ (Inspection Stat Mode)</span>
             </div>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               {viewMode === 'dev'
                 ? '🔬 กำลังแสดงโหมดเดฟ: เจาะลึกเปอร์เซ็นต์จริง, Pity %, เวลาจริง, อัตราฮุบเบ็ด'
                 : '🎮 กำลังแสดงโหมดผู้เล่น: ซ่อนตัวเลขทศนิยม แสดงเฉพาะชื่อ RPG สมจริง'}
@@ -555,12 +554,11 @@ const AdminCheatModal: React.FC<{
           </div>
           <button
             onClick={onToggleViewMode}
-            className={`px-4 py-2 font-bold text-xs tracking-wider border transition ${
+            className={`px-4 py-2 font-black text-xs tracking-wider border rounded-xl transition shadow-sm ${
               viewMode === 'dev'
-                ? 'bg-purple-600 text-white border-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.4)]'
-                : 'bg-zinc-800 text-zinc-300 border-white/20'
+                ? 'bg-purple-600 text-white border-purple-400'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
-            style={CUT_STYLE}
           >
             {viewMode === 'dev' ? '🔬 DEV STATS (ACTIVE)' : '🎮 USER RPG (ACTIVE)'}
           </button>
@@ -568,44 +566,44 @@ const AdminCheatModal: React.FC<{
 
         {/* 3. CURRENCY CHEATS (เพิ่ม/ลดเงิน) */}
         <div className="space-y-2">
-          <div className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="text-xs font-black text-amber-700 uppercase tracking-wider flex items-center gap-2">
             <Coins className="w-4 h-4" />
             <span>ปรับแต่งเงิน (Sea Coins) · ปัจจุบัน: {fishingState.seaCoins.toLocaleString()}</span>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
             <button
               onClick={() => onAddCoins(10000)}
-              className="py-2 px-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold font-mono transition"
+              className="py-2 px-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-800 text-xs font-black font-mono transition rounded-xl"
             >
               +10,000
             </button>
             <button
               onClick={() => onAddCoins(100000)}
-              className="py-2 px-2 bg-amber-500/25 hover:bg-amber-500/40 border border-amber-500/60 text-amber-200 text-xs font-bold font-mono transition"
+              className="py-2 px-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-800 text-xs font-black font-mono transition rounded-xl"
             >
               +100,000
             </button>
             <button
               onClick={() => onAddCoins(1000000)}
-              className="py-2 px-2 bg-amber-500/30 hover:bg-amber-500/50 border border-amber-400 text-amber-100 text-xs font-bold font-mono transition"
+              className="py-2 px-2 bg-amber-100 hover:bg-amber-200 border border-amber-400 text-amber-900 text-xs font-black font-mono transition rounded-xl"
             >
               +1,000,000
             </button>
             <button
               onClick={() => onAddCoins(-10000)}
-              className="py-2 px-2 bg-red-950/40 hover:bg-red-900/50 border border-red-500/50 text-red-300 text-xs font-bold font-mono transition"
+              className="py-2 px-2 bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-black font-mono transition rounded-xl"
             >
               -10,000
             </button>
             <button
               onClick={() => onAddCoins(-100000)}
-              className="py-2 px-2 bg-red-950/50 hover:bg-red-900/60 border border-red-500/60 text-red-200 text-xs font-bold font-mono transition"
+              className="py-2 px-2 bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-black font-mono transition rounded-xl"
             >
               -100,000
             </button>
             <button
               onClick={() => onAddCoins(-fishingState.seaCoins)}
-              className="py-2 px-2 bg-zinc-800 hover:bg-zinc-700 border border-white/20 text-zinc-400 text-xs font-bold transition"
+              className="py-2 px-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-600 text-xs font-black transition rounded-xl"
             >
               ล้างเงิน (0)
             </button>
@@ -614,38 +612,38 @@ const AdminCheatModal: React.FC<{
 
         {/* 4. LEVEL & PROGRESSION CHEATS (เพิ่ม/ลดเลเวล) */}
         <div className="space-y-2">
-          <div className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="text-xs font-black text-sky-700 uppercase tracking-wider flex items-center gap-2">
             <Zap className="w-4 h-4" />
             <span>ปรับแต่งเลเวล (Angler Level) · ปัจจุบัน: Lv.{fishingState.anglerLevel}</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             <button
               onClick={() => onSetLevel(fishingState.anglerLevel + 1)}
-              className="py-2 px-2 bg-sky-950/40 hover:bg-sky-900/50 border border-sky-500/50 text-sky-300 text-xs font-bold transition"
+              className="py-2 px-2 bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-800 text-xs font-black transition rounded-xl"
             >
               +1 Level
             </button>
             <button
               onClick={() => onSetLevel(fishingState.anglerLevel + 5)}
-              className="py-2 px-2 bg-sky-950/50 hover:bg-sky-900/60 border border-sky-400/60 text-sky-200 text-xs font-bold transition"
+              className="py-2 px-2 bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-800 text-xs font-black transition rounded-xl"
             >
               +5 Levels
             </button>
             <button
               onClick={() => onSetLevel(55)}
-              className="py-2 px-2 bg-sky-500/25 hover:bg-sky-500/40 border border-sky-400 text-sky-100 text-xs font-bold transition"
+              className="py-2 px-2 bg-sky-100 hover:bg-sky-200 border border-sky-400 text-sky-900 text-xs font-black transition rounded-xl"
             >
               Max Lv.55 (ตัน)
             </button>
             <button
               onClick={() => onSetLevel(Math.max(1, fishingState.anglerLevel - 1))}
-              className="py-2 px-2 bg-red-950/40 hover:bg-red-900/50 border border-red-500/50 text-red-300 text-xs font-bold transition"
+              className="py-2 px-2 bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-black transition rounded-xl"
             >
               -1 Level
             </button>
             <button
               onClick={() => onSetLevel(1)}
-              className="py-2 px-2 bg-zinc-800 hover:bg-zinc-700 border border-white/20 text-zinc-400 text-xs font-bold transition"
+              className="py-2 px-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-600 text-xs font-black transition rounded-xl"
             >
               รีเซ็ต Lv.1
             </button>
@@ -654,29 +652,26 @@ const AdminCheatModal: React.FC<{
 
         {/* 5. INSTANT UNLOCK & INVENTORY GOD-MODE */}
         <div className="space-y-2">
-          <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="text-xs font-black text-emerald-700 uppercase tracking-wider flex items-center gap-2">
             <Lock className="w-4 h-4" />
             <span>ปลดล็อคเนื้อหาทั้งหมด 100% (Instant Sandbox Unlock)</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <button
               onClick={onUnlockAll}
-              className="py-3 px-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-xs tracking-wide shadow-lg transition"
-              style={CUT_STYLE}
+              className="py-3 px-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-xs tracking-wide shadow-md transition rounded-2xl"
             >
               🔓 ปลดล็อคเบ็ด, คอสตูม, เกาะ & เหยื่อ 999
             </button>
             <button
               onClick={onInstantCatch}
-              className="py-3 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs tracking-wide shadow-lg transition"
-              style={CUT_STYLE}
+              className="py-3 px-3 bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-400 hover:to-blue-400 text-white font-black text-xs tracking-wide shadow-md transition rounded-2xl"
             >
               ⚡ ดึงปลาขึ้นทันที (Instant Catch)
             </button>
             <button
               onClick={onResetSave}
-              className="py-3 px-3 bg-red-950/70 hover:bg-red-900 border border-red-500 text-red-300 font-bold text-xs tracking-wide transition"
-              style={CUT_STYLE}
+              className="py-3 px-3 bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 font-black text-xs tracking-wide transition rounded-2xl"
             >
               🗑️ ล้างเซฟเริ่มต้นใหม่ (Reset State)
             </button>
@@ -1467,6 +1462,13 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     if (!rod) return;
     if (fishingState.ownedRodIds.includes(rodId)) {
       soundEngine.playClick();
+      // Pity reset & retrieve line on rod swap
+      setPityBonus(0);
+      if (phase !== 'IDLE_READY') {
+        setPhase('IDLE_READY');
+        setPendingSpecies(null);
+        notify(lang === 'th' ? 'เปลี่ยนคันเบ็ด: ดึงสายเบ็ดกลับและรีเซ็ตโอกาสลุ้นปลา (Pity)' : 'Rod changed: line retrieved & pity reset', 'info');
+      }
       setFishingState((p) => ({ ...p, equippedRodId: rodId }));
       notify(`${t.equippedToast} ${rodName(rod, lang)}`, 'info');
       return;
@@ -1480,6 +1482,11 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       return notify(t.notEnoughCoins, 'bad');
     }
     soundEngine.playCoin();
+    setPityBonus(0);
+    if (phase !== 'IDLE_READY') {
+      setPhase('IDLE_READY');
+      setPendingSpecies(null);
+    }
     setFishingState((p) => ({
       ...p,
       seaCoins: p.seaCoins - rod.price,
@@ -1497,6 +1504,13 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       return notify(t.noBaitOwned, 'bad');
     }
     soundEngine.playClick();
+    // Pity reset & retrieve line on bait swap
+    setPityBonus(0);
+    if (phase !== 'IDLE_READY') {
+      setPhase('IDLE_READY');
+      setPendingSpecies(null);
+      notify(lang === 'th' ? 'เปลี่ยนเหยื่อ: ดึงสายเบ็ดกลับและรีเซ็ตโอกาสลุ้นปลา (Pity)' : 'Bait changed: line retrieved & pity reset', 'info');
+    }
     setFishingState((p) => ({ ...p, equippedBaitId: baitId }));
   };
 
@@ -1554,14 +1568,14 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
         soundEngine.playClick();
         setActiveTab(id);
       }}
-      className={`relative py-2.5 px-0.5 flex flex-col items-center justify-center gap-1 transition-all ${
+      className={`relative py-2 px-0.5 flex flex-col items-center justify-center gap-1 transition-all rounded-xl ${
         activeTab === id
-          ? 'text-[#fef08a] border-b-2 border-amber-400 bg-gradient-to-t from-amber-500/20 to-transparent shadow-[inset_0_-2px_4px_rgba(245,158,11,0.2)]'
-          : 'text-zinc-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-white/[0.03]'
+          ? 'text-sky-600 font-black bg-sky-50/90 shadow-sm border border-sky-200'
+          : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
       }`}
     >
       <div className="flex items-center gap-1">
-        <span className={activeTab === id ? 'text-amber-300' : ''}>{icon}</span>
+        <span className={activeTab === id ? 'text-sky-600' : ''}>{icon}</span>
         {badge}
       </div>
       <span className="text-[9px] font-black tracking-wider uppercase leading-none">
@@ -1581,20 +1595,20 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       const locked = !owned && fishingState.anglerLevel < rod.requiredLevel;
       return (
         <Modal onClose={() => setDetail(null)}>
-          <div className="bg-gradient-to-b from-[#1a0a0d] to-[#0b0b10]">
-            <RodCanvas rod={rod} width={512} height={230} />
+          <div className="bg-sky-50/80 p-4 border-b border-sky-100 flex items-center justify-center">
+            <RodCanvas rod={rod} width={512} height={200} />
           </div>
-          <div className="p-5 space-y-3">
+          <div className="p-6 space-y-3 bg-white text-slate-800">
             <div>
-              <div className="text-[10px] tracking-[0.25em] text-[#ff4655] uppercase">{t.rod}</div>
-              <h3 className="text-xl font-bold text-white">{rodName(rod, lang)}</h3>
-              <div className="text-xs text-zinc-500">{lang === 'th' ? rod.nameEn : rod.nameTh}</div>
+              <div className="text-[10px] tracking-[0.2em] text-sky-600 uppercase font-black">{t.rod}</div>
+              <h3 className="text-xl font-black text-slate-800">{rodName(rod, lang)}</h3>
+              <div className="text-xs text-slate-500 font-medium">{lang === 'th' ? rod.nameEn : rod.nameTh}</div>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">{rodDesc(rod, lang)}</p>
+            <p className="text-sm text-slate-600 leading-relaxed">{rodDesc(rod, lang)}</p>
             {viewMode === 'dev' ? (
-              <div className="bg-purple-950/40 border border-purple-500/50 p-3 rounded space-y-1 font-mono text-xs text-purple-200 shadow-inner">
-                <div className="font-bold text-purple-400 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <div className="bg-purple-50 border border-purple-200 p-3 rounded-2xl space-y-1 font-mono text-xs text-purple-900 shadow-sm">
+                <div className="font-bold text-purple-700 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-600" />
                   <span>🔬 DEV MATH BREAKDOWN (FORMULA STATS):</span>
                 </div>
                 <div>Base Attraction Bonus: +{rod.baseAttractionBonusPct}% to Base Bite Chance</div>
@@ -1604,28 +1618,28 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
                 <div>Rarity Boost Multiplier: {rod.rarityBoostMultiplier}x</div>
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-2 bg-black/50 border border-white/10 p-3 text-center rounded">
+              <div className="grid grid-cols-3 gap-2 bg-sky-50 border border-sky-100 p-3 text-center rounded-2xl">
                 <div>
-                  <div className="text-[10px] text-zinc-400 uppercase font-semibold">
+                  <div className="text-[10px] text-slate-500 uppercase font-bold">
                     {lang === 'th' ? 'พลังดึงดูด' : 'Attraction'}
                   </div>
-                  <div className="text-base font-black text-amber-300 font-mono">{rod.attractionPower || 100}</div>
+                  <div className="text-base font-black text-amber-600 font-mono">{rod.attractionPower || 100}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-zinc-400 uppercase font-semibold">
+                  <div className="text-[10px] text-slate-500 uppercase font-bold">
                     {lang === 'th' ? 'โชคสมุทร' : 'Fortune'}
                   </div>
-                  <div className="text-base font-black text-cyan-300 font-mono">{rod.oceanFortune || 'D'}</div>
+                  <div className="text-base font-black text-sky-600 font-mono">{rod.oceanFortune || 'D'}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-zinc-400 uppercase font-semibold">
+                  <div className="text-[10px] text-slate-500 uppercase font-bold">
                     {lang === 'th' ? 'ความทนทาน' : 'Resilience'}
                   </div>
-                  <div className="text-base font-black text-emerald-300 font-mono">{rod.lineResilience || 100}</div>
+                  <div className="text-base font-black text-emerald-600 font-mono">{rod.lineResilience || 100}</div>
                 </div>
               </div>
             )}
-            <ul className="text-sm text-zinc-400 space-y-1.5 border-l border-[#ff4655]/50 pl-3">
+            <ul className="text-sm text-slate-600 space-y-1.5 border-l-2 border-sky-300 pl-3">
               <li>{rodWaitTextI18n(rod, lang)}</li>
               <li>{rodControlTextI18n(rod, lang)}</li>
               <li>{rodLuckTextI18n(rod, lang)}</li>
@@ -1633,7 +1647,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
             <button
               onClick={() => buyOrEquipRod(rod.id)}
               disabled={equipped || locked}
-              className="w-full py-3 rounded-xl font-black text-sm uppercase tracking-wider transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] disabled:from-zinc-800 disabled:to-zinc-900 text-[#fffbeb] disabled:text-zinc-500 border-2 border-[#fef08a] disabled:border-zinc-700 shadow-[0_4px_0_#78350f] disabled:shadow-none active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider transition-all bg-gradient-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] hover:from-[#60a5fa] hover:to-[#0284c7] disabled:from-slate-200 disabled:to-slate-300 text-white disabled:text-slate-400 border-2 border-white disabled:border-slate-200 shadow-[0_5px_0_#075985] disabled:shadow-none active:translate-y-1 active:shadow-[0_1px_0_#075985] flex items-center justify-center gap-2"
             >
               {equipped
                 ? t.equipped
@@ -1655,45 +1669,45 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       const equipped = fishingState.equippedBaitId === bait.id;
       return (
         <Modal onClose={() => setDetail(null)}>
-          <div className="h-36 flex items-center justify-center bg-gradient-to-b from-[#1a0a0d] to-[#0b0b10]">
+          <div className="h-36 flex items-center justify-center bg-sky-50/80 border-b border-sky-100">
             <div
               className="w-16 h-16 rounded-full"
-              style={{ background: `radial-gradient(circle at 35% 30%, #fff, ${bait.iconColor} 55%, #000 130%)`, boxShadow: `0 0 36px ${bait.iconColor}88` }}
+              style={{ background: `radial-gradient(circle at 35% 30%, #fff, ${bait.iconColor} 55%, #0284c7 130%)`, boxShadow: `0 0 36px ${bait.iconColor}66` }}
             />
           </div>
-          <div className="p-5 space-y-3">
+          <div className="p-6 space-y-3 bg-white text-slate-800">
             <div>
-              <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase font-serif font-black">{t.bait}</div>
-              <h3 className="text-xl font-serif font-black text-[#fef08a]">{baitName(bait, lang)}</h3>
-              <div className="text-xs text-zinc-400">{lang === 'th' ? bait.nameEn : shortName(bait.nameTh)}</div>
+              <div className="text-[10px] tracking-[0.2em] text-sky-600 uppercase font-black">{t.bait}</div>
+              <h3 className="text-xl font-black text-slate-800">{baitName(bait, lang)}</h3>
+              <div className="text-xs text-slate-500 font-medium">{lang === 'th' ? bait.nameEn : shortName(bait.nameTh)}</div>
             </div>
-            <p className="text-sm text-[#ded7c8] leading-relaxed">{baitDesc(bait, lang)}</p>
+            <p className="text-sm text-slate-600 leading-relaxed">{baitDesc(bait, lang)}</p>
             <div className="flex flex-wrap gap-1.5">
               {bait.targetFishIds.map((fid) => {
                 const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === fid);
                 const found = Boolean(fishingState.encyclopediaMap[fid]);
                 return (
-                  <span key={fid} className="text-[11px] px-2 py-0.5 rounded border border-[#b8860b]/30 bg-black/40 text-[#fef3c7]">
+                  <span key={fid} className="text-[11px] px-2.5 py-0.5 rounded-xl border border-sky-100 bg-sky-50 text-sky-800 font-bold">
                     {found && sp ? fishName(sp, lang) : '???'}
                   </span>
                 );
               })}
             </div>
-            <div className="text-xs text-amber-400/80 font-mono">
+            <div className="text-xs text-sky-700 font-mono font-bold">
               {free ? t.unlimited : `${t.inStock} ${count} · ${t.perPack} ${bait.packQuantity}`}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => equipBait(bait.id)}
                 disabled={equipped || (!free && (count as number) <= 0)}
-                className="py-3 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#2a1e16] to-[#18120d] border border-[#b8860b]/60 text-[#fef3c7] hover:border-amber-300 disabled:opacity-40 shadow-[0_2px_0_#0a0806] active:translate-y-0.5 active:shadow-none transition"
+                className="py-3 rounded-2xl font-black text-xs uppercase tracking-wider bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 text-sky-800 disabled:opacity-40 shadow-sm active:translate-y-0.5 transition"
               >
                 {equipped ? t.usingBait : t.useBait}
               </button>
               {!free && (
                 <button
                   onClick={() => buyBait(bait.id)}
-                  className="py-3 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_3px_0_#78350f] active:translate-y-0.5 active:shadow-none transition"
+                  className="py-3 rounded-2xl font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#fbbf24] via-[#f59e0b] to-[#d97706] hover:from-[#fcd34d] hover:to-[#f59e0b] text-white border-2 border-white shadow-[0_3px_0_#b45309] active:translate-y-0.5 active:shadow-none transition"
                 >
                   {t.buy} · {bait.pricePerPack.toLocaleString()} 🪙
                 </button>
@@ -1719,35 +1733,35 @@ const CostumeDetailModal: React.FC<{
   return (
     <Modal onClose={onClose}>
       {/* Abby-style Granblue Wiki Toggle Navigation */}
-      <div className="flex items-center gap-1.5 p-2.5 bg-[#140e0a] border-b-2 border-[#b8860b]/40 pr-12">
+      <div className="flex items-center gap-1.5 p-2.5 bg-sky-50 border-b border-sky-100 pr-12">
         <button
           onClick={() => setTab('base_sprite')}
-          className={`flex-1 py-1.5 px-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-1.5 px-2 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 ${
             tab === 'base_sprite'
-              ? 'bg-gradient-to-b from-amber-500 to-amber-600 text-black border border-amber-300 shadow-md'
-              : 'bg-black/40 text-amber-200/70 hover:text-white border border-[#b8860b]/30'
+              ? 'bg-sky-500 text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-sky-100'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
-          <span>{lang === 'th' ? 'ตัวละครขยับ (Base Sprite)' : 'Base Sprite'}</span>
+          <span>{lang === 'th' ? 'ตัวละครขยับ (Sprite)' : 'Base Sprite'}</span>
         </button>
         <button
           onClick={() => setTab('base_art')}
-          className={`flex-1 py-1.5 px-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-1.5 px-2 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 ${
             tab === 'base_art'
-              ? 'bg-gradient-to-b from-amber-500 to-amber-600 text-black border border-amber-300 shadow-md'
-              : 'bg-black/40 text-amber-200/70 hover:text-white border border-[#b8860b]/30'
+              ? 'bg-sky-500 text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-sky-100'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5" />
-          <span>{lang === 'th' ? 'ภาพวาดอาร์ต (Base Art)' : 'Base Art'}</span>
+          <span>{lang === 'th' ? 'ภาพอาร์ต (Art)' : 'Base Art'}</span>
         </button>
         <button
           onClick={() => setTab('scene')}
-          className={`py-1.5 px-3 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+          className={`py-1.5 px-3 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 ${
             tab === 'scene'
-              ? 'bg-gradient-to-b from-amber-500 to-amber-600 text-black border border-amber-300 shadow-md'
-              : 'bg-black/40 text-amber-200/70 hover:text-white border border-[#b8860b]/30'
+              ? 'bg-sky-500 text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-sky-100'
           }`}
           title={lang === 'th' ? 'ฉากริมทะเล' : 'Ocean Scene'}
         >
@@ -1757,8 +1771,8 @@ const CostumeDetailModal: React.FC<{
 
       {/* Tab Visuals */}
       {tab === 'base_art' ? (
-        <div className="relative bg-[#07070a] flex items-center justify-center p-4 border-b border-white/10 overflow-hidden">
-          <div className="relative max-w-[280px] aspect-[3/4] rounded-xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-black/60">
+        <div className="relative bg-slate-900 flex items-center justify-center p-4 border-b border-sky-100 overflow-hidden">
+          <div className="relative max-w-[280px] aspect-[3/4] rounded-2xl overflow-hidden border-2 border-white/60 shadow-2xl bg-black/60">
             <img
               src={`/assets/fishing/sprites/${costume.id}/art.png`}
               alt={costumeName(costume, lang)}
@@ -1769,18 +1783,18 @@ const CostumeDetailModal: React.FC<{
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-2.5 left-2 right-2 text-center pointer-events-none">
-              <span className="text-[10px] tracking-[0.2em] uppercase text-amber-400 font-extrabold drop-shadow">
+              <span className="text-[10px] tracking-[0.2em] uppercase text-amber-300 font-extrabold drop-shadow">
                 ★ ★ ★ ★ ★ SSR Granblue Art
               </span>
             </div>
           </div>
         </div>
       ) : tab === 'base_sprite' ? (
-        <div className="border-b border-[#b8860b]/30">
+        <div className="border-b border-sky-100 bg-sky-50/40">
           <SpritePreviewStage costume={costume} rod={rod} action={action} />
           {/* Action pose selector buttons (GBF Animation Player style) */}
-          <div className="p-2 bg-[#120d09] flex items-center justify-start sm:justify-center gap-1 border-t border-[#b8860b]/30 overflow-x-auto">
-            <span className="text-[10px] uppercase font-bold text-amber-400/80 mr-1 flex-shrink-0 font-serif">Pose:</span>
+          <div className="p-2 bg-white flex items-center justify-start sm:justify-center gap-1 border-t border-sky-100 overflow-x-auto">
+            <span className="text-[10px] uppercase font-black text-sky-700 mr-1 flex-shrink-0">Pose:</span>
             {[
               { id: 'idle', labelTh: 'ปกติ', labelEn: 'Idle' },
               { id: 'walk', labelTh: 'เดิน', labelEn: 'Walk' },
@@ -1795,10 +1809,10 @@ const CostumeDetailModal: React.FC<{
               <button
                 key={p.id}
                 onClick={() => setAction(p.id as any)}
-                className={`px-2.5 py-1 text-[11px] font-black rounded-md transition-all border ${
+                className={`px-2.5 py-1 text-[11px] font-black rounded-xl transition-all border ${
                   action === p.id
-                    ? 'border-amber-400 bg-amber-500/25 text-amber-300 shadow-sm'
-                    : 'border-[#b8860b]/30 bg-black/40 text-zinc-400 hover:text-white'
+                    ? 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm'
+                    : 'border-slate-200 bg-white text-slate-500 hover:text-slate-800'
                 }`}
               >
                 {lang === 'th' ? p.labelTh : p.labelEn}
@@ -1811,23 +1825,23 @@ const CostumeDetailModal: React.FC<{
       )}
 
       {/* Info & Action Buttons */}
-      <div className="p-5 space-y-3 bg-gradient-to-b from-[#18120e] to-[#0e0a07]">
+      <div className="p-6 space-y-3 bg-white text-slate-800">
         <div>
-          <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase font-serif font-black">{t.costume}</div>
-          <h3 className="text-xl font-serif font-black text-[#fef08a] flex items-center justify-between">
+          <div className="text-[10px] tracking-[0.2em] text-sky-600 uppercase font-black">{t.costume}</div>
+          <h3 className="text-xl font-black text-slate-800 flex items-center justify-between">
             <span>{costumeName(costume, lang)}</span>
             {worn && (
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase font-bold">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase font-black">
                 {t.wearing}
               </span>
             )}
           </h3>
         </div>
-        <p className="text-sm text-[#ded7c8] leading-relaxed">{costumeDesc(costume, lang)}</p>
+        <p className="text-sm text-slate-600 leading-relaxed">{costumeDesc(costume, lang)}</p>
         <button
           onClick={onBuyOrWear}
           disabled={worn}
-          className="w-full py-3 rounded-xl font-black text-sm uppercase tracking-wider bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] disabled:from-zinc-800 disabled:to-zinc-900 text-[#fffbeb] disabled:text-zinc-500 border-2 border-[#fef08a] disabled:border-zinc-700 shadow-[0_4px_0_#78350f] disabled:shadow-none active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+          className="w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider bg-gradient-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] hover:from-[#60a5fa] hover:to-[#0284c7] disabled:from-slate-200 disabled:to-slate-300 text-white disabled:text-slate-400 border-2 border-white disabled:border-slate-200 shadow-[0_5px_0_#075985] disabled:shadow-none active:translate-y-1 active:shadow-[0_1px_0_#075985] transition-all flex items-center justify-center gap-2"
         >
           {worn ? t.wearing : owned ? t.wear : `${t.buy} · ${costume.price.toLocaleString()}`}
         </button>
@@ -1883,9 +1897,9 @@ const CostumeDetailModal: React.FC<{
     }
 
     return (
-      <div className={`px-3 py-2.5 rounded-lg border-2 ${claimed ? 'border-white/5 opacity-40' : locked ? 'border-white/10 opacity-30' : 'border-[#b8860b]/30 bg-gradient-to-r from-[#17110c] to-[#0f0b08]'}`}>
+      <div className={`px-3.5 py-2.5 rounded-2xl border-2 transition ${claimed ? 'border-slate-200 bg-slate-50 opacity-50' : locked ? 'border-slate-200 bg-slate-100 opacity-40' : 'border-sky-100 bg-white shadow-sm'}`}>
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {npc && (
               <button
                 onClick={() => {
@@ -1893,7 +1907,7 @@ const CostumeDetailModal: React.FC<{
                   onOpenStory?.();
                 }}
                 title={lang === 'th' ? `ฟังเรื่องเล่าจาก ${npc.nameTh}` : `Hear story from ${npc.nameEn}`}
-                className="w-7 h-7 rounded-full bg-black/60 border border-amber-400/50 hover:border-amber-300 flex items-center justify-center text-sm shadow-sm transition hover:scale-105"
+                className="w-8 h-8 rounded-full bg-sky-50 border border-sky-200 hover:border-sky-400 flex items-center justify-center text-base shadow-sm transition hover:scale-105"
               >
                 {npc.avatarIcon}
               </button>
@@ -1906,12 +1920,12 @@ const CostumeDetailModal: React.FC<{
                     onOpenStory();
                   }
                 }}
-                className={`text-xs font-semibold text-zinc-200 truncate ${npc ? 'cursor-pointer hover:text-amber-300' : ''}`}
+                className={`text-xs font-bold text-slate-800 truncate ${npc ? 'cursor-pointer hover:text-sky-600' : ''}`}
               >
                 {questLabel(def, lang)}
               </div>
               {npc && (
-                <div className="text-[9px] text-amber-400 font-serif">
+                <div className="text-[10px] text-sky-600 font-bold">
                   {lang === 'th' ? npc.nameTh : npc.nameEn}
                 </div>
               )}
@@ -1919,31 +1933,28 @@ const CostumeDetailModal: React.FC<{
           </div>
 
           {locked ? (
-            <Lock className="w-3.5 h-3.5 text-zinc-600" />
+            <Lock className="w-3.5 h-3.5 text-slate-400" />
           ) : claimed ? (
-            <Check className="w-4 h-4 text-emerald-400" />
+            <Check className="w-4 h-4 text-emerald-500 font-black" />
           ) : (
             <button
               onClick={() => claimQuest(kind, def)}
               disabled={!done}
-              className={`px-3 py-1 rounded-md text-[11px] font-black transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all ${
                 done
-                  ? 'bg-gradient-to-b from-amber-400 to-amber-600 border border-amber-200 text-black shadow-md animate-pulse active:scale-95'
-                  : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                  ? 'bg-gradient-to-b from-amber-400 to-amber-500 border border-amber-300 text-slate-900 shadow-md animate-pulse active:scale-95'
+                  : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
               }`}
             >
-              {done ? t.claim : `${def.coins.toLocaleString()} 🪙`}
+              {done ? (lang === 'th' ? 'รับรางวัล' : 'Claim') : `${prog}/${def.target}`}
             </button>
           )}
         </div>
-        <div className="mt-2 h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+        <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
           <div
-            className="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-500 rounded-full"
-            style={{ width: `${(prog / def.target) * 100}%` }}
+            className="h-full bg-gradient-to-r from-sky-400 to-teal-400 transition-all duration-500 rounded-full"
+            style={{ width: `${Math.min(100, (prog / def.target) * 100)}%` }}
           />
-        </div>
-        <div className="mt-1 text-[10px] text-zinc-400 font-mono text-right">
-          {prog.toLocaleString()} / {def.target.toLocaleString()}
         </div>
       </div>
     );
@@ -1952,7 +1963,7 @@ const CostumeDetailModal: React.FC<{
   const firstOpenMain = MAIN_QUESTS.findIndex((m) => !fishingState.quests.mainClaimed[m.id]);
 
   return (
-    <div className="min-h-screen bg-[#07070a] text-zinc-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#f8fafc] text-slate-800 flex flex-col font-sans">
       <style>{`
         @keyframes toastIn { from { opacity:0; transform: translateX(14px);} to { opacity:1; transform:none;} }
         @keyframes popIn { from { opacity:0; transform: scale(.94);} to { opacity:1; transform:none;} }
@@ -1966,10 +1977,10 @@ const CostumeDetailModal: React.FC<{
           <div
             key={t.id}
             style={{ animation: 'toastIn .25s ease-out', ...CUT_STYLE }}
-            className="flex items-stretch bg-[#0d0d12]/95 border border-white/10 shadow-xl min-w-[150px]"
+            className="flex items-stretch bg-white/95 border-2 border-sky-100 shadow-xl min-w-[150px] rounded-2xl overflow-hidden"
           >
-            <span className={`w-1 ${TONE_BAR[t.tone]}`} />
-            <span className="px-3 py-2 text-sm font-semibold text-zinc-100">{t.text}</span>
+            <span className={`w-1.5 ${TONE_BAR[t.tone]}`} />
+            <span className="px-3.5 py-2 text-sm font-bold text-slate-800">{t.text}</span>
           </div>
         ))}
       </div>
@@ -2011,16 +2022,16 @@ const CostumeDetailModal: React.FC<{
       {/* Settings Modal (Audio Volume + Language) */}
       {showSettingsModal && (
         <Modal onClose={() => setShowSettingsModal(false)}>
-          <div className="p-6 space-y-5">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-              <Settings className="w-5 h-5 text-[#ff4655]" />
-              <h3 className="text-lg font-extrabold text-white tracking-wider uppercase">{t.settingsTitle}</h3>
+          <div className="p-6 space-y-5 bg-white text-slate-800">
+            <div className="flex items-center gap-2 border-b-2 border-sky-100 pb-3">
+              <Settings className="w-5 h-5 text-sky-600" />
+              <h3 className="text-lg font-black text-slate-800 tracking-wider uppercase">{t.settingsTitle}</h3>
             </div>
 
             {/* Language Selector */}
             <div className="space-y-2">
-              <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-[#ff4655]" />
+              <div className="text-xs font-black text-sky-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-sky-600" />
                 {t.language}
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -2030,8 +2041,8 @@ const CostumeDetailModal: React.FC<{
                     saveLang('th');
                     soundEngine.playClick();
                   }}
-                  className={`py-2.5 border text-xs font-bold transition ${
-                    lang === 'th' ? 'border-[#ff4655] bg-[#ff4655]/20 text-white' : 'border-white/10 bg-black/40 text-zinc-400 hover:text-white'
+                  className={`py-2.5 rounded-2xl border-2 text-xs font-black transition shadow-sm ${
+                    lang === 'th' ? 'border-sky-500 bg-sky-50 text-sky-800 ring-1 ring-sky-300' : 'border-slate-200 bg-white text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   🇹🇭 ภาษาไทย (TH)
@@ -2042,8 +2053,8 @@ const CostumeDetailModal: React.FC<{
                     saveLang('en');
                     soundEngine.playClick();
                   }}
-                  className={`py-2.5 border text-xs font-bold transition ${
-                    lang === 'en' ? 'border-[#ff4655] bg-[#ff4655]/20 text-white' : 'border-white/10 bg-black/40 text-zinc-400 hover:text-white'
+                  className={`py-2.5 rounded-2xl border-2 text-xs font-black transition shadow-sm ${
+                    lang === 'en' ? 'border-sky-500 bg-sky-50 text-sky-800 ring-1 ring-sky-300' : 'border-slate-200 bg-white text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   🇬🇧 English (EN)
@@ -2054,16 +2065,16 @@ const CostumeDetailModal: React.FC<{
             {/* Volume Controls */}
             <div className="space-y-3.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-zinc-300">{t.muteAll}</span>
+                <span className="text-xs font-black text-slate-700">{t.muteAll}</span>
                 <button
                   onClick={() => {
                     soundEngine.toggleMute();
                     soundEngine.playClick();
                   }}
-                  className={`px-3 py-1.5 border text-xs font-bold flex items-center gap-1.5 transition ${
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-black flex items-center gap-1.5 transition shadow-sm ${
                     soundSettings.muted
-                      ? 'border-[#ff4655] bg-[#ff4655]/20 text-[#ff4655]'
-                      : 'border-emerald-400/50 bg-emerald-400/10 text-emerald-300'
+                      ? 'border-rose-300 bg-rose-50 text-rose-600'
+                      : 'border-emerald-300 bg-emerald-50 text-emerald-700'
                   }`}
                 >
                   {soundSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -2072,9 +2083,9 @@ const CostumeDetailModal: React.FC<{
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-slate-500 font-bold">
                   <span>{t.masterVolume}</span>
-                  <span className="font-mono text-white">{Math.round(soundSettings.masterVolume)}%</span>
+                  <span className="font-mono text-slate-800">{Math.round(soundSettings.masterVolume)}%</span>
                 </div>
                 <input
                   type="range"
@@ -2082,14 +2093,14 @@ const CostumeDetailModal: React.FC<{
                   max={100}
                   value={Math.round(soundSettings.masterVolume)}
                   onChange={(e) => soundEngine.updateSettings({ masterVolume: Number(e.target.value), muted: false })}
-                  className="w-full accent-[#ff4655] cursor-pointer"
+                  className="w-full accent-sky-500 cursor-pointer"
                 />
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-slate-500 font-bold">
                   <span>{t.bgmVolume}</span>
-                  <span className="font-mono text-white">{Math.round(soundSettings.bgmVolume)}%</span>
+                  <span className="font-mono text-slate-800">{Math.round(soundSettings.bgmVolume)}%</span>
                 </div>
                 <input
                   type="range"
@@ -2097,14 +2108,14 @@ const CostumeDetailModal: React.FC<{
                   max={100}
                   value={Math.round(soundSettings.bgmVolume)}
                   onChange={(e) => soundEngine.updateSettings({ bgmVolume: Number(e.target.value), muted: false })}
-                  className="w-full accent-[#ff4655] cursor-pointer"
+                  className="w-full accent-sky-500 cursor-pointer"
                 />
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-slate-500 font-bold">
                   <span>{t.sfxVolume}</span>
-                  <span className="font-mono text-white">{Math.round(soundSettings.sfxVolume)}%</span>
+                  <span className="font-mono text-slate-800">{Math.round(soundSettings.sfxVolume)}%</span>
                 </div>
                 <input
                   type="range"
@@ -2115,10 +2126,10 @@ const CostumeDetailModal: React.FC<{
                     soundEngine.updateSettings({ sfxVolume: Number(e.target.value), muted: false });
                   }}
                   onMouseUp={() => soundEngine.playClick()}
-                  className="w-full accent-[#ff4655] cursor-pointer"
+                  className="w-full accent-sky-500 cursor-pointer"
                 />
               </div>
-              <div className="pt-3 border-t border-white/10 space-y-1">
+              <div className="pt-3 border-t border-sky-100 space-y-1">
                 <button
                   onClick={() => {
                     if (window.confirm(lang === 'th' ? 'ต้องการล้างข้อมูลเซฟเพื่อเริ่มใหม่ตามสเกล V3 หรือไม่? (ข้อมูลปลาและไอเทมจะถูกรีเซ็ต)' : 'Reset save data to V3 Hardcore system?')) {
@@ -2129,10 +2140,9 @@ const CostumeDetailModal: React.FC<{
                       setShowSettingsModal(false);
                     }
                   }}
-                  style={CUT_STYLE}
-                  className="w-full py-2 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/40 text-rose-300 font-bold text-xs tracking-wider uppercase transition flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 font-black text-xs tracking-wider uppercase transition rounded-xl flex items-center justify-center gap-1.5 shadow-sm"
                 >
-                  <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
                   <span>{lang === 'th' ? 'ล้างข้อมูลเซฟเพื่อเริ่มใหม่ (Reset V3 Save)' : 'Reset Save Data (V3 System)'}</span>
                 </button>
               </div>
@@ -2143,8 +2153,7 @@ const CostumeDetailModal: React.FC<{
                 soundEngine.playClick();
                 setShowSettingsModal(false);
               }}
-              style={CUT_STYLE}
-              className="w-full py-2.5 bg-[#ff4655] hover:bg-[#ff5d6a] text-white font-bold text-xs tracking-wider uppercase transition"
+              className="w-full py-3 bg-gradient-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] hover:from-[#60a5fa] hover:to-[#0284c7] text-white font-black text-xs tracking-wider uppercase transition rounded-2xl shadow-[0_4px_0_#075985]"
             >
               {t.close}
             </button>
@@ -2155,43 +2164,43 @@ const CostumeDetailModal: React.FC<{
       {/* Cygames / Granblue Fantasy Style NPC Story Dialogue Modal */}
       {selectedNpcQuest && selectedNpcQuest.npcId && (
         <Modal onClose={() => setSelectedNpcQuest(null)}>
-          <div className="p-6 space-y-4 max-w-lg bg-gradient-to-b from-[#180d1a] via-[#0d0d16] to-[#07070a] border border-amber-400/40 shadow-2xl">
+          <div className="p-6 space-y-4 max-w-lg bg-white text-slate-800">
             {/* NPC Header with Avatar */}
-            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500/20 to-purple-600/30 border-2 border-amber-400/60 flex items-center justify-center text-3xl shadow-lg">
+            <div className="flex items-center gap-3 border-b-2 border-sky-100 pb-3">
+              <div className="w-14 h-14 rounded-2xl bg-sky-50 border-2 border-sky-200 flex items-center justify-center text-3xl shadow-sm">
                 {NPC_CAST[selectedNpcQuest.npcId]?.avatarIcon || '⚓'}
               </div>
               <div>
-                <div className="text-[11px] font-mono tracking-widest text-[#ff4655] uppercase font-bold">
+                <div className="text-[11px] font-mono tracking-widest text-sky-600 uppercase font-bold">
                   {lang === 'th' ? NPC_CAST[selectedNpcQuest.npcId]?.titleTh : NPC_CAST[selectedNpcQuest.npcId]?.titleEn}
                 </div>
-                <h3 className="text-lg font-extrabold text-white">
+                <h3 className="text-lg font-black text-slate-800">
                   {lang === 'th' ? NPC_CAST[selectedNpcQuest.npcId]?.nameTh : NPC_CAST[selectedNpcQuest.npcId]?.nameEn}
                 </h3>
               </div>
             </div>
 
             {/* Spoken Dialogue (Granblue Story Style) */}
-            <div className="p-4 bg-black/60 border border-amber-500/20 rounded-sm relative">
-              <span className="text-amber-400 font-serif text-3xl absolute -top-1 left-2 select-none">“</span>
-              <p className="text-sm text-zinc-100 leading-relaxed indent-4 pt-1 font-sans">
+            <div className="p-4 bg-sky-50/70 border-2 border-sky-100 rounded-2xl relative shadow-inner">
+              <span className="text-sky-400 font-serif text-3xl absolute -top-1 left-2 select-none">“</span>
+              <p className="text-sm text-slate-700 leading-relaxed indent-4 pt-1 font-sans">
                 {lang === 'th' ? selectedNpcQuest.dialogueTh : selectedNpcQuest.dialogueEn || selectedNpcQuest.dialogueTh}
               </p>
-              <span className="text-amber-400 font-serif text-3xl absolute -bottom-4 right-2 select-none">”</span>
+              <span className="text-sky-400 font-serif text-3xl absolute -bottom-4 right-2 select-none">”</span>
             </div>
 
             {/* Quest Objective & Reward */}
-            <div className="p-3 bg-white/5 border border-white/10 flex items-center justify-between">
+            <div className="p-3.5 bg-sky-50 border border-sky-100 rounded-2xl flex items-center justify-between">
               <div>
-                <div className="text-[10px] text-zinc-400 uppercase tracking-wider">{lang === 'th' ? 'ภารกิจเป้าหมาย' : 'Objective'}</div>
-                <div className="text-xs font-bold text-white mt-0.5">{questLabel(selectedNpcQuest, lang)}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-black">{lang === 'th' ? 'ภารกิจเป้าหมาย' : 'Objective'}</div>
+                <div className="text-xs font-black text-slate-800 mt-0.5">{questLabel(selectedNpcQuest, lang)}</div>
               </div>
               <div className="text-right">
-                <div className="text-[10px] text-amber-300 font-bold flex items-center gap-1 justify-end">
+                <div className="text-xs text-amber-600 font-black flex items-center gap-1 justify-end font-mono">
                   <Coins className="w-3.5 h-3.5" />
                   <span>+{selectedNpcQuest.coins.toLocaleString()}</span>
                 </div>
-                <div className="text-[10px] text-sky-400 font-bold">+{selectedNpcQuest.exp} EXP</div>
+                <div className="text-[10px] text-sky-600 font-bold font-mono">+{selectedNpcQuest.exp} EXP</div>
               </div>
             </div>
 
@@ -2200,7 +2209,7 @@ const CostumeDetailModal: React.FC<{
                 soundEngine.playNpcBlip();
                 setSelectedNpcQuest(null);
               }}
-              className="w-full py-3 rounded-xl font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_4px_0_#78350f] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] hover:from-[#60a5fa] hover:to-[#0284c7] text-white border-2 border-white shadow-[0_4px_0_#075985] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
             >
               <span>⛵ {lang === 'th' ? 'รับทราบและออกเดินทาง!' : 'Acknowledge & Set Sail!'}</span>
             </button>
@@ -2208,27 +2217,27 @@ const CostumeDetailModal: React.FC<{
         </Modal>
       )}
 
-      {/* Illustrated Fantasy Nautical World Map Modal */}
+      {/* Commercial RPG Stage Selection Modal (เหมือนเกมในตลาด) */}
       {isIslandMapOpen && (
         <Modal onClose={() => setIsIslandMapOpen(false)} hideCloseButton maxWidthClass="max-w-4xl">
-          <div className="p-4 sm:p-6 space-y-4 max-w-4xl bg-gradient-to-b from-[#1b1511] via-[#140f0c] to-[#0a0806] border-2 border-[#c29b38]/70 text-[#fef3c7] rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
+          <div className="p-4 sm:p-6 space-y-4 max-w-4xl bg-white/98 backdrop-blur-2xl border-2 border-sky-100 text-slate-800 rounded-3xl shadow-[0_24px_64px_rgba(2,132,199,0.18)]">
             {/* Header */}
-            <div className="flex items-center justify-between border-b-2 border-[#b8860b]/40 pb-3">
+            <div className="flex items-center justify-between border-b-2 border-sky-100 pb-3.5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 border-2 border-amber-300 flex items-center justify-center shadow-md">
-                  <Compass className="w-6 h-6 text-amber-100 animate-spin-slow" />
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 border-2 border-sky-200 flex items-center justify-center shadow-md text-white">
+                  <Compass className="w-5 h-5 animate-spin-slow" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-serif font-black text-[#fef08a] tracking-wider uppercase flex items-center gap-2 drop-shadow">
-                    <span>{lang === 'th' ? '📜 แผนที่เดินเรือมหาขุมทรัพย์แห่งเอสพิเชียน' : '📜 Espician Ancient Nautical Treasure Chart'}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-serif">
-                      ⚓ CAPTAIN'S CHART
+                  <h3 className="text-base sm:text-lg font-black text-slate-800 tracking-wider flex items-center gap-2">
+                    <span>{lang === 'th' ? '🗺️ แผนที่สำรวจน่านน้ำเอสพิเชียน' : '🗺️ Espician Archipelago Expedition'}</span>
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 font-extrabold border border-sky-200">
+                      STAGE {currentIsland.order} / 5
                     </span>
                   </h3>
-                  <p className="text-[11px] text-amber-200/70 font-medium">
+                  <p className="text-xs text-slate-500 font-medium">
                     {lang === 'th'
-                      ? 'กางแผนที่เดินเรือบนโต๊ะกัปตัน · เลือกเกาะเป้าหมายเพื่อตรวจความพร้อมและกางใบเรือออกสำรวจ'
-                      : 'Unfurl ancient sea chart · Select an island to inspect marine fauna and set sail'}
+                      ? 'เลือกเกาะเป้าหมายเพื่อตรวจความพร้อม สภาพอากาศ สัตว์น้ำประจำถิ่น และออกเรือสำรวจ'
+                      : 'Select target stage island to inspect endemic fauna, weather conditions, and set sail'}
                   </p>
                 </div>
               </div>
@@ -2237,117 +2246,21 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setIsIslandMapOpen(false);
                 }}
-                className="w-8 h-8 rounded-full bg-gradient-to-b from-[#991b1b] to-[#7f1d1d] border border-[#fca5a5] text-white flex items-center justify-center hover:scale-105 active:scale-95 shadow-md transition"
-                title="Close Chart"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 border border-slate-200 flex items-center justify-center hover:scale-105 active:scale-95 shadow-sm transition"
+                title="Close Map"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Interactive Antique Nautical Chart Viewport */}
-            <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-xl overflow-hidden border-2 border-[#c29b38] shadow-[inset_0_0_40px_rgba(0,0,0,0.85),0_12px_30px_rgba(0,0,0,0.8)] bg-gradient-to-br from-[#1b1510] via-[#241c14] to-[#120e0a]">
-              {/* Parchment Nautical Grid Texture */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25">
-                <defs>
-                  <pattern id="nauticalChartGrid" width="60" height="60" patternUnits="userSpaceOnUse">
-                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#d4af37" strokeWidth="0.5" strokeDasharray="3 3" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#nauticalChartGrid)" />
-              </svg>
-
-              {/* Antique 16-point Compass Rose with Fleur-de-lis (Top Right) */}
-              <div className="absolute top-3 right-3 pointer-events-none opacity-60">
-                <svg width="76" height="76" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="44" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="2 3" />
-                  <circle cx="50" cy="50" r="34" fill="none" stroke="#b45309" strokeWidth="0.8" />
-                  <circle cx="50" cy="50" r="2" fill="#d4af37" />
-                  {/* Principal Points */}
-                  <polygon points="50,6 54,44 50,50 46,44" fill="#d4af37" />
-                  <polygon points="50,6 50,50 46,44" fill="#b45309" />
-                  <polygon points="50,94 54,56 50,50 46,56" fill="#d4af37" />
-                  <polygon points="50,94 50,50 46,56" fill="#b45309" />
-                  <polygon points="94,50 56,54 50,50 56,46" fill="#d4af37" />
-                  <polygon points="94,50 50,50 56,46" fill="#b45309" />
-                  <polygon points="6,50 44,54 50,50 44,46" fill="#d4af37" />
-                  <polygon points="6,50 50,50 44,46" fill="#b45309" />
-                  {/* Cardinal Labels */}
-                  <text x="50" y="5" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">N</text>
-                  <text x="98" y="52" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">E</text>
-                  <text x="50" y="99" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">S</text>
-                  <text x="2" y="52" fill="#fde68a" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="serif">W</text>
-                </svg>
-              </div>
-
-              {/* Hand-drawn Mythical Kraken & Galleon Watermarks */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 1000 450">
-                <g stroke="#d4af37" strokeWidth="1.5" fill="none">
-                  <path d="M 440 280 Q 420 220 460 190 Q 480 170 470 150 Q 460 140 450 160" />
-                  <path d="M 460 290 Q 480 230 510 210 Q 530 200 520 180" />
-                  <path d="M 430 310 Q 390 270 400 240 Q 410 220 390 200" />
-                  <text x="450" y="325" fill="#d4af37" fontSize="11" fontFamily="serif" fontStyle="italic" textAnchor="middle">
-                    ~ Terra Incognita · Leviathan Deep ~
-                  </text>
-                </g>
-                <g stroke="#d4af37" strokeWidth="1.2" fill="none" transform="translate(260, 200) scale(0.65)">
-                  <path d="M 0 30 Q 30 45 60 30 L 50 15 L 10 15 Z" fill="#d4af37" fillOpacity="0.2" />
-                  <line x1="20" y1="15" x2="20" y2="-15" strokeWidth="1.5" />
-                  <line x1="40" y1="15" x2="40" y2="-20" strokeWidth="1.5" />
-                  <path d="M 20 -10 Q 30 -5 20 5 Z" fill="#d4af37" fillOpacity="0.3" />
-                  <path d="M 40 -15 Q 52 -10 40 5 Z" fill="#d4af37" fillOpacity="0.3" />
-                </g>
-              </svg>
-
-              {/* Dotted Golden Sea Sailing Routes */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                <path
-                  d="M 18% 66% Q 27% 48%, 37% 38% T 58% 70% T 76% 32% T 88% 58%"
-                  fill="none"
-                  stroke="#f59e0b"
-                  strokeWidth="2.5"
-                  strokeDasharray="6 6"
-                  className="animate-pulse"
-                  opacity="0.8"
-                />
-              </svg>
-
-              {/* 5 Illustrated Island Medallions (No cyber emojis!) */}
+            {/* 5 Stage Cards Carousel / Grid (Commercial RPG Stage Selector) */}
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
               {[
-                {
-                  id: 'island_emerald_haven',
-                  x: 18,
-                  y: 66,
-                  stage: 1,
-                  label: lang === 'th' ? 'เกาะมรกต' : 'Emerald Haven'
-                },
-                {
-                  id: 'island_coral_sanctuary',
-                  x: 37,
-                  y: 38,
-                  stage: 2,
-                  label: lang === 'th' ? 'รังปะการังเรืองแสง' : 'Coral Lagoon'
-                },
-                {
-                  id: 'island_volcanic_atoll',
-                  x: 58,
-                  y: 70,
-                  stage: 3,
-                  label: lang === 'th' ? 'อ่าวภูเขาไฟลาวา' : 'Volcanic Atoll'
-                },
-                {
-                  id: 'island_aurora_fjord',
-                  x: 76,
-                  y: 32,
-                  stage: 4,
-                  label: lang === 'th' ? 'ธารน้ำแข็งออโรร่า' : 'Aurora Fjord'
-                },
-                {
-                  id: 'island_celestial_archipelago',
-                  x: 88,
-                  y: 58,
-                  stage: 5,
-                  label: lang === 'th' ? 'แดนดาราสวรรค์' : 'Celestial Void'
-                }
+                { id: 'island_emerald_haven', stage: 1, labelTh: 'เกาะมรกต', labelEn: 'Emerald Haven', reqLv: 1 },
+                { id: 'island_coral_sanctuary', stage: 2, labelTh: 'รังปะการังเรืองแสง', labelEn: 'Coral Lagoon', reqLv: 5 },
+                { id: 'island_volcanic_atoll', stage: 3, labelTh: 'อ่าวภูเขาไฟลาวา', labelEn: 'Volcanic Atoll', reqLv: 12 },
+                { id: 'island_aurora_fjord', stage: 4, labelTh: 'ธารน้ำแข็งออโรร่า', labelEn: 'Aurora Fjord', reqLv: 20 },
+                { id: 'island_celestial_archipelago', stage: 5, labelTh: 'แดนดาราสวรรค์', labelEn: 'Celestial Void', reqLv: 30 }
               ].map((node) => {
                 const isle = ALL_ISLANDS.find((i) => i.id === node.id)!;
                 const isCurrent = fishingState.currentIslandId === node.id;
@@ -2361,33 +2274,23 @@ const CostumeDetailModal: React.FC<{
                       soundEngine.playClick();
                       setSelectedIslandId(node.id);
                     }}
-                    style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 group transition-all duration-300 ${
-                      isSelected ? 'scale-115 z-30' : 'hover:scale-105 z-10'
+                    className={`relative text-left p-2.5 rounded-2xl border-2 transition-all duration-200 flex flex-col justify-between overflow-hidden group shadow-sm ${
+                      isSelected
+                        ? 'border-sky-500 bg-sky-50/80 ring-2 ring-sky-300 shadow-md scale-[1.02]'
+                        : isCurrent
+                        ? 'border-amber-400 bg-amber-50/70'
+                        : isUnlocked
+                        ? 'border-slate-200 bg-white hover:border-sky-300 hover:bg-sky-50/30'
+                        : 'border-slate-200 bg-slate-100/70 opacity-60'
                     }`}
                   >
-                    {/* Golden Anchor Beacon Aura for Current Island */}
-                    {isCurrent && (
-                      <span className="absolute -inset-2 rounded-full border-2 border-amber-400/90 shadow-[0_0_16px_rgba(251,191,36,0.6)] animate-pulse pointer-events-none" />
-                    )}
-
-                    {/* Cameo Medallion Frame with Actual Painted Background */}
-                    <div
-                      className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 transition-all shadow-[0_8px_18px_rgba(0,0,0,0.85)] ${
-                        isCurrent
-                          ? 'border-amber-300 ring-4 ring-amber-400/40'
-                          : isSelected
-                          ? 'border-sky-300 ring-4 ring-sky-400/50 scale-105'
-                          : isUnlocked
-                          ? 'border-[#d4af37] hover:border-amber-300'
-                          : 'border-stone-600 opacity-60'
-                      }`}
-                    >
+                    {/* Stage Thumbnail */}
+                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden mb-2 bg-slate-200">
                       <img
                         src={`/assets/fishing/backgrounds/${node.id}.jpg`}
-                        alt={node.label}
-                        className={`w-full h-full object-cover transition duration-300 ${
-                          !isUnlocked ? 'grayscale contrast-125' : 'group-hover:scale-110'
+                        alt={node.labelEn}
+                        className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                          !isUnlocked ? 'grayscale contrast-125' : ''
                         }`}
                         onError={(e) => {
                           (e.target as HTMLElement).style.display = 'none';
@@ -2395,42 +2298,42 @@ const CostumeDetailModal: React.FC<{
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-                      {/* Status Badge */}
-                      {isCurrent ? (
-                        <span className="absolute top-0 right-0 p-1 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-black shadow-md border border-amber-200">
-                          <Anchor className="w-3 h-3" />
-                        </span>
-                      ) : !isUnlocked ? (
-                        <span className="absolute top-0 right-0 p-1 rounded-full bg-stone-900 text-stone-300 shadow-md border border-stone-600">
-                          <Lock className="w-3 h-3" />
-                        </span>
-                      ) : (
-                        <span className="absolute top-0 right-0 p-0.5 px-1 rounded-full bg-emerald-600 text-white shadow-md border border-emerald-300 text-[8px] font-bold">
-                          ✓
-                        </span>
+                      {/* Top Badges */}
+                      <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-white font-black text-[9px] tracking-wider uppercase border border-white/20">
+                        STAGE 0{node.stage}
+                      </div>
+
+                      {isCurrent && (
+                        <div className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-amber-500 text-white font-black text-[9px] shadow-sm flex items-center gap-0.5">
+                          <Anchor className="w-2.5 h-2.5" />
+                          <span>ประจำการ</span>
+                        </div>
+                      )}
+
+                      {!isUnlocked && (
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex flex-col items-center justify-center text-white">
+                          <Lock className="w-5 h-5 text-amber-300 mb-0.5" />
+                          <span className="text-[10px] font-bold">Lv.{node.reqLv}</span>
+                        </div>
                       )}
                     </div>
 
-                    {/* Fantasy Ribbon Name Banner */}
-                    <div
-                      className={`mt-1.5 px-2 sm:px-2.5 py-0.5 rounded text-[10px] sm:text-[11px] font-black whitespace-nowrap shadow-lg transition-all border flex items-center justify-center gap-1 ${
-                        isCurrent
-                          ? 'bg-gradient-to-r from-[#92400e] via-[#b45309] to-[#92400e] border-[#fef08a] text-[#fffbeb] ring-1 ring-amber-400/40'
-                          : isSelected
-                          ? 'bg-gradient-to-r from-[#0369a1] via-[#0284c7] to-[#0369a1] border-[#bae6fd] text-white ring-2 ring-sky-400/50'
-                          : isUnlocked
-                          ? 'bg-gradient-to-r from-[#292524] to-[#1c1917] border-[#d6d3d1]/40 text-[#f5f5f4]'
-                          : 'bg-black/85 border-stone-800 text-stone-500'
-                      }`}
-                    >
-                      <span>เกาะที่ {node.stage} : {node.label}</span>
+                    {/* Stage Name & Fish Count */}
+                    <div>
+                      <div className="font-black text-xs text-slate-800 truncate">
+                        {lang === 'th' ? node.labelTh : node.labelEn}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                        <span>🐟 {isle.endemicFishIds.length} ชนิด</span>
+                        {isUnlocked && <span className="text-emerald-600 font-bold">✓ พร้อม</span>}
+                      </div>
                     </div>
                   </button>
                 );
               })}
             </div>
 
-            {/* Selected Island Inspection Panel (Captain's Log Dossier) */}
+            {/* Selected Island Deployment Dossier (แผงเตรียมตัวออกเรือ) */}
             {(() => {
               const curId = selectedIslandId || fishingState.currentIslandId;
               const isle = ALL_ISLANDS.find((i) => i.id === curId) || ALL_ISLANDS[0];
@@ -2440,9 +2343,9 @@ const CostumeDetailModal: React.FC<{
               const canUnlockNow = !isUnlocked && reqCheck.unlocked;
 
               return (
-                <div className="bg-gradient-to-b from-[#1e1713] to-[#120d0a] border-2 border-[#b45309]/60 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row gap-5 items-stretch shadow-2xl">
-                  {/* Island Biome Preview Banner */}
-                  <div className="relative w-full md:w-60 h-40 rounded-lg overflow-hidden border-2 border-[#c29b38] flex-shrink-0 shadow-lg bg-black">
+                <div className="bg-sky-50/70 border-2 border-sky-100 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row gap-5 items-stretch shadow-inner">
+                  {/* Island Panoramic Banner */}
+                  <div className="relative w-full md:w-64 h-44 rounded-xl overflow-hidden border-2 border-sky-200 flex-shrink-0 shadow-md bg-slate-900">
                     <img
                       src={`/assets/fishing/backgrounds/${isle.id}.jpg`}
                       alt={isle.nameEn}
@@ -2451,36 +2354,36 @@ const CostumeDetailModal: React.FC<{
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded bg-black/80 border border-[#d4af37] text-[10px] font-black text-[#fde68a] shadow">
-                      เกาะที่ {isle.order}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-sky-600/90 text-white text-[10px] font-black border border-white/30 shadow">
+                      STAGE {isle.order}
                     </div>
                     {isCurrent && (
-                      <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[11px] font-black flex items-center gap-1 shadow-md">
+                      <div className="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 text-[11px] font-black flex items-center gap-1 shadow-md">
                         <Anchor className="w-3.5 h-3.5" />
-                        <span>{lang === 'th' ? 'ประจำการอยู่' : 'ANCHORED'}</span>
+                        <span>{lang === 'th' ? 'ประจำการอยู่ที่นี่' : 'ANCHORED'}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Island Details & Lore */}
+                  {/* Island Details & Marine Fauna */}
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between mb-1.5 border-b border-[#b45309]/30 pb-1.5">
-                        <h4 className="text-lg font-serif font-black text-[#fef08a] flex items-center gap-2">
+                      <div className="flex items-center justify-between mb-1.5 border-b border-sky-200/60 pb-1.5">
+                        <h4 className="text-lg font-black text-slate-800 flex items-center gap-2">
                           <span>{lang === 'th' ? isle.nameTh : isle.nameEn}</span>
                         </h4>
-                        <span className="text-xs text-amber-400/90 font-bold">
+                        <span className="text-xs text-sky-700 font-bold bg-sky-100 px-2 py-0.5 rounded-full border border-sky-200">
                           {lang === 'th' ? isle.subtitleTh : isle.subtitleEn}
                         </span>
                       </div>
-                      <p className="text-xs text-[#ded7c8] leading-relaxed mb-3">
+                      <p className="text-xs text-slate-600 leading-relaxed mb-3">
                         {lang === 'th' ? isle.descriptionTh : isle.descriptionEn}
                       </p>
 
                       {/* Endemic Fish Specimen Badges */}
                       <div className="mb-3">
-                        <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider block mb-1.5">
+                        <span className="text-[10px] font-extrabold text-sky-700 uppercase tracking-wider block mb-1.5">
                           {lang === 'th' ? '🐟 สัตว์น้ำประจำถิ่น (Endemic Marine Species):' : 'Endemic Species:'}
                         </span>
                         <div className="flex flex-wrap gap-1.5">
@@ -2491,11 +2394,11 @@ const CostumeDetailModal: React.FC<{
                             return (
                               <span
                                 key={fId}
-                                className="px-2 py-0.5 rounded text-[11px] bg-[#291f17] border border-[#b45309]/50 text-[#fef3c7] flex items-center gap-1.5 shadow-sm"
+                                className="px-2.5 py-1 rounded-xl text-[11px] bg-white border border-sky-100 text-slate-700 flex items-center gap-1.5 shadow-sm"
                               >
                                 <span>{f.category === 'creature' ? '🦑' : '🐟'}</span>
                                 <span className="font-bold">{lang === 'th' ? f.nameTh : f.nameEn}</span>
-                                <span className={`text-[9px] px-1 rounded font-extrabold ${rc.badgeBg} ${rc.badgeText}`}>
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-extrabold ${rc.badgeBg} ${rc.badgeText}`}>
                                   {f.rarity}
                                 </span>
                               </span>
@@ -2506,22 +2409,22 @@ const CostumeDetailModal: React.FC<{
 
                       {/* Unlock Requirements if Locked */}
                       {!isUnlocked && (
-                        <div className="p-3 bg-[#17110c] border border-[#b45309]/40 rounded-lg text-xs space-y-1 mb-2">
-                          <div className="text-[10px] font-black uppercase text-amber-400">
+                        <div className="p-3 bg-white border border-rose-200 rounded-xl text-xs space-y-1 mb-2 shadow-sm">
+                          <div className="text-[10px] font-black uppercase text-rose-600">
                             {lang === 'th' ? 'เงื่อนไขการปลดล็อคเส้นทางเดินเรือ:' : 'Unlock Requirements:'}
                           </div>
-                          <div className={`flex items-center justify-between ${fishingState.anglerLevel >= isle.requiredLevel ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                          <div className={`flex items-center justify-between ${fishingState.anglerLevel >= isle.requiredLevel ? 'text-emerald-600 font-bold' : 'text-slate-400'}`}>
                             <span>• {lang === 'th' ? 'เลเวลนักตกปลา' : 'Angler Level'} {isle.requiredLevel}</span>
                             <span className="font-mono font-bold">{fishingState.anglerLevel} / {isle.requiredLevel}</span>
                           </div>
                           {isle.requiredCoins > 0 && (
-                            <div className={`flex items-center justify-between ${fishingState.seaCoins >= isle.requiredCoins ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                            <div className={`flex items-center justify-between ${fishingState.seaCoins >= isle.requiredCoins ? 'text-emerald-600 font-bold' : 'text-slate-400'}`}>
                               <span>• {lang === 'th' ? 'เหรียญทะเล' : 'Coins'} {isle.requiredCoins.toLocaleString()}</span>
                               <span className="font-mono font-bold">{fishingState.seaCoins.toLocaleString()}</span>
                             </div>
                           )}
                           {isle.requiredRodId && (
-                            <div className={`flex items-center justify-between ${fishingState.ownedRodIds.includes(isle.requiredRodId) ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                            <div className={`flex items-center justify-between ${fishingState.ownedRodIds.includes(isle.requiredRodId) ? 'text-emerald-600 font-bold' : 'text-slate-400'}`}>
                               <span>• {rodName(FISHING_RODS_CATALOG.find((r) => r.id === isle.requiredRodId) || FISHING_RODS_CATALOG[0], lang)}</span>
                               <span>{fishingState.ownedRodIds.includes(isle.requiredRodId) ? '✓ ครบถ้วน' : '✗ ขาดคันเบ็ดนี้'}</span>
                             </div>
@@ -2533,8 +2436,9 @@ const CostumeDetailModal: React.FC<{
                     {/* Action Button */}
                     <div className="pt-2">
                       {isCurrent ? (
-                        <div className="text-center py-2.5 rounded-lg text-xs font-black text-[#fef08a] border-2 border-[#b45309]/50 bg-[#251b14] shadow-inner">
-                          {lang === 'th' ? '⚓ ปัจจุบันกำลังทอดสมอตกปลาอยู่ที่เกาะนี้' : '⚓ Currently Anchored at this Island'}
+                        <div className="text-center py-3 rounded-2xl text-xs font-black text-sky-800 border-2 border-sky-200 bg-white shadow-sm flex items-center justify-center gap-2">
+                          <Anchor className="w-4 h-4 text-sky-600" />
+                          <span>{lang === 'th' ? '⚓ กำลังทอดสมออยู่ที่เกาะนี้เรียบร้อยแล้ว' : '⚓ Currently Anchored at this Island'}</span>
                         </div>
                       ) : isUnlocked ? (
                         <button
@@ -2542,18 +2446,23 @@ const CostumeDetailModal: React.FC<{
                             soundEngine.playSplash();
                             soundEngine.setIsland(isle.id);
                             setFishingState((prev) => ({ ...prev, currentIslandId: isle.id }));
+                            // Reset pity & retrieve line & run entrance walking cutscene
+                            setPityBonus(0);
+                            setPhase('IDLE_READY');
+                            setPendingSpecies(null);
+                            setIsIslandMapOpen(false);
+                            playEntranceCutscene();
                             notify(
                               lang === 'th'
-                                ? `ออกเรือเดินทางสู่ ${isle.nameTh}!`
-                                : `Set sail to ${isle.nameEn}!`,
+                                ? `ออกเรือเดินทางสู่ ${isle.nameTh}! เริ่มสำรวจสะพานปลา`
+                                : `Set sail to ${isle.nameEn}! Walking onto pier`,
                               'good'
                             );
-                            setIsIslandMapOpen(false);
                           }}
-                          className="w-full py-3 rounded-lg font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#075985] hover:from-[#38bdf8] hover:to-[#0284c7] text-[#f0f9ff] border-2 border-[#bae6fd] shadow-[0_4px_0_#082f49,0_8px_16px_rgba(0,0,0,0.6)] active:translate-y-1 active:shadow-[0_1px_0_#082f49] flex items-center justify-center gap-2"
+                          className="w-full py-3.5 rounded-2xl font-black text-sm tracking-wider uppercase transition-all bg-gradient-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] hover:from-[#60a5fa] hover:to-[#0284c7] text-white border-2 border-white shadow-[0_5px_0_#075985,0_10px_20px_rgba(2,132,199,0.3)] active:translate-y-1 active:shadow-[0_1px_0_#075985] flex items-center justify-center gap-2"
                         >
-                          <Compass className="w-4 h-4 text-cyan-200" />
-                          <span>{lang === 'th' ? `⛵ กางใบเรือออกสำรวจ ${isle.nameTh} (SET SAIL)` : `⛵ Set Sail to ${isle.nameEn}`}</span>
+                          <Compass className="w-4 h-4 text-sky-100" />
+                          <span>{lang === 'th' ? `⛵ ออกเดินทางสู่ ${isle.nameTh} (SET SAIL)` : `⛵ Set Sail to ${isle.nameEn}`}</span>
                         </button>
                       ) : canUnlockNow ? (
                         <button
@@ -2566,30 +2475,35 @@ const CostumeDetailModal: React.FC<{
                               unlockedIslandIds: Array.from(new Set([...prev.unlockedIslandIds, isle.id])),
                               currentIslandId: isle.id
                             }));
+                            // Reset pity & retrieve line & run entrance walking cutscene
+                            setPityBonus(0);
+                            setPhase('IDLE_READY');
+                            setPendingSpecies(null);
+                            setIsIslandMapOpen(false);
+                            playEntranceCutscene();
                             notify(
                               lang === 'th'
                                 ? `ปลดล็อค ${isle.nameTh} สำเร็จแล้วและออกเรือทันที!`
                                 : `Unlocked ${isle.nameEn} and set sail!`,
                               'rare'
                             );
-                            setIsIslandMapOpen(false);
                           }}
-                          className="w-full py-3 rounded-lg font-black text-xs tracking-wider uppercase transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#b45309] hover:from-[#fbbf24] hover:to-[#d97706] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_4px_0_#78350f,0_8px_16px_rgba(0,0,0,0.6)] active:translate-y-1 active:shadow-[0_1px_0_#78350f] animate-pulse flex items-center justify-center gap-2"
+                          className="w-full py-3.5 rounded-2xl font-black text-sm tracking-wider uppercase transition-all bg-gradient-to-b from-[#fbbf24] via-[#f59e0b] to-[#d97706] hover:from-[#fcd34d] hover:to-[#f59e0b] text-white border-2 border-white shadow-[0_5px_0_#b45309,0_10px_20px_rgba(245,158,11,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#b45309] animate-pulse flex items-center justify-center gap-2"
                         >
-                          <Sparkles className="w-4 h-4 text-amber-200" />
+                          <Sparkles className="w-4 h-4 text-amber-100" />
                           <span>
                             {lang === 'th'
-                              ? `✨ ปลดล็อคเส้นทางเดินเรือ & กางใบเรือทันที (${isle.requiredCoins.toLocaleString()} เหรียญ)`
-                              : `✨ Unlock Sea Chart & Set Sail (${isle.requiredCoins.toLocaleString()} Coins)`}
+                              ? `✨ ปลดล็อคเกาะ & ออกเรือทันที (${isle.requiredCoins.toLocaleString()} เหรียญ)`
+                              : `✨ Unlock Island & Set Sail (${isle.requiredCoins.toLocaleString()} Coins)`}
                           </span>
                         </button>
                       ) : (
                         <button
                           disabled
-                          className="w-full py-2.5 rounded-lg bg-[#1a1715] text-zinc-500 border border-zinc-700/50 font-bold text-xs tracking-wider uppercase cursor-not-allowed flex items-center justify-center gap-2"
+                          className="w-full py-3 rounded-2xl bg-slate-200 text-slate-400 font-bold text-xs tracking-wider uppercase cursor-not-allowed flex items-center justify-center gap-2"
                         >
                           <Lock className="w-3.5 h-3.5" />
-                          <span>{lang === 'th' ? '🔒 ยังไม่ผ่านเงื่อนไขการเดินเรือของสมาคม' : 'Requirements Unmet (Locked)'}</span>
+                          <span>{lang === 'th' ? '🔒 ยังไม่ผ่านเงื่อนไขการออกเรือของสมาคม' : 'Requirements Unmet (Locked)'}</span>
                         </button>
                       )}
                     </div>
@@ -2601,8 +2515,8 @@ const CostumeDetailModal: React.FC<{
         </Modal>
       )}
 
-      {/* Fantasy Adventurer Guild HUD Header */}
-      <header className="border-b-2 border-[#b8860b]/40 bg-gradient-to-r from-[#0b1320]/95 via-[#121f33]/95 to-[#0b1320]/95 backdrop-blur-md px-4 lg:px-8 py-2.5 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-lg">
+      {/* Bright Cute Anime Adventurer Guild HUD Header */}
+      <header className="border-b-2 border-sky-100 bg-white/95 backdrop-blur-xl px-4 lg:px-8 py-2.5 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-[0_4px_20px_rgba(2,132,199,0.06)] text-slate-800">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -2610,77 +2524,77 @@ const CostumeDetailModal: React.FC<{
               onBackToPortal();
             }}
             title={t.home}
-            className="p-2 rounded-lg border border-[#b8860b]/40 bg-[#162235] hover:border-amber-400 hover:text-amber-300 text-zinc-300 transition shadow-sm"
+            className="p-2 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 transition shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-2">
-            <Anchor className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-serif font-black tracking-wider text-[#fef08a] uppercase drop-shadow">
-              Espician <span className="text-amber-400">Fishing</span>
+            <Anchor className="w-4 h-4 text-sky-600" />
+            <span className="text-sm font-black tracking-wider text-slate-800 uppercase">
+              Espician <span className="text-sky-600">Fishing</span>
             </span>
           </div>
 
           {/* Integrated Nautical Island & Day/Night Talisman */}
-          <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-[#b8860b]/30">
+          <div className="hidden lg:flex items-center gap-2 pl-3 border-l border-sky-100">
             <button
               onClick={() => {
                 soundEngine.playClick();
                 setIsIslandMapOpen(true);
               }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-b from-[#1e293b] to-[#0f172a] border-2 border-[#fbbf24]/70 hover:border-[#fde68a] text-[#fef3c7] text-xs font-bold tracking-wider uppercase transition shadow-[0_3px_0_#090d16,0_4px_10px_rgba(0,0,0,0.4)] active:translate-y-0.5 active:shadow-none"
-              title={lang === 'th' ? 'เปิดแผนที่เดินเรือหมู่เกาะ' : 'Open Nautical Sea Chart'}
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 text-sky-800 text-xs font-black tracking-wider uppercase transition shadow-sm active:translate-y-0.5"
+              title={lang === 'th' ? 'เปิดแผนที่สำรวจหมู่เกาะ' : 'Open Archipelago Stage Map'}
             >
-              <Compass className="w-4 h-4 text-amber-300 animate-spin-slow" />
+              <Compass className="w-4 h-4 text-sky-600 animate-spin-slow" />
               <span>{lang === 'th' ? currentIsland.nameTh : currentIsland.nameEn}</span>
-              <span className="text-[10px] text-amber-400/80 font-serif">⚓ แผนที่</span>
+              <span className="text-[10px] text-sky-600/90 font-bold bg-sky-200/60 px-1.5 py-0.5 rounded-md">🗺️ แผนที่</span>
             </button>
 
             <div
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-bold tracking-wider shadow-sm transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 text-xs font-bold tracking-wider shadow-sm transition ${
                 realTimeOfDay === 'day'
-                  ? 'border-amber-400/60 bg-amber-950/40 text-amber-300'
-                  : 'border-indigo-400/60 bg-indigo-950/40 text-indigo-200'
+                  ? 'border-amber-300 bg-amber-50 text-amber-700'
+                  : 'border-indigo-300 bg-indigo-50 text-indigo-700'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full animate-pulse ${realTimeOfDay === 'day' ? 'bg-amber-400' : 'bg-cyan-400'}`} />
+              <span className={`w-2 h-2 rounded-full animate-pulse ${realTimeOfDay === 'day' ? 'bg-amber-500 shadow-[0_0_8px_#f59e0b]' : 'bg-indigo-500 shadow-[0_0_8px_#6366f1]'}`} />
               <span>{realTimeOfDay === 'day' ? '☀️ กลางวัน (DAY)' : '🌙 กลางคืน (NIGHT)'}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex items-center gap-2.5 bg-black/40 px-3 py-1.5 rounded-lg border border-[#b8860b]/30">
-            <span className="text-xs font-serif font-black text-amber-300 tracking-wider">RANK {fishingState.anglerLevel}</span>
-            <div className="w-16 sm:w-24 h-2 bg-black/60 rounded-full overflow-hidden border border-white/10">
+          <div className="flex items-center gap-2.5 bg-sky-50 px-3 py-1.5 rounded-xl border border-sky-200 shadow-sm">
+            <span className="text-xs font-black text-sky-800 tracking-wider">RANK {fishingState.anglerLevel}</span>
+            <div className="w-16 sm:w-24 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300/40">
               <div
-                className="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-500 rounded-full"
+                className="h-full bg-gradient-to-r from-sky-500 to-teal-400 transition-all duration-500 rounded-full"
                 style={{ width: `${Math.min(100, (fishingState.anglerExp / expForNextLevel) * 100)}%` }}
               />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-amber-300 bg-amber-950/30 px-3 py-1.5 rounded-lg border border-amber-500/40 shadow-inner">
-            <Coins className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-bold font-mono text-[#fef08a]">{fishingState.seaCoins.toLocaleString()}</span>
+          <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm">
+            <Coins className="w-4 h-4 text-amber-500" />
+            <span className="text-sm font-black font-mono">{fishingState.seaCoins.toLocaleString()}</span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-zinc-300 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/10">
-            <BookOpen className="w-4 h-4 text-cyan-400" />
+          <div className="hidden sm:flex items-center gap-1.5 text-cyan-800 bg-cyan-50 px-2.5 py-1.5 rounded-xl border border-cyan-200 shadow-sm">
+            <BookOpen className="w-4 h-4 text-cyan-600" />
             <span className="text-xs font-bold font-mono">
               {discoveredCount}/{TOTAL_SPECIES}
             </span>
           </div>
 
           {/* Central User Account Badge */}
-          <div className="hidden md:flex items-center gap-2 pl-3 border-l border-[#b8860b]/30">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 border border-amber-200 flex items-center justify-center text-[11px] font-black text-black uppercase shadow-md">
+          <div className="hidden md:flex items-center gap-2 pl-3 border-l border-sky-100">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-sky-500 to-teal-400 border border-sky-200 flex items-center justify-center text-[11px] font-black text-white uppercase shadow-sm">
               {currentUser?.username?.[0] || 'U'}
             </div>
             <div className="text-left">
-              <div className="text-[11px] font-bold text-white leading-tight flex items-center gap-1">
+              <div className="text-[11px] font-bold text-slate-800 leading-tight flex items-center gap-1">
                 <span>{currentUser?.username || (userEmail ? userEmail.split('@')[0] : 'Guest Angler')}</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" title="Cloud Synced" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" title="Cloud Synced" />
               </div>
-              <div className="text-[9px] text-amber-400/70 tracking-wider font-mono">
+              <div className="text-[9px] text-sky-600/80 tracking-wider font-mono">
                 {currentUser?.club_name || 'Espician Guild'}
               </div>
             </div>
@@ -2694,7 +2608,7 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setShowAdminModal(true);
                 }}
-                className="px-2.5 py-1 rounded-md border-2 border-amber-400 bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-[10px] font-black tracking-wider uppercase transition shadow-md animate-pulse"
+                className="px-2.5 py-1 rounded-lg border border-amber-300 bg-gradient-to-b from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 text-[10px] font-black tracking-wider uppercase transition shadow-sm animate-pulse"
               >
                 ⚡ ADMIN
               </button>
@@ -2702,7 +2616,7 @@ const CostumeDetailModal: React.FC<{
             <button
               onClick={toggleLang}
               title={t.language}
-              className="px-2.5 py-1 rounded-md border border-[#b8860b]/50 bg-[#162235] hover:border-amber-400 text-xs font-black tracking-wider text-amber-200 transition"
+              className="px-2.5 py-1 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-xs font-black tracking-wider text-sky-700 transition shadow-sm"
             >
               {lang.toUpperCase()}
             </button>
@@ -2712,13 +2626,13 @@ const CostumeDetailModal: React.FC<{
                 soundEngine.playClick();
               }}
               title={t.muteAll}
-              className={`p-1.5 rounded-md border transition ${
+              className={`p-1.5 rounded-lg border transition shadow-sm ${
                 soundSettings.muted
-                  ? 'border-rose-500 text-rose-400 bg-rose-950/40'
-                  : 'border-[#b8860b]/50 bg-[#162235] text-zinc-300 hover:border-amber-400 hover:text-white'
+                  ? 'border-rose-300 text-rose-600 bg-rose-50'
+                  : 'border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100'
               }`}
             >
-              {soundSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-300" />}
+              {soundSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-sky-600" />}
             </button>
             <button
               onClick={() => {
@@ -2726,7 +2640,7 @@ const CostumeDetailModal: React.FC<{
                 setShowSettingsModal(true);
               }}
               title={t.settingsTitle}
-              className="p-1.5 rounded-md border border-[#b8860b]/50 bg-[#162235] text-zinc-300 hover:border-amber-400 hover:text-amber-300 transition"
+              className="p-1.5 rounded-lg border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 transition shadow-sm"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -2746,35 +2660,35 @@ const CostumeDetailModal: React.FC<{
             ).length;
             return (
               <div
-                className="p-3 bg-gradient-to-r from-[#170e24] to-[#0c0814] border-2 border-purple-500/50 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-300 shadow-2xl"
+                className="p-3 bg-purple-50 border-2 border-purple-200 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-purple-900 shadow-sm"
               >
                 <div className="flex items-center gap-3.5 flex-wrap">
-                  <span className="text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                  <span className="text-purple-600 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
                     <span>FORMULA DEBUG:</span>
                   </span>
                   <span>
-                    Base Bite: <strong className="text-white font-bold">{(baseBiteRate * 100).toFixed(1)}%</strong>
+                    Base Bite: <strong className="text-purple-950 font-bold">{(baseBiteRate * 100).toFixed(1)}%</strong>
                   </span>
                   <span>
-                    Pity Bonus: <strong className="text-amber-400 font-bold">+{((pityBonus || 0) * 100).toFixed(2)}%</strong>
+                    Pity Bonus: <strong className="text-amber-600 font-bold">+{((pityBonus || 0) * 100).toFixed(2)}%</strong>
                   </span>
                   <span>
-                    Tick Roll Chance: <strong className="text-emerald-400 font-bold">{(totalBiteRate * 100).toFixed(2)}%</strong>
+                    Tick Roll Chance: <strong className="text-emerald-600 font-bold">{(totalBiteRate * 100).toFixed(2)}%</strong>
                   </span>
                   <span>
-                    Instant Jerk Chance: <strong className="text-cyan-400 font-bold">{(jerkBiteRate * 100).toFixed(2)}%</strong>
+                    Instant Jerk Chance: <strong className="text-sky-600 font-bold">{(jerkBiteRate * 100).toFixed(2)}%</strong>
                   </span>
                   <span>
-                    Available Pool: <strong className="text-white font-bold">{activePoolCount}/{TOTAL_SPECIES} ({realTimeOfDay.toUpperCase()})</strong>
+                    Available Pool: <strong className="text-purple-950 font-bold">{activePoolCount}/{TOTAL_SPECIES} ({realTimeOfDay.toUpperCase()})</strong>
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold border rounded ${
+                    className={`px-2 py-0.5 text-[10px] font-bold border rounded-lg ${
                       isAutoFishing
-                        ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)]'
-                        : 'border-white/10 bg-white/5 text-zinc-400'
+                        ? 'border-emerald-400 bg-emerald-100 text-emerald-800'
+                        : 'border-slate-200 bg-white text-slate-500'
                     }`}
                   >
                     AUTO-FISHING: {isAutoFishing ? 'ACTIVE' : 'IDLE'}
@@ -2784,7 +2698,7 @@ const CostumeDetailModal: React.FC<{
                       setPityBonus(0);
                       notify('Pity bonus reset to 0%', 'info');
                     }}
-                    className="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] border border-white/15 rounded"
+                    className="px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-700 text-[10px] border border-slate-300 rounded-lg shadow-sm"
                   >
                     Reset Pity
                   </button>
@@ -2793,7 +2707,7 @@ const CostumeDetailModal: React.FC<{
             );
           })()}
 
-          <div className="relative overflow-hidden border-2 border-[#b8860b]/50 rounded-xl bg-black aspect-[16/9] shadow-2xl">
+          <div className="relative overflow-hidden border-4 border-white rounded-3xl bg-slate-900 aspect-[16/9] shadow-[0_20px_50px_rgba(2,132,199,0.15)] ring-1 ring-sky-100">
             <canvas
               ref={mainCanvasRef}
               width={960}
@@ -2810,7 +2724,7 @@ const CostumeDetailModal: React.FC<{
               <div className="absolute bottom-4 inset-x-0 flex justify-center z-10">
                 <button
                   onClick={skipEntranceCutscene}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-[#2a1e16] to-[#140e0a] border-2 border-[#f59e0b]/70 text-[#fef3c7] font-serif font-black text-xs tracking-wide shadow-2xl flex items-center gap-2 hover:border-[#fde68a] transition animate-pulse"
+                  className="px-6 py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-sky-200 text-slate-800 font-black text-xs tracking-wide shadow-xl flex items-center gap-2 hover:bg-sky-50 transition animate-pulse"
                 >
                   <span>🚶 {t.arrivingAtPier}</span>
                 </button>
@@ -2824,10 +2738,10 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setDetail({ kind: 'rod', id: equippedRod.id });
                 }}
-                className="bg-gradient-to-b from-[#1c1612]/95 to-[#100d0a]/95 backdrop-blur-md border-2 border-[#b8860b]/60 hover:border-amber-300 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs transition shadow-lg"
+                className="bg-white/90 backdrop-blur-md border-2 border-sky-100 hover:border-sky-300 text-slate-800 rounded-2xl px-3.5 py-1.5 flex items-center gap-2 text-xs transition shadow-md"
               >
-                <span className="w-2.5 h-2.5 rounded-full shadow-sm ring-1 ring-white/40" style={{ backgroundColor: equippedRod.rodColor }} />
-                <span className="font-extrabold text-[#fef08a] tracking-wide">{rodName(equippedRod, lang)}</span>
+                <span className="w-2.5 h-2.5 rounded-full shadow-sm ring-1 ring-slate-400" style={{ backgroundColor: equippedRod.rodColor }} />
+                <span className="font-extrabold text-slate-800 tracking-wide">{rodName(equippedRod, lang)}</span>
               </button>
 
               <button
@@ -2837,15 +2751,15 @@ const CostumeDetailModal: React.FC<{
                   const nextBait = ownedBaits[(idx + 1) % ownedBaits.length];
                   if (nextBait) equipBait(nextBait.id);
                 }}
-                className="bg-gradient-to-b from-[#1c1612]/95 to-[#100d0a]/95 backdrop-blur-md border-2 border-[#b8860b]/60 hover:border-amber-300 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs transition text-zinc-300 hover:text-white shadow-lg"
+                className="bg-white/90 backdrop-blur-md border-2 border-sky-100 hover:border-sky-300 text-slate-800 rounded-2xl px-3.5 py-1.5 flex items-center gap-2 text-xs transition shadow-md"
                 title={lang === 'th' ? 'คลิกเพื่อสลับเหยื่อตกปลา' : 'Click to cycle bait'}
               >
-                <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white/40" style={{ backgroundColor: equippedBait.iconColor }} />
-                <span className="font-bold text-xs text-[#fef3c7]">{baitName(equippedBait, lang)}</span>
-                <span className="font-mono font-bold text-[10px] text-amber-400">
+                <span className="w-2.5 h-2.5 rounded-full ring-1 ring-slate-400" style={{ backgroundColor: equippedBait.iconColor }} />
+                <span className="font-bold text-xs text-slate-700">{baitName(equippedBait, lang)}</span>
+                <span className="font-mono font-bold text-[10px] text-amber-600">
                   {baitCount(equippedBait) === Infinity ? '∞' : `x${baitCount(equippedBait)}`}
                 </span>
-                <span className="text-[10px] text-amber-300 font-mono">▾</span>
+                <span className="text-[10px] text-sky-600 font-mono">▾</span>
               </button>
             </div>
 
@@ -2856,10 +2770,10 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setFastMode((v) => !v);
                 }}
-                className={`px-3 py-1 rounded-md text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition ${
+                className={`px-3 py-1 rounded-xl text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition shadow-sm ${
                   fastMode
-                    ? 'border-amber-400 bg-amber-400/30 text-amber-300 shadow-md'
-                    : 'border-[#b8860b]/50 bg-black/70 text-zinc-400 hover:text-white'
+                    ? 'border-amber-400 bg-amber-400 text-slate-900 shadow-md'
+                    : 'border-white/80 bg-white/80 text-slate-700 hover:bg-white'
                 }`}
                 title={t.fastMode}
               >
@@ -2870,10 +2784,10 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setAutoReel((v) => !v);
                 }}
-                className={`px-3 py-1 rounded-md text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition ${
+                className={`px-3 py-1 rounded-xl text-[11px] font-mono font-bold tracking-wider border-2 backdrop-blur-md transition shadow-sm ${
                   autoReel
-                    ? 'border-emerald-400 bg-emerald-400/30 text-emerald-300 shadow-md'
-                    : 'border-[#b8860b]/50 bg-black/70 text-zinc-400 hover:text-white'
+                    ? 'border-emerald-400 bg-emerald-400 text-slate-900 shadow-md'
+                    : 'border-white/80 bg-white/80 text-slate-700 hover:bg-white'
                 }`}
                 title={t.autoReel}
               >
@@ -2884,10 +2798,10 @@ const CostumeDetailModal: React.FC<{
                   soundEngine.playClick();
                   setViewMode((v) => (v === 'user' ? 'dev' : 'user'));
                 }}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold border-2 backdrop-blur-md transition ${
+                className={`px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold border-2 backdrop-blur-md transition shadow-sm ${
                   viewMode === 'dev'
-                    ? 'border-purple-400 bg-purple-950/70 text-purple-300 shadow-md'
-                    : 'border-[#b8860b]/50 bg-black/70 text-zinc-400 hover:text-white'
+                    ? 'border-purple-400 bg-purple-400 text-slate-900 shadow-md'
+                    : 'border-white/80 bg-white/80 text-slate-700 hover:bg-white'
                 }`}
                 title="Toggle Dev Formula Stats"
               >
@@ -2903,7 +2817,7 @@ const CostumeDetailModal: React.FC<{
                   playEntranceCutscene();
                 }}
                 title={t.replayEntrance}
-                className="absolute bottom-4 left-4 z-10 px-3 py-1.5 rounded-lg bg-black/80 hover:bg-black/95 border-2 border-[#b8860b]/50 text-amber-200 hover:text-white text-xs font-serif transition flex items-center gap-1.5 shadow-lg"
+                className="absolute bottom-4 left-4 z-10 px-3.5 py-1.5 rounded-2xl bg-white/90 hover:bg-white border-2 border-sky-100 text-slate-700 hover:text-sky-600 text-xs font-bold transition flex items-center gap-1.5 shadow-md"
               >
                 <span>🚶 {lang === 'th' ? 'เดินเข้าสะพาน' : 'Walk'}</span>
               </button>
@@ -2914,17 +2828,17 @@ const CostumeDetailModal: React.FC<{
                 {/* Atmospheric Bite Waiting Pill without exposing roll timers */}
                 <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-10 px-4">
                   <div
-                    className="pointer-events-auto px-5 py-2.5 rounded-xl bg-gradient-to-b from-[#1a1410]/95 to-[#0e0b08]/95 backdrop-blur-md border-2 border-[#b8860b]/60 text-xs text-[#fef3c7] shadow-2xl flex items-center gap-3"
+                    className="pointer-events-auto px-5 py-2.5 rounded-2xl bg-white/95 backdrop-blur-xl border-2 border-sky-200 text-xs text-slate-800 shadow-xl flex items-center gap-3"
                   >
-                    <div className="flex items-center gap-2 text-amber-300 font-semibold">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#f59e0b]" />
+                    <div className="flex items-center gap-2 text-sky-700 font-bold">
+                      <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse shadow-[0_0_8px_#0ea5e9]" />
                       <span>{lang === 'th' ? '🌊 สายเบ็ดลอยในกระแสน้ำ...' : 'Line drifting in ocean current...'}</span>
                     </div>
                     {pityBonus > 0 && (
                       <>
-                        <div className="h-3.5 w-px bg-amber-500/30" />
-                        <div className="text-emerald-400 font-bold text-[11px] flex items-center gap-1">
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                        <div className="h-3.5 w-px bg-slate-200" />
+                        <div className="text-emerald-600 font-extrabold text-[11px] flex items-center gap-1">
+                          <Sparkles className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
                           <span>{lang === 'th' ? '✨ ผิวน้ำกระเพื่อม... ปลาระแวงเริ่มสนใจ' : 'Water ripples... fish showing interest'}</span>
                         </div>
                       </>
@@ -2936,11 +2850,11 @@ const CostumeDetailModal: React.FC<{
                   <button
                     onClick={handleJerk}
                     disabled={jerkCooling}
-                    className="relative overflow-hidden px-6 py-3 rounded-xl font-black text-sm tracking-wide transition-all bg-gradient-to-b from-[#b45309] via-[#92400e] to-[#78350f] hover:from-[#d97706] hover:to-[#92400e] disabled:from-zinc-800 disabled:to-zinc-900 border-2 border-[#fde68a] disabled:border-zinc-700 text-[#fffbeb] shadow-[0_4px_0_#451a03,0_8px_16px_rgba(0,0,0,0.6)] active:translate-y-1 active:shadow-none flex items-center gap-2"
+                    className="relative overflow-hidden px-6 py-3 rounded-2xl font-black text-sm tracking-wide transition-all bg-gradient-to-b from-[#38bdf8] via-[#0ea5e9] to-[#0284c7] hover:from-[#60a5fa] hover:to-[#0284c7] disabled:from-slate-300 disabled:to-slate-400 border-2 border-white disabled:border-slate-200 text-white shadow-[0_5px_0_#0369a1,0_10px_20px_rgba(2,132,199,0.3)] disabled:shadow-none active:translate-y-1 active:shadow-[0_1px_0_#0369a1] flex items-center gap-2"
                   >
-                    <Waves className="w-4 h-4 text-[#fde68a]" />
+                    <Waves className="w-4 h-4 text-sky-100" />
                     <span>{t.jerkRod}</span>
-                    {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-[#fde68a]" style={{ animation: 'cool 3.5s linear forwards' }} />}
+                    {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-white" style={{ animation: 'cool 3.5s linear forwards' }} />}
                   </button>
                 </div>
               </>
@@ -2950,9 +2864,9 @@ const CostumeDetailModal: React.FC<{
               <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-none">
                 <button
                   onClick={startReeling}
-                  className="pointer-events-auto px-14 py-4 rounded-xl font-black text-xl tracking-wider uppercase transition-all bg-gradient-to-b from-[#ef4444] via-[#dc2626] to-[#991b1b] hover:from-[#f87171] hover:to-[#b91c1c] text-white border-2 border-[#fca5a5] shadow-[0_6px_0_#450a0a,0_12px_24px_rgba(0,0,0,0.8)] active:translate-y-1.5 active:shadow-[0_1px_0_#450a0a] animate-bounce flex items-center gap-3"
+                  className="pointer-events-auto px-14 py-4 rounded-2xl font-black text-xl tracking-wider uppercase transition-all bg-gradient-to-b from-[#ff4757] via-[#ff6b81] to-[#ee5253] hover:from-[#ff6b81] hover:to-[#d63031] text-white border-2 border-white shadow-[0_6px_0_#b71540,0_16px_32px_rgba(255,71,87,0.4)] active:translate-y-1.5 active:shadow-[0_1px_0_#b71540] animate-bounce flex items-center gap-3"
                 >
-                  <Sparkles className="w-6 h-6 text-amber-300 animate-spin" />
+                  <Sparkles className="w-6 h-6 text-amber-200 animate-spin" />
                   <span>{t.pullHook}</span>
                 </button>
               </div>
@@ -2965,10 +2879,10 @@ const CostumeDetailModal: React.FC<{
             )}
 
             {phase === 'CATCH_REVEAL' && latestCatch && latestCatchSpecies && (
-              <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-20">
+              <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-md flex items-center justify-center p-4 z-20">
                 <div
                   ref={cardRef}
-                  className="bg-gradient-to-b from-[#1c1612] via-[#14100d] to-[#0c0907] border-2 border-[#b8860b] rounded-2xl p-5 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,235,165,0.3)]"
+                  className="bg-white/98 backdrop-blur-2xl border-2 border-sky-100 rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(2,132,199,0.25)] text-slate-800"
                 >
                   <span
                     data-pop
@@ -2976,16 +2890,16 @@ const CostumeDetailModal: React.FC<{
                   >
                     {latestCatchSpecies.rarity.toUpperCase()}
                   </span>
-                  <h3 data-pop className="text-xl font-serif font-black text-[#fef08a] mt-2 drop-shadow">
+                  <h3 data-pop className="text-xl font-black text-slate-800 mt-2">
                     {fishName(latestCatchSpecies, lang)}
                   </h3>
-                  <div className="my-2 bg-black/60 border border-[#b8860b]/30 rounded-xl p-2 shadow-inner">
+                  <div className="my-2 bg-sky-50 border border-sky-100 rounded-2xl p-2 shadow-inner">
                     <FishPreviewCanvas species={latestCatchSpecies} hueShiftDeg={latestCatch.hueShiftDeg} width={280} height={130} scale={1.3} />
                   </div>
-                  <div data-pop className="text-sm font-semibold text-zinc-300">
+                  <div data-pop className="text-sm font-bold text-slate-600">
                     {latestCatch.weightKg} kg · {latestCatch.sizeTier}
                   </div>
-                  <div data-pop className="text-xs text-amber-300 mb-4 font-serif">
+                  <div data-pop className="text-xs text-sky-600 mb-4 font-bold">
                     {variantLabel(latestCatch.variantTitle, lang)}
                   </div>
                   <div data-pop className="grid grid-cols-3 gap-2">
@@ -2994,7 +2908,7 @@ const CostumeDetailModal: React.FC<{
                         handleSellFish(latestCatch.uid);
                         setPhase('IDLE_READY');
                       }}
-                      className="py-2.5 rounded-lg font-black text-xs bg-gradient-to-b from-[#d97706] to-[#92400e] border border-[#fde68a] text-white shadow-[0_3px_0_#451a03] active:translate-y-0.5 active:shadow-none"
+                      className="py-2.5 rounded-xl font-black text-xs bg-gradient-to-b from-[#f59e0b] to-[#d97706] border border-white text-white shadow-[0_3px_0_#b45309] active:translate-y-0.5 active:shadow-none"
                     >
                       {t.sell} {latestCatch.sellPrice.toLocaleString()}
                     </button>
@@ -3004,7 +2918,7 @@ const CostumeDetailModal: React.FC<{
                         setPhase('IDLE_READY');
                         setActiveTab('aquarium');
                       }}
-                      className="py-2.5 rounded-lg font-black text-xs bg-gradient-to-b from-[#0284c7] to-[#075985] border border-[#bae6fd] text-white shadow-[0_3px_0_#082f49] active:translate-y-0.5 active:shadow-none"
+                      className="py-2.5 rounded-xl font-black text-xs bg-gradient-to-b from-[#38bdf8] to-[#0284c7] border border-white text-white shadow-[0_3px_0_#075985] active:translate-y-0.5 active:shadow-none"
                     >
                       {t.aquarium}
                     </button>
@@ -3013,7 +2927,7 @@ const CostumeDetailModal: React.FC<{
                         soundEngine.playClick();
                         setPhase('IDLE_READY');
                       }}
-                      className="py-2.5 rounded-lg font-bold text-xs bg-gradient-to-b from-[#2a221b] to-[#18130f] border border-[#b45309]/50 text-[#fde68a] shadow-[0_2px_0_#0a0806] active:translate-y-0.5 active:shadow-none"
+                      className="py-2.5 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 shadow-sm active:translate-y-0.5 active:shadow-none"
                     >
                       {t.keep}
                     </button>
@@ -3026,9 +2940,9 @@ const CostumeDetailModal: React.FC<{
               <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none">
                 <button
                   onClick={handleCastLine}
-                  className="pointer-events-auto px-12 py-3.5 rounded-xl font-black text-base sm:text-lg tracking-wider uppercase transition-all bg-gradient-to-b from-[#f59e0b] via-[#d97706] to-[#92400e] hover:from-[#fbbf24] hover:to-[#b45309] text-[#fffbeb] border-2 border-[#fef08a] shadow-[0_5px_0_#451a03,0_10px_20px_rgba(0,0,0,0.7)] active:translate-y-1 active:shadow-[0_1px_0_#451a03] flex items-center gap-3 drop-shadow"
+                  className="pointer-events-auto px-12 py-3.5 rounded-2xl font-black text-base sm:text-lg tracking-wider uppercase transition-all bg-gradient-to-b from-[#ff6b81] via-[#ee5253] to-[#d63031] hover:from-[#ff7979] hover:to-[#eb4d4b] text-white border-2 border-white shadow-[0_6px_0_#b71540,0_14px_28px_rgba(238,82,83,0.35)] active:translate-y-1 active:shadow-[0_2px_0_#b71540] flex items-center gap-3 drop-shadow"
                 >
-                  <Anchor className="w-5 h-5 text-[#fef08a]" />
+                  <Anchor className="w-5 h-5 text-white" />
                   <span>{t.castLine}</span>
                 </button>
               </div>
@@ -3038,11 +2952,11 @@ const CostumeDetailModal: React.FC<{
 
         {/* JRPG Command Deck Side Panel */}
         <div className={`lg:col-span-4 ${PANEL} flex flex-col h-[640px]`}>
-          <div className="grid grid-cols-6 border-b border-[#b8860b]/30 px-1">
-            {tabBtn('bag', <Fish className="w-3.5 h-3.5" />, lang === 'th' ? 'คลังปลา' : 'BAG', <span className="text-[10px] font-mono text-amber-400">({fishingState.caughtInventory.length})</span>)}
+          <div className="grid grid-cols-6 border-b border-sky-100 bg-sky-50/50 p-1.5 gap-1 rounded-t-3xl">
+            {tabBtn('bag', <Fish className="w-3.5 h-3.5" />, lang === 'th' ? 'คลังปลา' : 'BAG', <span className="text-[10px] font-mono font-bold text-sky-600">({fishingState.caughtInventory.length})</span>)}
             {tabBtn('shop', <ShoppingBag className="w-3.5 h-3.5" />, lang === 'th' ? 'ร้านค้า' : 'SHOP')}
             {tabBtn('wardrobe', <Shirt className="w-3.5 h-3.5" />, lang === 'th' ? 'คอสตูม' : 'STYLE')}
-            {tabBtn('encyclopedia', <BookOpen className="w-3.5 h-3.5" />, lang === 'th' ? 'สมุดปลา' : 'CODEX', <span className="text-[10px] font-mono text-amber-400">{discoveredCount}</span>)}
+            {tabBtn('encyclopedia', <BookOpen className="w-3.5 h-3.5" />, lang === 'th' ? 'สมุดปลา' : 'CODEX', <span className="text-[10px] font-mono font-bold text-sky-600">{discoveredCount}</span>)}
             {tabBtn(
               'quests',
               <Target className="w-3.5 h-3.5" />,
@@ -3051,53 +2965,55 @@ const CostumeDetailModal: React.FC<{
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_#f59e0b]" />
               ) : undefined
             )}
-            {tabBtn('aquarium', <Layers className="w-3.5 h-3.5" />, lang === 'th' ? 'ตู้ปลา' : 'AQUA', <span className="text-[10px] font-mono text-amber-400">{aquariumFishList.length}</span>)}
+            {tabBtn('aquarium', <Layers className="w-3.5 h-3.5" />, lang === 'th' ? 'ตู้ปลา' : 'AQUA', <span className="text-[10px] font-mono font-bold text-sky-600">{aquariumFishList.length}</span>)}
           </div>
 
-          <div className="flex-1 overflow-hidden p-3 flex flex-col">
+          <div className="flex-1 overflow-hidden p-3.5 flex flex-col">
             {activeTab === 'bag' && (
               <>
                 <button
                   onClick={handleSellAll}
-                  className="w-full mb-2.5 py-2.5 rounded-lg font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#b45309] to-[#78350f] hover:from-[#d97706] hover:to-[#92400e] text-[#fef3c7] border-2 border-[#fde68a]/70 shadow-[0_3px_0_#451a03] active:translate-y-0.5 active:shadow-none transition flex items-center justify-center gap-2"
+                  className="w-full mb-3 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-gradient-to-b from-[#fbbf24] via-[#f59e0b] to-[#d97706] hover:from-[#fcd34d] hover:to-[#f59e0b] text-white border-2 border-white shadow-[0_3px_0_#b45309] active:translate-y-0.5 active:shadow-none transition flex items-center justify-center gap-2"
                 >
-                  <Coins className="w-4 h-4 text-amber-300" />
+                  <Coins className="w-4 h-4 text-white" />
                   <span>{t.sellAll}</span>
                 </button>
-                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+                <div className="flex-1 overflow-y-auto space-y-2 pr-1">
                   {fishingState.caughtInventory.length === 0 ? (
-                    <div className="text-center py-20 text-zinc-700 text-4xl">○</div>
+                    <div className="text-center py-20 text-slate-300 font-bold text-sm">
+                      {lang === 'th' ? 'ยังไม่มีปลาในคลัง เหวี่ยงเบ็ดเพื่อเริ่มตกปลา!' : 'No fish in bag. Cast line to fish!'}
+                    </div>
                   ) : (
                     fishingState.caughtInventory.map((item) => {
                       const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === item.speciesId);
                       if (!sp) return null;
                       const rc = RARITY_CONFIG[sp.rarity];
                       return (
-                        <div key={item.uid} className="bg-gradient-to-r from-[#17110c] to-[#0f0b08] border border-[#b8860b]/30 hover:border-amber-400/50 rounded-lg p-2 flex items-center justify-between gap-2 shadow-sm transition">
+                        <div key={item.uid} className="bg-white border-2 border-sky-100 hover:border-sky-300 rounded-2xl p-2.5 flex items-center justify-between gap-2 shadow-sm transition">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-14 h-11 bg-black/60 rounded overflow-hidden border border-[#b8860b]/20">
+                            <div className="w-14 h-11 bg-sky-50 rounded-xl overflow-hidden border border-sky-200">
                               <FishPreviewCanvas species={sp} hueShiftDeg={item.hueShiftDeg} width={56} height={44} scale={0.4} />
                             </div>
                             <div>
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-[#fef08a]">{fishName(sp, lang)}</span>
-                                <span className={`text-[9px] px-1.5 rounded font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
+                                <span className="text-xs font-black text-slate-800">{fishName(sp, lang)}</span>
+                                <span className={`text-[9px] px-1.5 py-0.2 rounded-md font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
                               </div>
-                              <div className="text-[11px] text-zinc-400 font-mono">{item.weightKg} kg</div>
+                              <div className="text-[11px] text-slate-500 font-mono font-bold">{item.weightKg} kg</div>
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1">
                             <button
                               onClick={() => handleToggleAquarium(item.uid)}
-                              className={`text-[10px] px-2 py-0.5 rounded border transition ${
-                                item.isLockedInAquarium ? 'border-amber-400 text-amber-300 bg-amber-950/40' : 'border-zinc-700 text-zinc-400 hover:text-white'
+                              className={`text-[10px] px-2 py-1 rounded-xl border transition shadow-sm ${
+                                item.isLockedInAquarium ? 'border-sky-400 text-sky-700 bg-sky-50' : 'border-slate-200 text-slate-400 hover:text-slate-700 bg-white'
                               }`}
                               title="Aquarium Lock"
                             >
                               <Layers className="w-3 h-3" />
                             </button>
                             {!item.isLockedInAquarium && (
-                              <button onClick={() => handleSellFish(item.uid)} className="text-xs font-bold text-amber-300 hover:text-amber-200 font-mono">
+                              <button onClick={() => handleSellFish(item.uid)} className="text-xs font-black text-amber-600 hover:text-amber-700 font-mono bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200 shadow-sm">
                                 +{item.sellPrice.toLocaleString()} 🪙
                               </button>
                             )}
@@ -3113,8 +3029,9 @@ const CostumeDetailModal: React.FC<{
             {activeTab === 'shop' && (
               <div className="flex-1 overflow-y-auto space-y-4 pr-1">
                 <div className="space-y-1.5">
-                  <div className="text-[10px] tracking-[0.2em] text-amber-400 uppercase font-serif font-black px-1">
-                    🎣 {lang === 'th' ? 'คันเบ็ดตกปลาโบราณ' : 'FISHING RODS'}
+                  <div className="text-[10px] tracking-[0.15em] text-sky-700 uppercase font-black px-1 flex items-center gap-1.5">
+                    <span>🎣</span>
+                    <span>{lang === 'th' ? 'คันเบ็ดตกปลา' : 'FISHING RODS'}</span>
                   </div>
                   {FISHING_RODS_CATALOG.map((rod) => {
                     const owned = fishingState.ownedRodIds.includes(rod.id);
@@ -3127,26 +3044,27 @@ const CostumeDetailModal: React.FC<{
                           soundEngine.playClick();
                           setDetail({ kind: 'rod', id: rod.id });
                         }}
-                        className={`w-full text-left px-3 py-2.5 rounded-lg border-2 flex items-center justify-between gap-2 transition-all ${
+                        className={`w-full text-left px-3.5 py-2.5 rounded-2xl border-2 flex items-center justify-between gap-2 transition-all shadow-sm ${
                           equipped
-                            ? 'border-amber-400 bg-amber-950/40 shadow-sm'
-                            : 'border-[#b8860b]/30 bg-black/40 hover:border-amber-400/50'
+                            ? 'border-sky-500 bg-sky-50/90 shadow-md ring-1 ring-sky-300'
+                            : 'border-sky-100 bg-white hover:border-sky-300 hover:bg-sky-50/30'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white/30" style={{ backgroundColor: rod.rodColor }} />
-                          <span className="text-xs font-bold text-[#fef3c7]">{rodName(rod, lang)}</span>
+                          <span className="w-3 h-3 rounded-full ring-2 ring-white shadow-sm" style={{ backgroundColor: rod.rodColor }} />
+                          <span className="text-xs font-black text-slate-800">{rodName(rod, lang)}</span>
                         </div>
-                        <span className={`text-[11px] font-bold ${equipped ? 'text-amber-300' : owned ? 'text-zinc-400' : locked ? 'text-zinc-600' : 'text-amber-300 font-mono'}`}>
-                          {equipped ? <Check className="w-4 h-4 text-amber-300" /> : owned ? t.owned : locked ? `Lv.${rod.requiredLevel}` : rod.price.toLocaleString()}
+                        <span className={`text-[11px] font-black ${equipped ? 'text-sky-600 font-black' : owned ? 'text-slate-400' : locked ? 'text-slate-400' : 'text-amber-600 font-mono'}`}>
+                          {equipped ? <Check className="w-4 h-4 text-sky-600" /> : owned ? t.owned : locked ? `Lv.${rod.requiredLevel}` : rod.price.toLocaleString()}
                         </span>
                       </button>
                     );
                   })}
                 </div>
                 <div className="space-y-1.5">
-                  <div className="text-[10px] tracking-[0.2em] text-amber-400 uppercase font-serif font-black px-1">
-                    🪱 {lang === 'th' ? 'เหยื่อตกปลาสูตรลับ' : 'BAITS & LURES'}
+                  <div className="text-[10px] tracking-[0.15em] text-sky-700 uppercase font-black px-1 flex items-center gap-1.5">
+                    <span>🪱</span>
+                    <span>{lang === 'th' ? 'เหยื่อตกปลา' : 'BAITS & LURES'}</span>
                   </div>
                   {FISHING_BAITS_CATALOG.map((bait) => {
                     const n = baitCount(bait);
@@ -3158,19 +3076,19 @@ const CostumeDetailModal: React.FC<{
                           soundEngine.playClick();
                           setDetail({ kind: 'bait', id: bait.id });
                         }}
-                        className={`w-full text-left px-3 py-2.5 rounded-lg border-2 flex items-center justify-between gap-2 transition-all ${
+                        className={`w-full text-left px-3.5 py-2.5 rounded-2xl border-2 flex items-center justify-between gap-2 transition-all shadow-sm ${
                           equipped
-                            ? 'border-amber-400 bg-amber-950/40 shadow-sm'
-                            : 'border-[#b8860b]/30 bg-black/40 hover:border-amber-400/50'
+                            ? 'border-sky-500 bg-sky-50/90 shadow-md ring-1 ring-sky-300'
+                            : 'border-sky-100 bg-white hover:border-sky-300 hover:bg-sky-50/30'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <span className="w-2.5 h-2.5 rounded-full ring-1 ring-white/30" style={{ backgroundColor: bait.iconColor }} />
-                          <span className="text-xs font-bold text-[#fef3c7]">{baitName(bait, lang)}</span>
+                          <span className="w-3 h-3 rounded-full ring-2 ring-white shadow-sm" style={{ backgroundColor: bait.iconColor }} />
+                          <span className="text-xs font-black text-slate-800">{baitName(bait, lang)}</span>
                         </div>
-                        <span className="text-[11px] text-zinc-300 font-mono">
+                        <span className="text-[11px] text-slate-600 font-mono font-bold">
                           {n === Infinity ? '∞' : `x${n}`}
-                          {bait.pricePerPack > 0 && <span className="text-amber-300 ml-2 font-bold">{bait.pricePerPack.toLocaleString()}</span>}
+                          {bait.pricePerPack > 0 && <span className="text-amber-600 ml-2 font-black">{bait.pricePerPack.toLocaleString()}</span>}
                         </span>
                       </button>
                     );
@@ -3180,7 +3098,7 @@ const CostumeDetailModal: React.FC<{
             )}
 
             {activeTab === 'encyclopedia' && (
-              <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1">
                 {TWENTY_OCEAN_FISH_SPECIES.map((sp) => {
                   const rec = fishingState.encyclopediaMap[sp.id];
                   const found = Boolean(rec && rec.count > 0);
@@ -3193,20 +3111,22 @@ const CostumeDetailModal: React.FC<{
                         soundEngine.playClick();
                         setExpanded(open ? null : sp.id);
                       }}
-                      className="w-full text-left bg-gradient-to-r from-[#17110c] to-[#0f0b08] border-2 border-[#b8860b]/30 hover:border-amber-400/60 rounded-xl p-2.5 transition shadow-sm"
+                      className="w-full text-left bg-white border-2 border-sky-100 hover:border-sky-300 rounded-2xl p-3 transition shadow-sm"
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-serif font-black text-[#fef08a]">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs font-black text-slate-800">
                           #{sp.indexNumber} {found ? fishName(sp, lang) : '???'}
-                          {sp.category === 'creature' && <span className="ml-1.5 text-[9px] text-amber-400">✨ {t.specialTag}</span>}
+                          {sp.category === 'creature' && <span className="ml-1.5 text-[9px] text-amber-500">✨ {t.specialTag}</span>}
                         </span>
-                        <span className={`text-[9px] px-1.5 py-0.2 rounded font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
+                        <span className={`text-[9px] px-2 py-0.5 rounded-md font-black border ${rc.badgeBg} ${rc.badgeText} ${rc.borderColor}`}>{sp.rarity}</span>
                       </div>
-                      <FishPreviewCanvas species={sp} discovered={found} width={150} height={66} scale={0.62} />
+                      <div className="bg-sky-50/70 rounded-xl p-1.5 border border-sky-100">
+                        <FishPreviewCanvas species={sp} discovered={found} width={150} height={66} scale={0.62} />
+                      </div>
                       {open && (
-                        <div className="mt-1 text-[11px] text-[#ded7c8] space-y-0.5 border-t border-[#b8860b]/20 pt-1">
-                          {found && <p>{fishDesc(sp, lang)}</p>}
-                          <p>
+                        <div className="mt-2 text-[11px] text-slate-600 space-y-0.5 border-t border-sky-100 pt-1.5">
+                          {found && <p className="font-medium">{fishDesc(sp, lang)}</p>}
+                          <p className="font-mono text-slate-500">
                             {fishHabitat(sp, lang)} · {sp.minWeightKg}–{sp.maxWeightKg} kg
                             {found && ` · ×${rec.count}`}
                           </p>
@@ -3220,8 +3140,8 @@ const CostumeDetailModal: React.FC<{
 
             {activeTab === 'aquarium' && (
               <div className="flex-1 flex flex-col gap-2">
-                <div className="text-right text-xs font-bold text-amber-300 font-serif">+{passiveCoinsPerMin} {t.perMin}</div>
-                <div className="border-2 border-[#b8860b]/40 rounded-xl overflow-hidden bg-black shadow-lg">
+                <div className="text-right text-xs font-black text-sky-700">+{passiveCoinsPerMin} {t.perMin}</div>
+                <div className="border-2 border-sky-200 rounded-2xl overflow-hidden bg-slate-900 shadow-md">
                   <canvas ref={aquariumCanvasRef} width={420} height={420} className="w-full block" />
                 </div>
               </div>
@@ -3230,8 +3150,8 @@ const CostumeDetailModal: React.FC<{
             {activeTab === 'quests' && (
               <div className="flex-1 overflow-y-auto space-y-4 pr-1">
                 <div>
-                  <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase mb-1.5 font-serif font-black">{t.daily}</div>
-                  <div className="space-y-1.5">
+                  <div className="text-[10px] tracking-[0.15em] text-sky-700 uppercase mb-2 font-black">{t.daily}</div>
+                  <div className="space-y-2">
                     {fishingState.quests.daily.ids.map((id) => {
                       const d = DAILY_POOL.find((x) => x.id === id);
                       return d ? <QuestRow key={id} def={d} kind="daily" /> : null;
@@ -3239,8 +3159,8 @@ const CostumeDetailModal: React.FC<{
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase mb-1.5 font-serif font-black">{t.main}</div>
-                  <div className="space-y-1.5">
+                  <div className="text-[10px] tracking-[0.15em] text-sky-700 uppercase mb-2 font-black">{t.main}</div>
+                  <div className="space-y-2">
                     {MAIN_QUESTS.map((m, i) => {
                       const claimed = fishingState.quests.mainClaimed[m.id];
                       // Sequential hiding: Hide quests that are far in the future!
@@ -3264,7 +3184,7 @@ const CostumeDetailModal: React.FC<{
             )}
 
             {activeTab === 'wardrobe' && (
-              <div className="flex-1 overflow-y-auto grid grid-cols-2 gap-2 pr-1 content-start">
+              <div className="flex-1 overflow-y-auto grid grid-cols-2 gap-2.5 pr-1 content-start">
                 {COSTUMES.map((c) => {
                   const owned = fishingState.ownedCostumeIds.includes(c.id);
                   const worn = fishingState.equippedCostumeId === c.id;
@@ -3275,13 +3195,13 @@ const CostumeDetailModal: React.FC<{
                         soundEngine.playClick();
                         setDetail({ kind: 'costume', id: c.id });
                       }}
-                      className={`text-left p-2.5 rounded-xl border-2 transition-all ${
+                      className={`text-left p-3 rounded-2xl border-2 transition-all shadow-sm ${
                         worn
-                          ? 'border-amber-400 bg-amber-950/40 shadow-sm'
-                          : 'border-[#b8860b]/30 bg-black/40 hover:border-amber-400/50'
+                          ? 'border-sky-500 bg-sky-50/90 shadow-md ring-1 ring-sky-300'
+                          : 'border-sky-100 bg-white hover:border-sky-300 hover:bg-sky-50/30'
                       }`}
                     >
-                      <div className="w-full h-24 mb-2 rounded-lg overflow-hidden bg-gradient-to-b from-[#1a0a14] to-[#0b0b12] border border-[#b8860b]/30 relative shadow-inner">
+                      <div className="w-full h-24 mb-2 rounded-xl overflow-hidden bg-slate-900 border border-sky-100 relative shadow-inner">
                         <img
                           src={`/assets/fishing/sprites/${c.id}/art.png`}
                           alt={costumeName(c, lang)}
@@ -3292,12 +3212,12 @@ const CostumeDetailModal: React.FC<{
                         />
                         <div className="absolute bottom-1 right-1 flex gap-1">
                           {[c.dressA, c.dressC, c.accent].map((col, i) => (
-                            <span key={i} className="w-3 h-3 rounded-full border border-white/40 shadow" style={{ backgroundColor: col }} />
+                            <span key={i} className="w-3 h-3 rounded-full border border-white/60 shadow" style={{ backgroundColor: col }} />
                           ))}
                         </div>
                       </div>
-                      <div className="text-xs font-bold leading-snug text-[#fef08a]">{costumeName(c, lang)}</div>
-                      <div className={`text-[11px] mt-1 font-bold ${worn ? 'text-amber-300' : owned ? 'text-zinc-500' : 'text-amber-300 font-mono'}`}>
+                      <div className="text-xs font-black leading-snug text-slate-800">{costumeName(c, lang)}</div>
+                      <div className={`text-[11px] mt-1 font-black ${worn ? 'text-sky-600' : owned ? 'text-slate-400' : 'text-amber-600 font-mono'}`}>
                         {worn ? t.wornNow : owned ? t.owned : c.price.toLocaleString()}
                       </div>
                     </button>
