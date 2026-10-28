@@ -13,7 +13,11 @@ import {
   CaughtFishInstance,
   OceanTimeMood,
   rollFishAndWaitTime,
-  createCaughtFishInstance
+  createCaughtFishInstance,
+  getRealTimeOfDay,
+  calculateBaseBiteChance,
+  performBiteRoll,
+  rollFishSpecies
 } from '../../core/data/fishingDatabase';
 import {
   COSTUMES,
@@ -454,6 +458,230 @@ const Modal: React.FC<{
   </div>
 );
 
+const AdminCheatModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  fishingState: PersistentFishingState;
+  isAutoFishing: boolean;
+  onToggleAutoFishing: () => void;
+  onAddCoins: (amount: number) => void;
+  onSetLevel: (level: number) => void;
+  onUnlockAll: () => void;
+  onInstantCatch: () => void;
+  onResetSave: () => void;
+  viewMode: 'user' | 'dev';
+  onToggleViewMode: () => void;
+  lang: GameLang;
+}> = ({
+  isOpen,
+  onClose,
+  fishingState,
+  isAutoFishing,
+  onToggleAutoFishing,
+  onAddCoins,
+  onSetLevel,
+  onUnlockAll,
+  onInstantCatch,
+  onResetSave,
+  viewMode,
+  onToggleViewMode,
+  lang
+}) => {
+  if (!isOpen) return null;
+  return (
+    <Modal onClose={onClose} maxWidthClass="max-w-2xl">
+      <div className="p-6 space-y-6 bg-[#0a0a0f] text-white">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-amber-500/40 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded bg-amber-500/20 border border-amber-500 flex items-center justify-center text-amber-400 font-bold text-lg">
+              ⚡
+            </div>
+            <div>
+              <div className="text-[10px] tracking-[0.25em] text-amber-400 uppercase font-mono font-bold">
+                DEVELOPER GOD-MODE CONSOLE
+              </div>
+              <h2 className="text-xl font-black text-white">
+                ADMIN CONTROL PANEL · MACGA GARRY
+              </h2>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 text-[11px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50">
+            ROOT ACCESS: GRANTED
+          </span>
+        </div>
+
+        {/* 1. AUTO-FISHING TOGGLE */}
+        <div className="p-4 bg-gradient-to-r from-emerald-950/40 to-black border border-emerald-500/40 rounded flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-emerald-300 flex items-center gap-2">
+              <Bot className="w-4 h-4 text-emerald-400" />
+              <span>ระบบตกปลาอัตโนมัติ (Auto-Fish God Mode)</span>
+            </div>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              เหวี่ยงเบ็ดอัตโนมัติ → ล่อปลาฮุบทันที → กรอสายชนะ 100% → เก็บปลาวนลูปต่อเนื่อง
+            </p>
+          </div>
+          <button
+            onClick={onToggleAutoFishing}
+            className={`px-5 py-2.5 font-bold text-xs tracking-wider transition ${
+              isAutoFishing
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]'
+                : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
+            }`}
+            style={CUT_STYLE}
+          >
+            {isAutoFishing ? '🟢 AUTO-FISHING: ON' : '⚪ AUTO-FISHING: OFF'}
+          </button>
+        </div>
+
+        {/* 2. STAT VIEW MODE (USER vs DEV) */}
+        <div className="p-4 bg-gradient-to-r from-purple-950/40 to-black border border-purple-500/40 rounded flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-purple-300 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span>สลับมุมมองสถิติ (Inspection Stat Mode)</span>
+            </div>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              {viewMode === 'dev'
+                ? '🔬 กำลังแสดงโหมดเดฟ: เจาะลึกเปอร์เซ็นต์จริง, Pity %, เวลาจริง, อัตราฮุบเบ็ด'
+                : '🎮 กำลังแสดงโหมดผู้เล่น: ซ่อนตัวเลขทศนิยม แสดงเฉพาะชื่อ RPG สมจริง'}
+            </p>
+          </div>
+          <button
+            onClick={onToggleViewMode}
+            className={`px-4 py-2 font-bold text-xs tracking-wider border transition ${
+              viewMode === 'dev'
+                ? 'bg-purple-600 text-white border-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                : 'bg-zinc-800 text-zinc-300 border-white/20'
+            }`}
+            style={CUT_STYLE}
+          >
+            {viewMode === 'dev' ? '🔬 DEV STATS (ACTIVE)' : '🎮 USER RPG (ACTIVE)'}
+          </button>
+        </div>
+
+        {/* 3. CURRENCY CHEATS (เพิ่ม/ลดเงิน) */}
+        <div className="space-y-2">
+          <div className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+            <Coins className="w-4 h-4" />
+            <span>ปรับแต่งเงิน (Sea Coins) · ปัจจุบัน: {fishingState.seaCoins.toLocaleString()}</span>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            <button
+              onClick={() => onAddCoins(10000)}
+              className="py-2 px-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold font-mono transition"
+            >
+              +10,000
+            </button>
+            <button
+              onClick={() => onAddCoins(100000)}
+              className="py-2 px-2 bg-amber-500/25 hover:bg-amber-500/40 border border-amber-500/60 text-amber-200 text-xs font-bold font-mono transition"
+            >
+              +100,000
+            </button>
+            <button
+              onClick={() => onAddCoins(1000000)}
+              className="py-2 px-2 bg-amber-500/30 hover:bg-amber-500/50 border border-amber-400 text-amber-100 text-xs font-bold font-mono transition"
+            >
+              +1,000,000
+            </button>
+            <button
+              onClick={() => onAddCoins(-10000)}
+              className="py-2 px-2 bg-red-950/40 hover:bg-red-900/50 border border-red-500/50 text-red-300 text-xs font-bold font-mono transition"
+            >
+              -10,000
+            </button>
+            <button
+              onClick={() => onAddCoins(-100000)}
+              className="py-2 px-2 bg-red-950/50 hover:bg-red-900/60 border border-red-500/60 text-red-200 text-xs font-bold font-mono transition"
+            >
+              -100,000
+            </button>
+            <button
+              onClick={() => onAddCoins(-fishingState.seaCoins)}
+              className="py-2 px-2 bg-zinc-800 hover:bg-zinc-700 border border-white/20 text-zinc-400 text-xs font-bold transition"
+            >
+              ล้างเงิน (0)
+            </button>
+          </div>
+        </div>
+
+        {/* 4. LEVEL & PROGRESSION CHEATS (เพิ่ม/ลดเลเวล) */}
+        <div className="space-y-2">
+          <div className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            <span>ปรับแต่งเลเวล (Angler Level) · ปัจจุบัน: Lv.{fishingState.anglerLevel}</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            <button
+              onClick={() => onSetLevel(fishingState.anglerLevel + 1)}
+              className="py-2 px-2 bg-sky-950/40 hover:bg-sky-900/50 border border-sky-500/50 text-sky-300 text-xs font-bold transition"
+            >
+              +1 Level
+            </button>
+            <button
+              onClick={() => onSetLevel(fishingState.anglerLevel + 5)}
+              className="py-2 px-2 bg-sky-950/50 hover:bg-sky-900/60 border border-sky-400/60 text-sky-200 text-xs font-bold transition"
+            >
+              +5 Levels
+            </button>
+            <button
+              onClick={() => onSetLevel(55)}
+              className="py-2 px-2 bg-sky-500/25 hover:bg-sky-500/40 border border-sky-400 text-sky-100 text-xs font-bold transition"
+            >
+              Max Lv.55 (ตัน)
+            </button>
+            <button
+              onClick={() => onSetLevel(Math.max(1, fishingState.anglerLevel - 1))}
+              className="py-2 px-2 bg-red-950/40 hover:bg-red-900/50 border border-red-500/50 text-red-300 text-xs font-bold transition"
+            >
+              -1 Level
+            </button>
+            <button
+              onClick={() => onSetLevel(1)}
+              className="py-2 px-2 bg-zinc-800 hover:bg-zinc-700 border border-white/20 text-zinc-400 text-xs font-bold transition"
+            >
+              รีเซ็ต Lv.1
+            </button>
+          </div>
+        </div>
+
+        {/* 5. INSTANT UNLOCK & INVENTORY GOD-MODE */}
+        <div className="space-y-2">
+          <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+            <Lock className="w-4 h-4" />
+            <span>ปลดล็อคเนื้อหาทั้งหมด 100% (Instant Sandbox Unlock)</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <button
+              onClick={onUnlockAll}
+              className="py-3 px-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-xs tracking-wide shadow-lg transition"
+              style={CUT_STYLE}
+            >
+              🔓 ปลดล็อคเบ็ด, คอสตูม, เกาะ & เหยื่อ 999
+            </button>
+            <button
+              onClick={onInstantCatch}
+              className="py-3 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs tracking-wide shadow-lg transition"
+              style={CUT_STYLE}
+            >
+              ⚡ ดึงปลาขึ้นทันที (Instant Catch)
+            </button>
+            <button
+              onClick={onResetSave}
+              className="py-3 px-3 bg-red-950/70 hover:bg-red-900 border border-red-500 text-red-300 font-bold text-xs tracking-wide transition"
+              style={CUT_STYLE}
+            >
+              🗑️ ล้างเซฟเริ่มต้นใหม่ (Reset State)
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 /* ------------------------------------------------------------------ */
 /* Main view                                                           */
 /* ------------------------------------------------------------------ */
@@ -526,7 +754,28 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     return () => clearInterval(i);
   }, []);
 
-  const [mood, setMood] = useState<OceanTimeMood>('sunset');
+  // Real-time Day/Night Clock
+  const [clockTime, setClockTime] = useState<Date>(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setClockTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const realTimeOfDay = getRealTimeOfDay();
+  const mood: OceanTimeMood = realTimeOfDay === 'day' ? 'morning' : 'night_glow';
+
+  // Admin & Dev Inspection States (Specifically for macga garry & admins)
+  const isAdminUser = useMemo(() => {
+    if (currentUser?.isAdmin) return true;
+    const u = (currentUser?.username || '').toLowerCase();
+    const e = (currentUser?.email || userEmail || '').toLowerCase();
+    return u.includes('macga') || e.includes('macga') || e === 'zmacger@gmail.com' || u === 'admin';
+  }, [currentUser, userEmail]);
+
+  const [viewMode, setViewMode] = useState<'user' | 'dev'>('user');
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [isAutoFishing, setIsAutoFishing] = useState(false);
+  const [pityBonus, setPityBonus] = useState(0);
+
   const [phase, setPhase] = useState<FishingPhase>('IDLE_READY');
   const [activeTab, setActiveTab] = useState<TabId>('bag');
   const [fastMode, setFastMode] = useState(false);
@@ -761,16 +1010,9 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       if (left <= 0) notify(t.lastBait, 'bad');
     }
     castSeq.current += 1;
-    const roll = rollFishAndWaitTime(
-      equippedRod,
-      bait,
-      mood,
-      fastMode,
-      fishingState.totalCatches + castSeq.current,
-      fishingState.currentIslandId
-    );
-    setPendingSpecies(roll.species);
-    waitRef.current = { total: roll.waitSeconds, remaining: roll.waitSeconds };
+    const initialWait = fastMode ? 6 : 60;
+    waitRef.current = { total: initialWait, remaining: initialWait };
+    setPendingSpecies(null);
     setLatestCatch(null);
     setFishingState((p) => ({ ...p, quests: trackQuest(p.quests, 'cast') }));
     setPhase('CASTING');
@@ -786,19 +1028,40 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     });
   };
 
+  // Percentage & Pity 1-minute Tick Bite Engine
   useEffect(() => {
     if (phase !== 'WAITING_FOR_BITE') return;
     const timer = setInterval(() => {
       waitRef.current.remaining -= 1;
       if (waitRef.current.remaining <= 0) {
-        clearInterval(timer);
-        setPhase('FISH_BITING');
-        soundEngine.playBite();
-        notify(t.fishBiting, 'rare');
+        // Regular 1-min roll
+        const res = performBiteRoll(
+          equippedRod,
+          equippedBait,
+          pityBonus,
+          false,
+          fishingState.currentIslandId,
+          realTimeOfDay
+        );
+        if (res.hit && res.species) {
+          clearInterval(timer);
+          setPendingSpecies(res.species);
+          setPityBonus(0);
+          setPhase('FISH_BITING');
+          soundEngine.playBite();
+          notify(t.fishBiting, 'rare');
+        } else {
+          setPityBonus(res.newPity);
+          const nextWait = fastMode ? 6 : 60;
+          waitRef.current = { total: nextWait, remaining: nextWait };
+          if (viewMode === 'dev') {
+            notify(`[DEV] Regular check missed. Pity accumulated: +${(res.newPity * 100).toFixed(2)}%`, 'info');
+          }
+        }
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [phase, notify, t.fishBiting]);
+  }, [phase, fastMode, equippedRod, equippedBait, pityBonus, fishingState.currentIslandId, realTimeOfDay, viewMode, notify, t.fishBiting]);
 
   const handleJerk = () => {
     if (phase !== 'WAITING_FOR_BITE' || jerkCooling) return;
@@ -806,11 +1069,34 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     const a = animRef.current;
     a.jerk = 0;
     gsap.to(a, { jerk: 1, duration: 0.7, ease: 'none' });
-    waitRef.current.remaining = Math.max(2, waitRef.current.remaining - Math.max(4, waitRef.current.total * 0.06));
     setJerkCooling(true);
-    setTimeout(() => setJerkCooling(false), 3500);
+    setTimeout(() => setJerkCooling(false), 3000);
     setFishingState((p) => ({ ...p, quests: trackQuest(p.quests, 'jerk') }));
-    notify(t.jerkedToast, 'info');
+
+    // Immediate Jerk roll (10% of regular bite rate)
+    const res = performBiteRoll(
+      equippedRod,
+      equippedBait,
+      pityBonus,
+      true,
+      fishingState.currentIslandId,
+      realTimeOfDay
+    );
+    if (res.hit && res.species) {
+      setPendingSpecies(res.species);
+      setPityBonus(0);
+      setPhase('FISH_BITING');
+      soundEngine.playBite();
+      notify(lang === 'th' ? '⚡ กระตุกสายโดนใจ! ปลาติดเบ็ดทันที!' : '⚡ Line jerked! Immediate strike!', 'rare');
+    } else {
+      setPityBonus(res.newPity);
+      notify(
+        lang === 'th'
+          ? `🎣 กระตุกสายล่อปลา... ปลาระแวงแต่เริ่มสนใจ (+Pity)`
+          : `🎣 Line jerked... water stirred (+Pity)`,
+        'info'
+      );
+    }
   };
 
   const startReeling = useCallback(() => {
@@ -927,6 +1213,77 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     }
   }, [phase]);
 
+  // Auto-Fishing Loop for Admin Testing
+  useEffect(() => {
+    if (!isAutoFishing) return;
+    const loopTimer = setInterval(() => {
+      if (phaseRef.current === 'IDLE_READY' && !isEntranceCutscene) {
+        handleCastLine();
+      } else if (phaseRef.current === 'WAITING_FOR_BITE') {
+        if (waitRef.current.remaining > 2) {
+          waitRef.current.remaining = 1;
+        }
+      } else if (phaseRef.current === 'FISH_BITING') {
+        startReeling();
+      } else if (phaseRef.current === 'REELING_MINIGAME') {
+        handleReelDone(true);
+      } else if (phaseRef.current === 'CATCH_REVEAL') {
+        setPhase('IDLE_READY');
+      }
+    }, 850);
+    return () => clearInterval(loopTimer);
+  }, [isAutoFishing, isEntranceCutscene, handleCastLine, startReeling, handleReelDone]);
+
+  // Admin Cheat actions for macga garry
+  const adminAddCoins = (amount: number) => {
+    setFishingState((p) => ({ ...p, seaCoins: Math.max(0, p.seaCoins + amount) }));
+    soundEngine.playCoin();
+    notify(`Admin: ${amount > 0 ? '+' : ''}${amount.toLocaleString()} Sea Coins`, 'good');
+  };
+
+  const adminSetLevel = (targetLevel: number) => {
+    setFishingState((p) => ({
+      ...p,
+      anglerLevel: Math.max(1, targetLevel),
+      anglerExp: 0
+    }));
+    soundEngine.playLevelUp();
+    notify(`Admin: Set Angler Level to ${targetLevel}`, 'good');
+  };
+
+  const adminUnlockAll = () => {
+    const allRods = FISHING_RODS_CATALOG.map((r) => r.id);
+    const allCostumes = COSTUMES.map((c) => c.id);
+    const allIsles = ALL_ISLANDS.map((i) => i.id);
+    const fullBaits: Record<string, number> = {};
+    FISHING_BAITS_CATALOG.forEach((b) => {
+      fullBaits[b.id] = 999;
+    });
+
+    setFishingState((p) => ({
+      ...p,
+      seaCoins: p.seaCoins + 500000,
+      anglerLevel: Math.max(p.anglerLevel, 55),
+      ownedRodIds: allRods,
+      ownedCostumeIds: allCostumes,
+      unlockedIslandIds: allIsles,
+      baitInventory: fullBaits
+    }));
+    soundEngine.playCatch('Secret');
+    notify('Admin: Unlocked all Rods, Costumes, Islands & 999 Baits!', 'rare');
+  };
+
+  const adminInstantCatch = () => {
+    if (phase === 'WAITING_FOR_BITE' || phase === 'FISH_BITING' || phase === 'REELING_MINIGAME') {
+      const sp = pendingSpecies || rollFishSpecies(equippedRod, equippedBait, realTimeOfDay, fishingState.currentIslandId);
+      setPendingSpecies(sp);
+      handleReelDone(true);
+      notify('Admin: Instant Catch Triggered!', 'rare');
+    } else {
+      notify('Admin: Cast line first to instant catch', 'info');
+    }
+  };
+
   /* ---------------- scene loop ---------------- */
   const sceneRef = useRef<any>({});
   sceneRef.current = {
@@ -936,7 +1293,8 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
     rodTier,
     species: pendingSpecies,
     costume: equippedCostume,
-    islandId: fishingState.currentIslandId
+    islandId: fishingState.currentIslandId,
+    timeOfDay: realTimeOfDay
   };
   /* ---------------- 60-120 FPS 2D Rig Scene Loop ---------------- */
   useEffect(() => {
@@ -967,6 +1325,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           costume: s.costume,
           entranceProgress01: a.entrance,
           islandId: s.islandId,
+          timeOfDay: s.timeOfDay,
           rig: { breath: a.breath, sway: a.sway, blink: a.blink }
         });
       }
@@ -1209,6 +1568,40 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
               <div className="text-xs text-zinc-500">{lang === 'th' ? rod.nameEn : rod.nameTh}</div>
             </div>
             <p className="text-sm text-zinc-300 leading-relaxed">{rodDesc(rod, lang)}</p>
+            {viewMode === 'dev' ? (
+              <div className="bg-purple-950/40 border border-purple-500/50 p-3 rounded space-y-1 font-mono text-xs text-purple-200 shadow-inner">
+                <div className="font-bold text-purple-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                  <span>🔬 DEV MATH BREAKDOWN (FORMULA STATS):</span>
+                </div>
+                <div>Base Attraction Bonus: +{rod.baseAttractionBonusPct}% to Base Bite Chance</div>
+                <div>Wait Time Reduction: -{rod.waitTimeReductionPct}%</div>
+                <div>Sweet Spot Bar Bonus: +{rod.sweetSpotSizeBonus}px</div>
+                <div>Line Strength Bonus: +{rod.lineStrengthBonus}%</div>
+                <div>Rarity Boost Multiplier: {rod.rarityBoostMultiplier}x</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-2 bg-black/50 border border-white/10 p-3 text-center rounded">
+                <div>
+                  <div className="text-[10px] text-zinc-400 uppercase font-semibold">
+                    {lang === 'th' ? 'พลังดึงดูด' : 'Attraction'}
+                  </div>
+                  <div className="text-base font-black text-amber-300 font-mono">{rod.attractionPower || 100}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-400 uppercase font-semibold">
+                    {lang === 'th' ? 'โชคสมุทร' : 'Fortune'}
+                  </div>
+                  <div className="text-base font-black text-cyan-300 font-mono">{rod.oceanFortune || 'D'}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-400 uppercase font-semibold">
+                    {lang === 'th' ? 'ความทนทาน' : 'Resilience'}
+                  </div>
+                  <div className="text-base font-black text-emerald-300 font-mono">{rod.lineResilience || 100}</div>
+                </div>
+              </div>
+            )}
             <ul className="text-sm text-zinc-400 space-y-1.5 border-l border-[#ff4655]/50 pl-3">
               <li>{rodWaitTextI18n(rod, lang)}</li>
               <li>{rodControlTextI18n(rod, lang)}</li>
@@ -1557,6 +1950,38 @@ const CostumeDetailModal: React.FC<{
       </div>
 
       {detail && renderDetail()}
+
+      {/* Admin God-Mode Cheat Console Modal (Specifically for macga garry & Admins) */}
+      {showAdminModal && isAdminUser && (
+        <AdminCheatModal
+          isOpen={showAdminModal}
+          onClose={() => setShowAdminModal(false)}
+          fishingState={fishingState}
+          isAutoFishing={isAutoFishing}
+          onToggleAutoFishing={() => {
+            soundEngine.playClick();
+            setIsAutoFishing((v) => !v);
+          }}
+          onAddCoins={adminAddCoins}
+          onSetLevel={adminSetLevel}
+          onUnlockAll={adminUnlockAll}
+          onInstantCatch={adminInstantCatch}
+          onResetSave={() => {
+            if (window.confirm('ยืนยันล้างข้อมูลเซฟตกปลาทั้งหมดและเริ่มต้นใหม่ใช่หรือไม่?')) {
+              localStorage.removeItem(storageKey);
+              setFishingState(normalizeState(null));
+              notify('Admin: Reset state to starter defaults', 'bad');
+              setShowAdminModal(false);
+            }
+          }}
+          viewMode={viewMode}
+          onToggleViewMode={() => {
+            soundEngine.playClick();
+            setViewMode((v) => (v === 'user' ? 'dev' : 'user'));
+          }}
+          lang={lang}
+        />
+      )}
 
       {/* Settings Modal (Audio Volume + Language) */}
       {showSettingsModal && (
@@ -2224,23 +2649,62 @@ const CostumeDetailModal: React.FC<{
                 <span>{lang === 'th' ? currentIsland.nameTh : currentIsland.nameEn}</span>
               </button>
 
-              {OCEAN_MOODS.map((m) => (
+              {/* Real-Time Local Day/Night Clock Badge */}
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1 border text-xs font-bold tracking-wider font-mono shadow-sm transition ${
+                  realTimeOfDay === 'day'
+                    ? 'border-amber-400/50 bg-amber-950/40 text-amber-300 shadow-amber-500/10'
+                    : 'border-indigo-400/50 bg-indigo-950/40 text-indigo-200 shadow-indigo-500/10'
+                }`}
+                style={CUT_STYLE}
+                title={
+                  lang === 'th'
+                    ? `เวลาจริง: ${clockTime.toLocaleTimeString()} (${realTimeOfDay === 'day' ? 'กลางวัน: แดดสดใส ปลาผิวน้ำชุกชุม' : 'กลางคืน: แสงจันทร์เรืองแสง ปลาก้นสมุทรตื่น'})`
+                    : `Real-time: ${clockTime.toLocaleTimeString()} (${realTimeOfDay === 'day' ? 'Daytime active species' : 'Nocturnal bioluminescent species'})`
+                }
+              >
+                <span className={`w-2 h-2 rounded-full animate-pulse ${realTimeOfDay === 'day' ? 'bg-amber-400' : 'bg-cyan-400'}`} />
+                <span>
+                  {realTimeOfDay === 'day' ? '☀️ DAY' : '🌙 NIGHT'}{' '}
+                  {clockTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                </span>
+              </div>
+
+              {/* View Mode Toggle Pill (User RPG vs Dev Stats) */}
+              <button
+                onClick={() => {
+                  soundEngine.playClick();
+                  setViewMode((v) => (v === 'user' ? 'dev' : 'user'));
+                }}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs border font-bold tracking-wider transition ${
+                  viewMode === 'dev'
+                    ? 'border-purple-400 bg-purple-950/50 text-purple-300 shadow-[0_0_8px_rgba(168,85,247,0.3)]'
+                    : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'
+                }`}
+                style={CUT_STYLE}
+                title={
+                  lang === 'th'
+                    ? 'สลับมุมมอง: 🎮 โหมดผู้เล่น (RPG) / 🔬 โหมดเดฟ (ดูสูตรคำนวณและ % จริง)'
+                    : 'Toggle View: 🎮 Player RPG / 🔬 Dev Math Stats'
+                }
+              >
+                <span>{viewMode === 'dev' ? '🔬 DEV STATS' : '🎮 USER RPG'}</span>
+              </button>
+
+              {/* Admin Cheat Console Button (Visible for macga garry & Admins) */}
+              {isAdminUser && (
                 <button
-                  key={m.id}
                   onClick={() => {
                     soundEngine.playClick();
-                    setMood(m.id);
+                    setShowAdminModal(true);
                   }}
-                  title={lang === 'en' ? MOOD_EN[m.id]?.bonusEn || m.bonusText : m.bonusText}
-                  className={`px-2.5 py-1 text-xs border transition ${
-                    mood === m.id
-                      ? 'border-[#ff4655] text-[#ff4655] bg-[#ff4655]/10'
-                      : 'border-white/10 text-zinc-500 hover:text-zinc-200'
-                  }`}
+                  className="flex items-center gap-1.5 px-2.5 py-1 border border-amber-500/80 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold tracking-wider uppercase transition shadow-[0_0_10px_rgba(245,158,11,0.25)] animate-pulse"
+                  style={CUT_STYLE}
                 >
-                  {lang === 'en' ? MOOD_EN[m.id]?.nameEn || shortName(m.nameTh) : shortName(m.nameTh)}
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>⚡ ADMIN CHEATS</span>
                 </button>
-              ))}
+              )}
             </div>
             <div className="flex items-center gap-1.5">
               <button
@@ -2279,6 +2743,64 @@ const CostumeDetailModal: React.FC<{
               </button>
             </div>
           </div>
+
+          {/* Live Dev Math Inspection HUD */}
+          {viewMode === 'dev' && (() => {
+            const baseBiteRate = calculateBaseBiteChance(equippedRod, equippedBait);
+            const totalBiteRate = Math.min(1.0, baseBiteRate + (pityBonus || 0));
+            const jerkBiteRate = Math.min(1.0, totalBiteRate * 0.10);
+            const activePoolCount = TWENTY_OCEAN_FISH_SPECIES.filter(
+              (s) => !s.timeAvailability || s.timeAvailability === 'all' || s.timeAvailability === realTimeOfDay
+            ).length;
+            return (
+              <div
+                style={CUT_STYLE}
+                className="p-3 bg-black/95 border border-purple-500/50 rounded flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-300 shadow-2xl"
+              >
+                <div className="flex items-center gap-3.5 flex-wrap">
+                  <span className="text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                    <span>FORMULA DEBUG:</span>
+                  </span>
+                  <span>
+                    Base Bite: <strong className="text-white font-bold">{(baseBiteRate * 100).toFixed(1)}%</strong>
+                  </span>
+                  <span>
+                    Pity Bonus: <strong className="text-amber-400 font-bold">+{((pityBonus || 0) * 100).toFixed(2)}%</strong>
+                  </span>
+                  <span>
+                    Tick Roll Chance: <strong className="text-emerald-400 font-bold">{(totalBiteRate * 100).toFixed(2)}%</strong>
+                  </span>
+                  <span>
+                    Instant Jerk Chance: <strong className="text-cyan-400 font-bold">{(jerkBiteRate * 100).toFixed(2)}%</strong>
+                  </span>
+                  <span>
+                    Available Pool: <strong className="text-white font-bold">{activePoolCount}/{TOTAL_SPECIES} ({realTimeOfDay.toUpperCase()})</strong>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-bold border ${
+                      isAutoFishing
+                        ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)]'
+                        : 'border-white/10 bg-white/5 text-zinc-400'
+                    }`}
+                  >
+                    AUTO-FISHING: {isAutoFishing ? 'ACTIVE' : 'IDLE'}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setPityBonus(0);
+                      notify('Pity bonus reset to 0%', 'info');
+                    }}
+                    className="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] border border-white/15"
+                  >
+                    Reset Pity
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="relative overflow-hidden border border-white/10 bg-black aspect-[16/9]" style={CUT_STYLE}>
             <canvas

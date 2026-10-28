@@ -29,6 +29,7 @@ export type FishBodyShape =
   | 'nautilus';
 
 export type OceanTimeMood = 'morning' | 'sunset' | 'night_glow' | 'astral_storm';
+export type TimeAvailability = 'all' | 'day' | 'night';
 
 export interface FishSpeciesData {
   id: string;
@@ -38,6 +39,7 @@ export interface FishSpeciesData {
   category?: 'fish' | 'creature';
   rarity: FishRarity;
   bodyShape: FishBodyShape;
+  timeAvailability?: TimeAvailability;
   habitat: string;
   minWeightKg: number;
   maxWeightKg: number;
@@ -80,6 +82,11 @@ export interface FishingRodItem {
   rarityBoostMultiplier: number; // Boosts Rare/Epic/Legendary/Secret weights
   rodColor: string;
   description: string;
+  // RPG Stat displays (User requirement: RPG names/values rather than raw decimals)
+  attractionPower: number; // e.g. 100, 140, 195, 260, 360, 520
+  oceanFortune: string; // e.g. 'D', 'C', 'B', 'A', 'S', 'SS+'
+  lineResilience: number; // e.g. 100, 150, 230, 340, 480, 700
+  baseAttractionBonusPct: number; // Backend percentage bonus to base bite chance
 }
 
 export interface FishingBaitItem {
@@ -94,6 +101,8 @@ export interface FishingBaitItem {
   bonusWeightMultiplier: number;
   iconColor: string;
   description: string;
+  attractionPowerBonus?: number;
+  baseAttractionBonusPct?: number;
 }
 
 export const RARITY_CONFIG: Record<
@@ -751,6 +760,7 @@ export const TWENTY_OCEAN_FISH_SPECIES: FishSpeciesData[] = [
     nameEn: 'Chrono Nautilus',
     rarity: 'Secret',
     bodyShape: 'nautilus',
+    timeAvailability: 'all',
     habitat: 'สุสานเทพเจ้าใต้สมุทร (Secret Realm)',
     minWeightKg: 3,
     maxWeightKg: 20,
@@ -765,6 +775,145 @@ export const TWENTY_OCEAN_FISH_SPECIES: FishSpeciesData[] = [
     patternType: 'starlight',
     preferredBaitIds: ['bait_astral_nectar'],
     description: '[SECRET TIER] เปลือกก้นหอยทองคำที่หมุนวนตามเข็มเวลา ว่ากันว่าใครเห็นมันจะได้ย้อนเวลากลับไปหนึ่งคืน'
+  },
+  // ======================== NEW EXPANDED SPECIES (Day & Night Specific) ========================
+  {
+    id: 'fish_27_sunburst_dorado',
+    indexNumber: 27,
+    nameTh: 'ปลาดอลฟินฟิชประกายตะวัน',
+    nameEn: 'Sunburst Golden Dorado',
+    rarity: 'Uncommon',
+    bodyShape: 'mahimahi',
+    timeAvailability: 'day',
+    habitat: 'ผิวน้ำแสงแดดจัด (กลางวัน)',
+    minWeightKg: 3.0,
+    maxWeightKg: 12.0,
+    minLengthCm: 50,
+    maxLengthCm: 110,
+    basePrice: 380,
+    expReward: 130,
+    difficulty: 4.8,
+    primaryColor: '#fbbf24',
+    secondaryColor: '#34d399',
+    accentColor: '#38bdf8',
+    patternType: 'spots',
+    preferredBaitIds: ['bait_krill', 'bait_squid'],
+    description: 'ปลาผิวน้ำเขตร้อนที่ชอบแหวกว่ายใต้แสงตะวันเจิดจ้า เกล็ดประกายสีทองอร่ามและเขียวมรกต'
+  },
+  {
+    id: 'fish_28_midnight_moonfish',
+    indexNumber: 28,
+    nameTh: 'ปลาโอปาห์จันทราเที่ยงคืน',
+    nameEn: 'Midnight Crescent Opah',
+    rarity: 'Rare',
+    bodyShape: 'bream',
+    timeAvailability: 'night',
+    habitat: 'ร่องน้ำลึกใต้เงาจันทร์ (กลางคืน)',
+    minWeightKg: 8.5,
+    maxWeightKg: 32.0,
+    minLengthCm: 60,
+    maxLengthCm: 130,
+    basePrice: 880,
+    expReward: 270,
+    difficulty: 6.4,
+    primaryColor: '#312e81',
+    secondaryColor: '#e0e7ff',
+    accentColor: '#fb7185',
+    patternType: 'gradient',
+    preferredBaitIds: ['bait_squid', 'bait_crystal_lure'],
+    description: 'ปลาทรงกลมแบนที่ลอยขึ้นสู่ผิวน้ำเฉพาะยามเที่ยงคืน เกล็ดสีน้ำเงินเงินสะท้อนแสงจันทร์นวลตา'
+  },
+  {
+    id: 'fish_29_solar_ray',
+    indexNumber: 29,
+    nameTh: 'ปลากระเบนสุริยคราสสีทอง',
+    nameEn: 'Solar Eclipse Dawn Ray',
+    rarity: 'Rare',
+    bodyShape: 'mantaray',
+    timeAvailability: 'day',
+    habitat: 'ชายฝั่งน้ำตื้นยามรุ่งอรุณ (กลางวัน)',
+    minWeightKg: 12.0,
+    maxWeightKg: 46.0,
+    minLengthCm: 100,
+    maxLengthCm: 210,
+    basePrice: 920,
+    expReward: 280,
+    difficulty: 6.5,
+    primaryColor: '#b45309',
+    secondaryColor: '#fef08a',
+    accentColor: '#f97316',
+    patternType: 'bands',
+    preferredBaitIds: ['bait_sandworm', 'bait_crystal_lure'],
+    description: 'ปลากระเบนปีกสีส้มทองอร่าม ว่ายเลียบชายหาดรับแสงแดดยามเช้า ครีบพลิ้วไหวราวกับเปลวสุริยะ'
+  },
+  {
+    id: 'fish_30_abyssal_biolum',
+    indexNumber: 30,
+    nameTh: 'ปลาไวเปอร์เรืองแสงนิทรา',
+    nameEn: 'Somnolent Viperfish',
+    rarity: 'Epic',
+    bodyShape: 'barracuda',
+    timeAvailability: 'night',
+    habitat: 'ห้วงเหวลึกไร้ก้น (กลางคืน)',
+    minWeightKg: 1.8,
+    maxWeightKg: 6.5,
+    minLengthCm: 40,
+    maxLengthCm: 85,
+    basePrice: 2250,
+    expReward: 620,
+    difficulty: 8.0,
+    primaryColor: '#1e1b4b',
+    secondaryColor: '#06b6d4',
+    accentColor: '#c084fc',
+    patternType: 'starlight',
+    preferredBaitIds: ['bait_squid', 'bait_astral_nectar'],
+    description: 'นักล่ายามราตรีแห่งร่องลึก เขี้ยวยาวโค้งและอวัยวะเรืองแสงระยิบระยับเป็นแนวยาวข้างลำตัว'
+  },
+  {
+    id: 'fish_31_dawn_trout',
+    indexNumber: 31,
+    nameTh: 'เทราต์ประกายรุ้งสุริยา',
+    nameEn: 'Aurora Sunrise Trout',
+    rarity: 'Uncommon',
+    bodyShape: 'snapper',
+    timeAvailability: 'day',
+    habitat: 'ธารน้ำใสสะท้อนแดด (กลางวัน)',
+    minWeightKg: 0.8,
+    maxWeightKg: 3.5,
+    minLengthCm: 30,
+    maxLengthCm: 65,
+    basePrice: 290,
+    expReward: 105,
+    difficulty: 4.2,
+    primaryColor: '#0284c7',
+    secondaryColor: '#fda4af',
+    accentColor: '#facc15',
+    patternType: 'spots',
+    preferredBaitIds: ['bait_krill', 'bait_sandworm'],
+    description: 'ปลาเทราต์ที่มีแถบสีรุ้งประกายสดใสตามข้างลำตัว ออกหากินอย่างร่าเริงยามพระอาทิตย์ขึ้น'
+  },
+  {
+    id: 'fish_32_starlight_dragonet',
+    indexNumber: 32,
+    nameTh: 'มังกรน้อยระยับดาว',
+    nameEn: 'Starlight Void Dragonet',
+    rarity: 'Legendary',
+    bodyShape: 'chronoskoi',
+    timeAvailability: 'night',
+    habitat: 'ห้วงเวิ้งอวกาศยามราตรี (กลางคืน)',
+    minWeightKg: 16.0,
+    maxWeightKg: 58.0,
+    minLengthCm: 85,
+    maxLengthCm: 175,
+    basePrice: 6800,
+    expReward: 1800,
+    difficulty: 9.3,
+    primaryColor: '#581c87',
+    secondaryColor: '#38bdf8',
+    accentColor: '#f43f5e',
+    patternType: 'nebula',
+    preferredBaitIds: ['bait_golden_essence', 'bait_astral_nectar'],
+    description: 'สิ่งมีชีวิตลึกลับคล้ายลูกมังกรสวรรค์ มีครีบระบายดั่งปีกผีเสื้อและละอองดาวลอยวนรอบตัวในยามค่ำคืน'
   }
 ];
 
@@ -783,72 +932,96 @@ export const FISHING_RODS_CATALOG: FishingRodItem[] = [
     lineStrengthBonus: 0,
     rarityBoostMultiplier: 1.0,
     rodColor: '#b45309',
-    description: 'คันเบ็ดไม้ไผ่เรียบง่าย เหมาะสำหรับเริ่มต้นนั่งตกปลาริมท่าเรือมรกต'
+    description: 'คันเบ็ดไม้ไผ่เรียบง่าย เหมาะสำหรับเริ่มต้นนั่งตกปลาริมท่าเรือมรกต',
+    attractionPower: 100,
+    oceanFortune: 'D',
+    lineResilience: 100,
+    baseAttractionBonusPct: 0
   },
   {
     id: 'rod_willow',
     nameTh: 'คันเบ็ดไม้โอ๊คสายลมทะเล',
     nameEn: 'Breeze Oakwood Rod',
-    price: 1200,
-    requiredLevel: 4,
+    price: 2500,
+    requiredLevel: 5,
     waitTimeReductionPct: 15,
     sweetSpotSizeBonus: 16,
     lineStrengthBonus: 14,
     rarityBoostMultiplier: 1.35,
     rodColor: '#92400e',
-    description: 'คันเบ็ดไม้โอ๊คยืดหยุ่นสูง ลดเวลารอปลาฮุบเหยื่อ 15% และขยายขนาดแถบวัดเบ็ด'
+    description: 'คันเบ็ดไม้โอ๊คยืดหยุ่นสูง เพิ่มพลังดึงดูดสมุทรและระยะแถบวัดเบ็ด',
+    attractionPower: 140,
+    oceanFortune: 'C',
+    lineResilience: 150,
+    baseAttractionBonusPct: 2
   },
   {
     id: 'rod_coral_carbon',
     nameTh: 'คันเบ็ดคาร์บอนปะการังคราม',
     nameEn: 'Azure Coral Carbon Rod',
-    price: 8500,
-    requiredLevel: 12,
+    price: 18000,
+    requiredLevel: 15,
     waitTimeReductionPct: 28,
     sweetSpotSizeBonus: 28,
     lineStrengthBonus: 26,
     rarityBoostMultiplier: 1.85,
     rodColor: '#0284c7',
-    description: 'ผลิตจากคาร์บอนไฟเบอร์น้ำหนักเบา กุญแจสำคัญสู่การปลดล็อคเกาะแนวปะการังเรืองแสง'
+    description: 'ผลิตจากคาร์บอนไฟเบอร์น้ำหนักเบา กุญแจสำคัญสู่การปลดล็อคเกาะแนวปะการังเรืองแสง',
+    attractionPower: 195,
+    oceanFortune: 'B',
+    lineResilience: 230,
+    baseAttractionBonusPct: 5
   },
   {
     id: 'rod_deep_titanium',
     nameTh: 'คันเบ็ดไทเทเนียมร่องน้ำลึก',
     nameEn: 'Deep-Trench Titanium Rod',
-    price: 42000,
-    requiredLevel: 25,
+    price: 85000,
+    requiredLevel: 28,
     waitTimeReductionPct: 40,
     sweetSpotSizeBonus: 42,
     lineStrengthBonus: 40,
     rarityBoostMultiplier: 2.65,
     rodColor: '#6366f1',
-    description: 'คันเบ็ดอัลลอยด์ทนทานสูง กุญแจสำคัญสู่การปลดล็อคเกาะภูเขาไฟหินดำ'
+    description: 'คันเบ็ดอัลลอยด์ทนทานสูง กุญแจสำคัญสู่การปลดล็อคเกาะภูเขาไฟหินดำ',
+    attractionPower: 260,
+    oceanFortune: 'A',
+    lineResilience: 340,
+    baseAttractionBonusPct: 9
   },
   {
     id: 'rod_starlight',
     nameTh: 'คันเบ็ดผู้ทอแสงดาว',
     nameEn: 'Starlight Weaver Rod',
-    price: 145000,
-    requiredLevel: 38,
+    price: 280000,
+    requiredLevel: 42,
     waitTimeReductionPct: 52,
     sweetSpotSizeBonus: 56,
     lineStrengthBonus: 54,
     rarityBoostMultiplier: 3.85,
     rodColor: '#a855f7',
-    description: 'สายเบ็ดทอจากเส้นใยผลึกดาว กุญแจสำคัญสู่การปลดล็อคเกาะธารน้ำแข็งออโรร่า'
+    description: 'สายเบ็ดทอจากเส้นใยผลึกดาว กุญแจสำคัญสู่การปลดล็อคเกาะธารน้ำแข็งออโรร่า',
+    attractionPower: 360,
+    oceanFortune: 'S',
+    lineResilience: 480,
+    baseAttractionBonusPct: 14
   },
   {
     id: 'rod_chronos_abyss',
     nameTh: 'คันเบ็ดโพไซดอนแห่งกาลเวลา',
     nameEn: 'Chronos Sovereign Rod',
-    price: 480000,
-    requiredLevel: 50,
+    price: 850000,
+    requiredLevel: 55,
     waitTimeReductionPct: 68,
     sweetSpotSizeBonus: 75,
     lineStrengthBonus: 72,
     rarityBoostMultiplier: 6.2,
     rodColor: '#f59e0b',
-    description: 'ศาสตราวุธระดับเทพเจ้า ปลดล็อคความลับแห่งเกาะสวรรค์ลอยฟ้ากลางมิติ'
+    description: 'ศาสตราวุธระดับเทพเจ้า ปลดล็อคความลับแห่งเกาะสวรรค์ลอยฟ้ากลางมิติ',
+    attractionPower: 520,
+    oceanFortune: 'SS+',
+    lineResilience: 700,
+    baseAttractionBonusPct: 20
   }
 ];
 
@@ -864,29 +1037,33 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
     packQuantity: 999,
     waitTimeReductionPct: 0,
     targetRarities: ['Common', 'Uncommon'],
-    targetFishIds: ['fish_01_sardine', 'fish_03_mackerel', 'fish_04_flounder', 'fish_05_bream'],
+    targetFishIds: ['fish_01_sardine', 'fish_03_mackerel', 'fish_04_flounder', 'fish_05_bream', 'fish_29_solar_ray', 'fish_31_dawn_trout'],
     bonusWeightMultiplier: 1.0,
     iconColor: '#f97316',
-    description: 'เหยื่อพื้นฐานที่มีให้ใช้ตลอดเวลา ดึงดูดปลาชายฝั่งทั่วไปได้ดี'
+    description: 'เหยื่อพื้นฐานที่มีให้ใช้ตลอดเวลา ดึงดูดปลาชายฝั่งทั่วไปได้ดี',
+    attractionPowerBonus: 0,
+    baseAttractionBonusPct: 0
   },
   {
     id: 'bait_krill',
     nameTh: 'กุ้งฝอยสดปะการัง',
     nameEn: 'Fresh Coral Krill',
-    pricePerPack: 120,
+    pricePerPack: 250,
     packQuantity: 10,
     waitTimeReductionPct: 10,
     targetRarities: ['Common', 'Uncommon', 'Rare'],
-    targetFishIds: ['fish_02_clownfish', 'creature_21_shrimp', 'fish_06_snapper', 'fish_07_parrotfish', 'fish_08_boxfish'],
+    targetFishIds: ['fish_02_clownfish', 'creature_21_shrimp', 'fish_06_snapper', 'fish_07_parrotfish', 'fish_08_boxfish', 'fish_27_sunburst_dorado', 'fish_31_dawn_trout'],
     bonusWeightMultiplier: 1.8,
     iconColor: '#fb7185',
-    description: 'กุ้งฝอยกลิ่นหอมสดใหม่ เพิ่มโอกาสติดปลาแนวปะการังสีสวยและลดเวลารอ 10%'
+    description: 'กุ้งฝอยกลิ่นหอมสดใหม่ เพิ่มโอกาสติดปลาแนวปะการังสีสวยและเพิ่มพลังดึงดูด',
+    attractionPowerBonus: 25,
+    baseAttractionBonusPct: 2
   },
   {
     id: 'bait_squid',
     nameTh: 'หมึกสายเรืองแสง',
     nameEn: 'Bioluminescent Squid Strip',
-    pricePerPack: 360,
+    pricePerPack: 800,
     packQuantity: 10,
     waitTimeReductionPct: 20,
     targetRarities: ['Uncommon', 'Rare', 'Epic'],
@@ -897,17 +1074,21 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
       'fish_10_tuna',
       'fish_11_lionfish',
       'fish_13_mantaray',
-      'fish_15_angler'
+      'fish_15_angler',
+      'fish_28_midnight_moonfish',
+      'fish_30_abyssal_biolum'
     ],
     bonusWeightMultiplier: 2.6,
     iconColor: '#38bdf8',
-    description: 'เนื้อหมึกเรืองแสงที่ปลานักล่าน้ำลึกและปลา Rare/Epic ชื่นชอบเป็นพิเศษ'
+    description: 'เนื้อหมึกเรืองแสงที่ปลานักล่าน้ำลึกและปลา Rare/Epic ชื่นชอบเป็นพิเศษ',
+    attractionPowerBonus: 50,
+    baseAttractionBonusPct: 4
   },
   {
     id: 'bait_crystal_lure',
     nameTh: 'เหยื่อปลอมผลึกแก้วสมุทร',
     nameEn: 'Prism Minnow Lure',
-    pricePerPack: 850,
+    pricePerPack: 2400,
     packQuantity: 8,
     waitTimeReductionPct: 30,
     targetRarities: ['Rare', 'Epic'],
@@ -916,17 +1097,21 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
       'fish_12_mahimahi',
       'fish_14_swordfish',
       'fish_16_oarfish',
-      'creature_24_seahorse'
+      'creature_24_seahorse',
+      'fish_28_midnight_moonfish',
+      'fish_29_solar_ray'
     ],
     bonusWeightMultiplier: 3.5,
     iconColor: '#22d3ee',
-    description: 'เหยื่อสะท้อนแสงปริซึมใต้น้ำ ดึงดูดปลากระโทงดาบผลึกแก้วและปลาออร์ฟิชซากุระโดยตรง!'
+    description: 'เหยื่อสะท้อนแสงปริซึมใต้น้ำ ดึงดูดปลากระโทงดาบผลึกแก้วและปลาออร์ฟิชซากุระโดยตรง!',
+    attractionPowerBonus: 85,
+    baseAttractionBonusPct: 6
   },
   {
     id: 'bait_golden_essence',
     nameTh: 'หัวเชื้ออำพันบรรพกาล',
     nameEn: 'Ancient Golden Essence',
-    pricePerPack: 2200,
+    pricePerPack: 6500,
     packQuantity: 6,
     waitTimeReductionPct: 40,
     targetRarities: ['Epic', 'Legendary'],
@@ -934,17 +1119,20 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
       'fish_14_swordfish',
       'fish_16_oarfish',
       'fish_17_whaleshark',
-      'fish_18_coelacanth'
+      'fish_18_coelacanth',
+      'fish_32_starlight_dragonet'
     ],
     bonusWeightMultiplier: 5.0,
     iconColor: '#fbbf24',
-    description: 'หัวเชื้อสกัดจากแร่ทองคำใต้สมุทร ดึงดูดฉลามวาฬดาราจักรและซีลาแคนท์สุริยะอย่างทรงพลัง'
+    description: 'หัวเชื้อสกัดจากแร่ทองคำใต้สมุทร ดึงดูดฉลามวาฬดาราจักรและซีลาแคนท์สุริยะอย่างทรงพลัง',
+    attractionPowerBonus: 130,
+    baseAttractionBonusPct: 9
   },
   {
     id: 'bait_astral_nectar',
     nameTh: 'น้ำทิพย์ดาราจักร (ล่าปลา Secret)',
     nameEn: 'Astral Leviathan Nectar',
-    pricePerPack: 5800,
+    pricePerPack: 18000,
     packQuantity: 5,
     waitTimeReductionPct: 50,
     targetRarities: ['Epic', 'Legendary', 'Secret'],
@@ -953,11 +1141,16 @@ export const FISHING_BAITS_CATALOG: FishingBaitItem[] = [
       'fish_17_whaleshark',
       'fish_18_coelacanth',
       'fish_19_leviathan',
-      'fish_20_chronoskoi'
+      'fish_20_chronoskoi',
+      'creature_26_nautilus',
+      'fish_30_abyssal_biolum',
+      'fish_32_starlight_dragonet'
     ],
     bonusWeightMultiplier: 8.5,
     iconColor: '#f43f5e',
-    description: 'เหยื่อศักดิ์สิทธิ์ที่เพิ่มโอกาสพบปลา SECRET TIER ถึง 8.5 เท่า และลดเวลารอลงครึ่งหนึ่ง!'
+    description: 'เหยื่อศักดิ์สิทธิ์ที่เพิ่มโอกาสพบปลา SECRET TIER ถึง 8.5 เท่า และดึงดูดสิ่งมีชีวิตดาราจักร!',
+    attractionPowerBonus: 200,
+    baseAttractionBonusPct: 14
   }
 ];
 
@@ -1009,6 +1202,143 @@ export const OCEAN_MOODS: {
 ];
 
 /**
+ * Real-time Day / Night detector based on local device clock.
+ * 06:00 to 17:59 = 'day'
+ * 18:00 to 05:59 = 'night'
+ */
+export function getRealTimeOfDay(): 'day' | 'night' {
+  const hour = new Date().getHours();
+  return hour >= 6 && hour < 18 ? 'day' : 'night';
+}
+
+/**
+ * Calculates base bite chance (0.10 base, boosted by rod and bait RPG stats)
+ */
+export function calculateBaseBiteChance(rod: FishingRodItem, bait: FishingBaitItem): number {
+  const rodBonus = (rod.baseAttractionBonusPct || 0) / 100;
+  const baitBonus = (bait.baseAttractionBonusPct || 0) / 100;
+  return Math.min(0.60, 0.10 + rodBonus + baitBonus);
+}
+
+/**
+ * Roll a fish species matching Island biome affinity and Day/Night real-time availability.
+ */
+export function rollFishSpecies(
+  rod: FishingRodItem,
+  bait: FishingBaitItem,
+  timeOfDay: 'day' | 'night',
+  islandId?: string
+): FishSpeciesData {
+  // Filter species pool by Day/Night
+  const candidatePool = TWENTY_OCEAN_FISH_SPECIES.filter((sp) => {
+    if (!sp.timeAvailability || sp.timeAvailability === 'all') return true;
+    return sp.timeAvailability === timeOfDay;
+  });
+
+  const poolToUse = candidatePool.length > 0 ? candidatePool : TWENTY_OCEAN_FISH_SPECIES;
+
+  const weightedPool = poolToUse.map((sp) => {
+    const rarityBase = RARITY_CONFIG[sp.rarity].baseChancePct;
+    let w = rarityBase;
+
+    // Island affinity
+    if (islandId) {
+      const islandEndemicMap: Record<string, string[]> = {
+        island_emerald_haven: ['fish_01_sardine', 'fish_02_clownfish', 'fish_03_mackerel', 'creature_21_shrimp', 'fish_05_bream', 'fish_29_solar_ray'],
+        island_coral_sanctuary: ['fish_04_flounder', 'fish_07_parrotfish', 'fish_08_boxfish', 'creature_22_squid', 'fish_11_lionfish', 'fish_27_sunburst_dorado'],
+        island_volcanic_atoll: ['fish_09_barracuda', 'fish_10_tuna', 'creature_24_seahorse', 'fish_12_mahimahi', 'fish_14_swordfish', 'fish_30_abyssal_biolum'],
+        island_aurora_fjord: ['fish_06_snapper', 'creature_23_jellyfish', 'fish_13_mantaray', 'fish_16_oarfish', 'creature_25_octopus', 'fish_31_dawn_trout'],
+        island_celestial_archipelago: ['fish_15_angler', 'fish_17_whaleshark', 'fish_18_coelacanth', 'fish_19_leviathan', 'fish_20_chronoskoi', 'creature_26_nautilus', 'fish_28_midnight_moonfish', 'fish_32_starlight_dragonet']
+      };
+      const endemics = islandEndemicMap[islandId] || [];
+      if (endemics.includes(sp.id)) {
+        w *= 3.4;
+      } else {
+        w *= 0.55;
+      }
+    }
+
+    // Rod boosts
+    if (sp.rarity === 'Rare') w *= Math.pow(rod.rarityBoostMultiplier, 0.55);
+    if (sp.rarity === 'Epic') w *= Math.pow(rod.rarityBoostMultiplier, 0.85);
+    if (sp.rarity === 'Legendary') w *= Math.pow(rod.rarityBoostMultiplier, 1.15);
+    if (sp.rarity === 'Secret') w *= Math.pow(rod.rarityBoostMultiplier, 1.45);
+
+    // Bait affinity
+    if (bait.targetFishIds.includes(sp.id)) {
+      w *= bait.bonusWeightMultiplier;
+    } else if (bait.targetRarities.includes(sp.rarity)) {
+      w *= 1 + (bait.bonusWeightMultiplier - 1) * 0.45;
+    }
+
+    return { species: sp, weight: w };
+  });
+
+  const totalWeight = weightedPool.reduce((acc, item) => acc + item.weight, 0);
+  let cursor = Math.random() * totalWeight;
+  for (const item of weightedPool) {
+    if (cursor <= item.weight) return item.species;
+    cursor -= item.weight;
+  }
+  return weightedPool[0].species;
+}
+
+/**
+ * 2026 Percentage & Pity Bite Simulator:
+ * - Every 1-min interval, rolls bite probability (baseRate + pityBonus).
+ * - Miss on regular tick adds +10% of baseRate to pityBonus.
+ * - Jerk line action triggers an immediate roll with 10% of the regular rate.
+ * - Miss on Jerk adds +1% of baseRate to pityBonus.
+ * - Success on either roll resets pityBonus to 0 and selects a fish species
+ *   matching current Island biome and Day/Night conditions.
+ */
+export function performBiteRoll(
+  rod: FishingRodItem,
+  bait: FishingBaitItem,
+  pityBonus: number,
+  isJerk: boolean,
+  islandId?: string,
+  timeOfDay?: 'day' | 'night'
+): {
+  hit: boolean;
+  species: FishSpeciesData | null;
+  newPity: number;
+  effectiveChance: number;
+  baseRate: number;
+} {
+  const tod = timeOfDay || getRealTimeOfDay();
+  const baseRate = calculateBaseBiteChance(rod, bait);
+  const regularRate = Math.min(1.0, baseRate + pityBonus);
+  const effectiveChance = isJerk ? Math.min(1.0, regularRate * 0.10) : regularRate;
+
+  const roll = Math.random();
+  if (roll < effectiveChance) {
+    // HIT! Reset pity to 0, choose fish
+    const species = rollFishSpecies(rod, bait, tod, islandId);
+    return {
+      hit: true,
+      species,
+      newPity: 0,
+      effectiveChance,
+      baseRate
+    };
+  } else {
+    // MISS! Accumulate pity
+    // Regular miss: +10% of base rate
+    // Jerk miss: +1% of base rate
+    const pityDelta = isJerk ? 0.01 * baseRate : 0.10 * baseRate;
+    const newPity = pityBonus + pityDelta;
+    return {
+      hit: false,
+      species: null,
+      newPity,
+      effectiveChance,
+      baseRate
+    };
+  }
+}
+
+/**
  * อัลกอริทึมคำนวณการสุ่มปลาแบบถ่วงน้ำหนัก (Weighted Rarity & Bait Affinity Algorithm)
  * พร้อมสร้าง Seed ขนาดตัวและสีพิเศษเฉพาะตัว (Procedural Seed Variant)
  */
@@ -1018,93 +1348,17 @@ export function rollFishAndWaitTime(
   mood: OceanTimeMood,
   isFastFocusMode: boolean,
   rollSequence: number,
-  islandId?: string
+  islandId?: string,
+  timeOfDay?: 'day' | 'night'
 ): {
   species: FishSpeciesData;
   waitSeconds: number;
 } {
-  // 1. Compute dynamic weights for each of the fish species
-  const weightedPool: { species: FishSpeciesData; weight: number }[] =
-    TWENTY_OCEAN_FISH_SPECIES.map((sp) => {
-      const rarityBase = RARITY_CONFIG[sp.rarity].baseChancePct;
-      let w = rarityBase;
+  const tod = timeOfDay || getRealTimeOfDay();
+  const chosen = rollFishSpecies(rod, bait, tod, islandId);
 
-      // Apply Island Biome affinity multiplier (endemic species appear 3.5x more often on their native island)
-      if (islandId) {
-        const islandEndemicMap: Record<string, string[]> = {
-          island_emerald_haven: ['fish_01_sardine', 'fish_02_clown', 'fish_03_mackerel', 'creature_21_shrimp', 'fish_05_bream'],
-          island_coral_sanctuary: ['fish_04_flounder', 'fish_07_parrot', 'fish_08_boxfish', 'creature_22_squid', 'fish_11_lionfish'],
-          island_volcanic_atoll: ['fish_09_barracuda', 'fish_10_tuna', 'creature_24_seahorse', 'fish_12_mahimahi', 'fish_14_swordfish'],
-          island_aurora_fjord: ['fish_06_snapper', 'creature_23_jellyfish', 'fish_13_mantaray', 'fish_16_oarfish', 'creature_25_octopus'],
-          island_celestial_archipelago: ['fish_15_angler', 'fish_17_whaleshark', 'fish_18_coelacanth', 'fish_19_leviathan', 'fish_20_chronoskoi', 'creature_26_nautilus']
-        };
-        const endemics = islandEndemicMap[islandId] || [];
-        if (endemics.includes(sp.id)) {
-          w *= 3.2;
-        } else {
-          w *= 0.55;
-        }
-      }
-
-      // Apply Rod rarity boost to Rare, Epic, Legendary, Secret
-      if (sp.rarity === 'Rare') w *= Math.pow(rod.rarityBoostMultiplier, 0.55);
-      if (sp.rarity === 'Epic') w *= Math.pow(rod.rarityBoostMultiplier, 0.85);
-      if (sp.rarity === 'Legendary') w *= Math.pow(rod.rarityBoostMultiplier, 1.15);
-      if (sp.rarity === 'Secret') w *= Math.pow(rod.rarityBoostMultiplier, 1.45);
-
-      // Apply Specialized Bait affinity multiplier
-      if (bait.targetFishIds.includes(sp.id)) {
-        w *= bait.bonusWeightMultiplier;
-      } else if (bait.targetRarities.includes(sp.rarity)) {
-        w *= 1 + (bait.bonusWeightMultiplier - 1) * 0.45;
-      }
-
-      // Apply Ocean Time/Weather Mood bonus
-      if (mood === 'night_glow' && (sp.rarity === 'Rare' || sp.rarity === 'Epic')) {
-        w *= 1.35;
-      } else if (
-        mood === 'astral_storm' &&
-        (sp.rarity === 'Legendary' || sp.rarity === 'Secret')
-      ) {
-        w *= 2.5;
-      }
-
-      return { species: sp, weight: w };
-    });
-
-  const totalWeight = weightedPool.reduce((acc, item) => acc + item.weight, 0);
-  // Combine high-entropy time + sequence seed
-  const hashSeed = Math.abs(Math.sin(Date.now() * 0.0017 + rollSequence * 12.9898) * 43758.5453);
-  const rand01 = hashSeed - Math.floor(hashSeed);
-
-  let cursor = rand01 * totalWeight;
-  let chosen = weightedPool[0].species;
-  for (const item of weightedPool) {
-    if (cursor <= item.weight) {
-      chosen = item.species;
-      break;
-    }
-    cursor -= item.weight;
-  }
-
-  // 2. Calculate Wait Time (1 Minute [60s] to 1 Hour [3600s] in standard Idle mode, reduced by Rod & Bait)
-  const rCfg = RARITY_CONFIG[chosen.rarity];
-  const seed2 = Math.abs(Math.cos(Date.now() * 0.0023 + rollSequence * 78.233) * 19341.23);
-  const ratio = seed2 - Math.floor(seed2);
-
-  // Bias wait time toward accessible end while allowing deep 1-hour waits for high tiers
-  const rawWait = rCfg.minWaitSec + Math.pow(ratio, 1.6) * (rCfg.maxWaitSec - rCfg.minWaitSec);
-  const totalReduction = Math.min(
-    0.78,
-    (rod.waitTimeReductionPct + bait.waitTimeReductionPct) / 100
-  );
-
-  let finalWaitSec = Math.max(45, Math.round(rawWait * (1 - totalReduction)));
-
-  // If player enabled "โหมดเร่งเวลาตก (Fast Focus Mode)" for active testing/playing: 5s - 16s
-  if (isFastFocusMode) {
-    finalWaitSec = Math.max(4, Math.min(16, Math.round(5 + chosen.difficulty * 1.1 * (1 - totalReduction * 0.5))));
-  }
+  // 2. Calculate Wait Time (60s tick interval standard, or 6s fast mode)
+  let finalWaitSec = isFastFocusMode ? 6 : 60;
 
   return {
     species: chosen,

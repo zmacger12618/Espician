@@ -464,6 +464,26 @@ class SoundEngine {
       osc.stop(t + 0.24);
     });
   }
+
+  public playLevelUp() {
+    const ctx = this.ensureContext();
+    if (!ctx || !this.sfxGain || this.settings.muted) return;
+    const now = ctx.currentTime;
+    // Granblue / Cygames style rising anime fanfare: C5, E5, G5, C6
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+      const t = now + idx * 0.08;
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(0.25, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      osc.connect(g);
+      g.connect(this.sfxGain!);
+      osc.start(t);
+      osc.stop(t + 0.38);
+    });
+  }
 }
 
 export const soundEngine = new SoundEngine();

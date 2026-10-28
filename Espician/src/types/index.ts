@@ -217,6 +217,7 @@ export interface UserAccount {
   isTutorialCompleted: boolean;
   accountLevel: number;
   accountExp: number;
+  isAdmin?: boolean;
 }
 
 export interface TutorialState {

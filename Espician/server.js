@@ -74,6 +74,7 @@ db.exec(`
     is_tutorial_completed INTEGER NOT NULL DEFAULT 0,
     account_level INTEGER NOT NULL DEFAULT 1,
     account_exp INTEGER NOT NULL DEFAULT 0,
+    is_admin INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL,
     last_login_at TEXT NOT NULL
   );
@@ -241,6 +242,12 @@ function getUserFromRequest(req) {
 }
 
 function formatUserResponse(row) {
+  const isAdmin = Boolean(
+    row.is_admin === 1 ||
+    row.username?.toLowerCase() === 'macgagarry' ||
+    row.email?.toLowerCase().includes('macga') ||
+    row.email?.toLowerCase() === 'zmacger@gmail.com'
+  );
   return {
     id: row.id,
     username: row.username,
@@ -251,7 +258,8 @@ function formatUserResponse(row) {
     coachName: row.coach_name,
     isTutorialCompleted: Boolean(row.is_tutorial_completed),
     accountLevel: row.account_level || 1,
-    accountExp: row.account_exp || 0
+    accountExp: row.account_exp || 0,
+    isAdmin
   };
 }
 

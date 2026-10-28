@@ -50,10 +50,11 @@ export const ALL_ISLANDS: IslandBiome[] = [
     ],
     endemicFishIds: [
       'fish_01_sardine',
-      'fish_02_clown',
+      'fish_02_clownfish',
       'fish_03_mackerel',
       'creature_21_shrimp',
-      'fish_05_bream'
+      'fish_05_bream',
+      'fish_29_solar_ray'
     ]
   },
   {
@@ -65,8 +66,8 @@ export const ALL_ISLANDS: IslandBiome[] = [
     descriptionTh: 'ลากูนน้ำตื้นเขตร้อนที่เต็มไปด้วยแนวปะการังเปล่งประกายสีนีออนและสิ่งมีชีวิตสีสันสดใส',
     descriptionEn: 'Luminous turquoise lagoon teeming with glowing neon coral formations and exotic fauna.',
     order: 2,
-    requiredLevel: 12,
-    requiredCoins: 6500,
+    requiredLevel: 15,
+    requiredCoins: 12000,
     requiredRodId: 'rod_coral_carbon',
     skyGradient: ['#06b6d4', '#22d3ee', '#a5f3fc'],
     seaGradient: ['#0d9488', '#0f766e', '#115e59'],
@@ -79,10 +80,11 @@ export const ALL_ISLANDS: IslandBiome[] = [
     ],
     endemicFishIds: [
       'fish_04_flounder',
-      'fish_07_parrot',
+      'fish_07_parrotfish',
       'fish_08_boxfish',
       'creature_22_squid',
-      'fish_11_lionfish'
+      'fish_11_lionfish',
+      'fish_27_sunburst_dorado'
     ]
   },
   {
@@ -94,8 +96,8 @@ export const ALL_ISLANDS: IslandBiome[] = [
     descriptionTh: 'ร่องหินบะซอลต์สีดำทมิฬล้อมรอบธารแมกมาใต้สมุทร ลมทะเลพัดพาละอองไฟระยิบระยับและปลาเพลิงดุร้าย',
     descriptionEn: 'Obsidian basalt cliffs jutting from simmering volcanic waters with glowing embers and fierce predators.',
     order: 3,
-    requiredLevel: 25,
-    requiredCoins: 28000,
+    requiredLevel: 28,
+    requiredCoins: 65000,
     requiredRodId: 'rod_deep_titanium',
     skyGradient: ['#450a0a', '#7f1d1d', '#991b1b'],
     seaGradient: ['#18181b', '#27272a', '#3f3f46'],
@@ -111,7 +113,8 @@ export const ALL_ISLANDS: IslandBiome[] = [
       'fish_10_tuna',
       'creature_24_seahorse',
       'fish_12_mahimahi',
-      'fish_14_swordfish'
+      'fish_14_swordfish',
+      'fish_30_abyssal_biolum'
     ]
   },
   {
@@ -123,8 +126,8 @@ export const ALL_ISLANDS: IslandBiome[] = [
     descriptionTh: 'อ่าวธารน้ำแข็งอันสงบเงียบ แสงเหนือออโรร่าสีเขียวมรกตและม่วงครามเต้นระบำบนท้องฟ้ายามค่ำ ชุมนุมปลาโบราณหายาก',
     descriptionEn: 'Crystal-clear arctic fjord under shimmering green and purple dancing celestial aurora with relic species.',
     order: 4,
-    requiredLevel: 38,
-    requiredCoins: 95000,
+    requiredLevel: 42,
+    requiredCoins: 220000,
     requiredRodId: 'rod_starlight',
     skyGradient: ['#020617', '#0f172a', '#1e1b4b'],
     seaGradient: ['#0c4a6e', '#0369a1', '#0284c7'],
@@ -140,7 +143,8 @@ export const ALL_ISLANDS: IslandBiome[] = [
       'creature_23_jellyfish',
       'fish_13_mantaray',
       'fish_16_oarfish',
-      'creature_25_octopus'
+      'creature_25_octopus',
+      'fish_31_dawn_trout'
     ]
   },
   {
@@ -152,8 +156,8 @@ export const ALL_ISLANDS: IslandBiome[] = [
     descriptionTh: 'เกาะลอยฟ้าศักดิ์สิทธิ์ที่ล่องลอยอยู่เหนือมิติ ท้องฟ้าเป็นห้วงอวกาศและสายน้ำคือธารดวงดาว ถิ่นอาศัยของปลาลับระดับคอสมิก',
     descriptionEn: 'Sacred floating isles above a cosmic void where the sea flows with stardust, home to cosmic secret leviathans.',
     order: 5,
-    requiredLevel: 50,
-    requiredCoins: 320000,
+    requiredLevel: 55,
+    requiredCoins: 680000,
     requiredRodId: 'rod_chronos_abyss',
     skyGradient: ['#18062b', '#2e1065', '#4c1d95'],
     seaGradient: ['#311042', '#1a0526', '#09010f'],
@@ -170,7 +174,9 @@ export const ALL_ISLANDS: IslandBiome[] = [
       'fish_18_coelacanth',
       'fish_19_leviathan',
       'fish_20_chronoskoi',
-      'creature_26_nautilus'
+      'creature_26_nautilus',
+      'fish_28_midnight_moonfish',
+      'fish_32_starlight_dragonet'
     ]
   }
 ];

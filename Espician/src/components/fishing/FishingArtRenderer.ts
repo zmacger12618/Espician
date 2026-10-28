@@ -40,9 +40,10 @@ export interface SceneRenderParams {
   rig?: { breath: number; sway: number; blink: number };
   entranceProgress01?: number; // 0..1 (walk along pier and sit down)
   islandId?: string;
+  timeOfDay?: 'day' | 'night';
 }
 
-// Painted Biome Background Image Cache with instant preloading
+// Painted Biome Background Image Cache with instant preloading for Day & Night
 const BG_CACHE: Record<string, HTMLImageElement> = {};
 const ISLAND_IDS = [
   'island_emerald_haven',
@@ -53,21 +54,31 @@ const ISLAND_IDS = [
 ];
 if (typeof window !== 'undefined') {
   ISLAND_IDS.forEach((id) => {
-    const im = new Image();
-    im.src = `/assets/fishing/backgrounds/${id}.jpg`;
-    BG_CACHE[id] = im;
+    ['day', 'night'].forEach((tod) => {
+      const key = `${id}_${tod}`;
+      const im = new Image();
+      im.src = `/assets/fishing/backgrounds/${key}.jpg`;
+      BG_CACHE[key] = im;
+    });
+    // Fallback default
+    const imDef = new Image();
+    imDef.src = `/assets/fishing/backgrounds/${id}.jpg`;
+    BG_CACHE[id] = imDef;
   });
 }
 
-function getIslandBackground(islandId: string): HTMLImageElement | null {
+function getIslandBackground(islandId: string, timeOfDay: 'day' | 'night' = 'day'): HTMLImageElement | null {
   if (typeof window === 'undefined') return null;
-  if (!BG_CACHE[islandId]) {
-    const im = new Image();
-    im.src = `/assets/fishing/backgrounds/${islandId}.jpg`;
-    BG_CACHE[islandId] = im;
+  const key = `${islandId}_${timeOfDay}`;
+  let im = BG_CACHE[key];
+  if (!im) {
+    im = new Image();
+    im.src = `/assets/fishing/backgrounds/${key}.jpg`;
+    BG_CACHE[key] = im;
   }
-  const im = BG_CACHE[islandId];
-  return im.complete && im.naturalWidth > 0 ? im : null;
+  if (im.complete && im.naturalWidth > 0) return im;
+  const def = BG_CACHE[islandId];
+  return def && def.complete && def.naturalWidth > 0 ? def : null;
 }
 
 function drawAnimeSparkle(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, color = '#ffffff') {
@@ -101,7 +112,8 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
     reelTension01,
     hookedSpecies,
     entranceProgress01 = 1.0,
-    islandId = 'island_emerald_haven'
+    islandId = 'island_emerald_haven',
+    timeOfDay = 'day'
   } = params;
 
   const islandData = ALL_ISLANDS.find((i) => i.id === islandId) || ALL_ISLANDS[0];
@@ -148,7 +160,7 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
   ctx.translate(-focalX, -focalY);
 
   // 1. PAINTED BIOME BACKGROUND OR PROCEDURAL SKY GRADIENT
-  const bgImg = getIslandBackground(islandId);
+  const bgImg = getIslandBackground(islandId, timeOfDay);
   if (bgImg) {
     // Render authentic high-resolution painted watercolor anime background
     ctx.drawImage(bgImg, 0, 0, width, height);
@@ -293,7 +305,7 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
   }
 
   // 5. JAPANESE WOODEN SEASIDE PIER WITH CHOCHIN LANTERN (Styling per Island)
-  drawWoodenPier(ctx, pierEdgeX, pierDeckY, height, timeSec, islandData.pierStyle, islandData.accentGlow);
+  drawWoodenPier(ctx, pierEdgeX, pierDeckY, height, timeSec, islandData.pierStyle, islandData.accentGlow, timeOfDay);
 
   // 6. ANIME ANGLER GIRL + PIER CAT + ROD, LINE & BOBBER
   drawAngler(ctx, {
@@ -627,34 +639,36 @@ function drawWoodenPier(
   height: number,
   timeSec: number,
   pierStyle = 'rustic_wood',
-  accentGlow = '#f59e0b'
+  accentGlow = '#f59e0b',
+  timeOfDay: 'day' | 'night' = 'day'
 ) {
   ctx.save();
-  const INK = '#261410';
+  const INK = '#1e110d';
+  const isNight = timeOfDay === 'night';
 
   // Palette styling per Island Pier Biome
-  let pillarColA = '#3b1d0e';
-  let pillarColB = '#5c2e14';
-  let pillarColC = '#261207';
-  let plankColA = '#6b3619';
-  let plankColB = '#7c3f1d';
-  let plankHighlight = 'rgba(254, 240, 138, 0.22)';
-  let lanternGlowA = 'rgba(254, 240, 138, 0.95)';
-  let lanternGlowB = 'rgba(251, 113, 133, 0.38)';
+  let pillarColA = '#3a1e10';
+  let pillarColB = '#552a14';
+  let pillarColC = '#221008';
+  let plankColA = '#5c2d15';
+  let plankColB = '#6e3619';
+  let plankHighlight = 'rgba(254, 240, 138, 0.24)';
+  let lanternGlowA = isNight ? 'rgba(254, 240, 138, 0.98)' : 'rgba(254, 240, 138, 0.65)';
+  let lanternGlowB = isNight ? 'rgba(251, 146, 60, 0.55)' : 'rgba(251, 146, 60, 0.25)';
   let lanternGlowC = 'rgba(251, 191, 36, 0)';
   let lanternBodyA = '#fef08a';
   let lanternBodyB = '#fb923c';
-  let lanternBodyC = '#e11d48';
+  let lanternBodyC = '#dc2626';
 
   if (pierStyle === 'coral_plank') {
     pillarColA = '#0f766e';
     pillarColB = '#14b8a6';
     pillarColC = '#042f2e';
-    plankColA = '#134e4a';
+    plankColA = '#115e59';
     plankColB = '#0f766e';
-    plankHighlight = 'rgba(165, 243, 252, 0.26)';
-    lanternGlowA = 'rgba(165, 243, 252, 0.95)';
-    lanternGlowB = 'rgba(45, 212, 191, 0.42)';
+    plankHighlight = 'rgba(165, 243, 252, 0.28)';
+    lanternGlowA = isNight ? 'rgba(165, 243, 252, 0.98)' : 'rgba(165, 243, 252, 0.65)';
+    lanternGlowB = isNight ? 'rgba(45, 212, 191, 0.55)' : 'rgba(45, 212, 191, 0.25)';
     lanternGlowC = 'rgba(13, 148, 136, 0)';
     lanternBodyA = '#a5f3fc';
     lanternBodyB = '#22d3ee';
@@ -666,8 +680,8 @@ function drawWoodenPier(
     plankColA = '#1c1917';
     plankColB = '#292524';
     plankHighlight = 'rgba(249, 115, 22, 0.32)';
-    lanternGlowA = 'rgba(254, 202, 202, 0.95)';
-    lanternGlowB = 'rgba(239, 68, 68, 0.48)';
+    lanternGlowA = isNight ? 'rgba(254, 202, 202, 0.98)' : 'rgba(254, 202, 202, 0.65)';
+    lanternGlowB = isNight ? 'rgba(239, 68, 68, 0.58)' : 'rgba(239, 68, 68, 0.25)';
     lanternGlowC = 'rgba(185, 28, 28, 0)';
     lanternBodyA = '#fca5a5';
     lanternBodyB = '#ef4444';
@@ -679,8 +693,8 @@ function drawWoodenPier(
     plankColA = '#334155';
     plankColB = '#475569';
     plankHighlight = 'rgba(224, 231, 255, 0.35)';
-    lanternGlowA = 'rgba(224, 231, 255, 0.95)';
-    lanternGlowB = 'rgba(165, 180, 252, 0.42)';
+    lanternGlowA = isNight ? 'rgba(224, 231, 255, 0.98)' : 'rgba(224, 231, 255, 0.65)';
+    lanternGlowB = isNight ? 'rgba(165, 180, 252, 0.55)' : 'rgba(165, 180, 252, 0.25)';
     lanternGlowC = 'rgba(99, 102, 241, 0)';
     lanternBodyA = '#e0e7ff';
     lanternBodyB = '#a5b4fc';
@@ -692,118 +706,312 @@ function drawWoodenPier(
     plankColA = '#2e1065';
     plankColB = '#3b0764';
     plankHighlight = 'rgba(245, 208, 254, 0.36)';
-    lanternGlowA = 'rgba(245, 208, 254, 0.95)';
-    lanternGlowB = 'rgba(192, 132, 252, 0.45)';
+    lanternGlowA = isNight ? 'rgba(245, 208, 254, 0.98)' : 'rgba(245, 208, 254, 0.65)';
+    lanternGlowB = isNight ? 'rgba(192, 132, 252, 0.55)' : 'rgba(192, 132, 252, 0.25)';
     lanternGlowC = 'rgba(147, 51, 234, 0)';
     lanternBodyA = '#f5d0fe';
     lanternBodyB = '#d8b4fe';
     lanternBodyC = '#9333ea';
   }
 
-  // Support pillars going into the sea
+  // 1. Support Pillars (3 Heavy Weathered Timber Logs with 3D Bark Shading & Waterline Moss)
   const pillarPositions = [pierEdgeX * 0.18, pierEdgeX * 0.54, pierEdgeX * 0.88];
+  const pillarWidth = 24;
+
   for (const px of pillarPositions) {
-    const pillarGrad = ctx.createLinearGradient(px - 12, pierDeckY, px + 12, pierDeckY);
+    const pLeft = px - pillarWidth / 2;
+    // Pillar 3D cylindrical gradient
+    const pillarGrad = ctx.createLinearGradient(pLeft, 0, pLeft + pillarWidth, 0);
     pillarGrad.addColorStop(0, pillarColA);
-    pillarGrad.addColorStop(0.5, pillarColB);
+    pillarGrad.addColorStop(0.35, pillarColB);
+    pillarGrad.addColorStop(0.85, pillarColA);
     pillarGrad.addColorStop(1, pillarColC);
+
     ctx.fillStyle = pillarGrad;
     ctx.strokeStyle = INK;
     ctx.lineWidth = 1.6;
-    ctx.fillRect(px - 11, pierDeckY + 8, 22, height - pierDeckY);
-    ctx.strokeRect(px - 11, pierDeckY + 8, 22, height - pierDeckY);
-
-    // Anime white foam ring around pillar at waterline
-    const foamY = pierDeckY + 62 + Math.sin(timeSec * 2.2 + px * 0.05) * 2.5;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
-    ctx.lineWidth = 2.8;
     ctx.beginPath();
-    ctx.arc(px, foamY, 16, 0.08 * Math.PI, 0.92 * Math.PI);
-    ctx.stroke();
-  }
-
-  // Horizontal side beam
-  ctx.fillStyle = pillarColA;
-  ctx.strokeStyle = INK;
-  ctx.lineWidth = 1.6;
-  ctx.fillRect(0, pierDeckY + 6, pierEdgeX + 8, 16);
-  ctx.strokeRect(0, pierDeckY + 6, pierEdgeX + 8, 16);
-
-  // Cel-shaded wooden deck planks
-  const plankCount = 12;
-  const plankWidth = (pierEdgeX + 14) / plankCount;
-  for (let i = 0; i < plankCount; i++) {
-    const x = i * plankWidth;
-    ctx.fillStyle = i % 2 === 0 ? plankColA : plankColB;
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.roundRect(x, pierDeckY - 6, plankWidth - 2, 14, 3);
+    ctx.roundRect(pLeft, pierDeckY + 6, pillarWidth, height - pierDeckY, [0, 0, 4, 4]);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = plankHighlight;
-    ctx.fillRect(x + 2, pierDeckY - 5, plankWidth - 6, 3);
+    // Subtle vertical bark grain linework
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+    ctx.lineWidth = 1.0;
+    ctx.beginPath();
+    ctx.moveTo(pLeft + 6, pierDeckY + 10);
+    ctx.lineTo(pLeft + 6, height);
+    ctx.moveTo(pLeft + 16, pierDeckY + 12);
+    ctx.lineTo(pLeft + 16, height);
+    ctx.stroke();
+
+    // Dark wet tide mark below waterline
+    const waterlineY = pierDeckY + 68;
+    const wetGrad = ctx.createLinearGradient(0, waterlineY - 10, 0, height);
+    wetGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    wetGrad.addColorStop(0.3, 'rgba(0, 0, 0, 0.45)');
+    wetGrad.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
+    ctx.fillStyle = wetGrad;
+    ctx.fillRect(pLeft, waterlineY - 10, pillarWidth, height - (waterlineY - 10));
+
+    // Green seaweed / ocean moss clinging to pilings
+    ctx.fillStyle = '#166534';
+    for (let m = 0; m < 4; m++) {
+      ctx.beginPath();
+      ctx.ellipse(pLeft + 4 + m * 5, waterlineY + 4 + (m % 2) * 5, 4, 2.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Coiled Hemp Rope wrapping around the pillar (2 bands of rope)
+    const ropeWrapY1 = pierDeckY + 28;
+    const ropeWrapY2 = pierDeckY + 48;
+    [ropeWrapY1, ropeWrapY2].forEach((ry) => {
+      ctx.fillStyle = '#b45309';
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 1.2;
+      for (let r = 0; r < 3; r++) {
+        ctx.beginPath();
+        ctx.roundRect(pLeft - 2, ry + r * 4.2, pillarWidth + 4, 4, 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      // Hanging frayed rope end
+      ctx.strokeStyle = '#92400e';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(pLeft + pillarWidth + 1, ry + 6);
+      ctx.quadraticCurveTo(pLeft + pillarWidth + 6, ry + 16, pLeft + pillarWidth + 3, ry + 22);
+      ctx.stroke();
+    });
+
+    // Animated white foam wave crest around pillar
+    const foamY = waterlineY + Math.sin(timeSec * 2.2 + px * 0.05) * 2.5;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+    ctx.lineWidth = 3.0;
+    ctx.beginPath();
+    ctx.arc(px, foamY, pillarWidth * 0.75, 0.1 * Math.PI, 0.9 * Math.PI);
+    ctx.stroke();
   }
 
-  // Cute Anime Wooden Fish Bucket on Pier
-  const bucketX = pierEdgeX - 108;
-  const bucketY = pierDeckY - 24;
-  ctx.fillStyle = pierStyle === 'obsidian_stone' ? '#292524' : '#92400e';
-  ctx.strokeStyle = INK;
-  ctx.lineWidth = 1.6;
-  ctx.beginPath();
-  ctx.roundRect(bucketX, bucketY, 28, 20, 4);
-  ctx.fill();
-  ctx.stroke();
-  // Metal hoops on bucket
-  ctx.fillStyle = '#facc15';
-  ctx.fillRect(bucketX + 1, bucketY + 4, 26, 2.5);
-  ctx.fillRect(bucketX + 1, bucketY + 13, 26, 2.5);
-  // Blue water peek at top of bucket
-  ctx.fillStyle = '#38bdf8';
-  ctx.beginPath();
-  ctx.ellipse(bucketX + 14, bucketY + 1, 11, 2.5, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Traditional Japanese Chochin Paper Lantern Post (提灯)
-  const postX = pierEdgeX - 138;
+  // 2. Heavy Horizontal Joist Beam under deck
   ctx.fillStyle = pillarColA;
   ctx.strokeStyle = INK;
   ctx.lineWidth = 1.6;
-  ctx.fillRect(postX, pierDeckY - 88, 6.5, 84);
-  ctx.strokeRect(postX, pierDeckY - 88, 6.5, 84);
-  ctx.fillRect(postX, pierDeckY - 88, 24, 5.5);
-  ctx.strokeRect(postX, pierDeckY - 88, 24, 5.5);
+  ctx.fillRect(0, pierDeckY + 6, pierEdgeX + 10, 16);
+  ctx.strokeRect(0, pierDeckY + 6, pierEdgeX + 10, 16);
 
-  const lanternX = postX + 20;
-  const lanternY = pierDeckY - 69 + Math.sin(timeSec * 2.0) * 1.4;
-  const lanternGlow = ctx.createRadialGradient(lanternX, lanternY, 2, lanternX, lanternY, 44);
-  lanternGlow.addColorStop(0, lanternGlowA);
-  lanternGlow.addColorStop(0.4, lanternGlowB);
-  lanternGlow.addColorStop(1, lanternGlowC);
-  ctx.fillStyle = lanternGlow;
-  ctx.beginPath();
-  ctx.arc(lanternX, lanternY, 44, 0, Math.PI * 2);
-  ctx.fill();
+  // Cast shadow under planks
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  ctx.fillRect(0, pierDeckY + 6, pierEdgeX + 10, 5);
 
-  // Paper lantern body (Chochin oval)
-  const lGrad = ctx.createRadialGradient(lanternX, lanternY, 1, lanternX, lanternY, 11);
-  lGrad.addColorStop(0, lanternBodyA);
-  lGrad.addColorStop(0.65, lanternBodyB);
-  lGrad.addColorStop(1, lanternBodyC);
-  ctx.fillStyle = lGrad;
+  // Iron joinery bolt plates on joist
+  pillarPositions.forEach((px) => {
+    ctx.fillStyle = '#27272a';
+    ctx.strokeStyle = '#09090b';
+    ctx.lineWidth = 1;
+    ctx.fillRect(px - 6, pierDeckY + 9, 12, 10);
+    ctx.strokeRect(px - 6, pierDeckY + 9, 12, 10);
+    // Brass rivet dots
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.arc(px, pierDeckY + 14, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // 3. Cel-shaded Weathered Deck Planks (12 planks with bevels & iron forge nails)
+  const plankCount = 12;
+  const plankWidth = (pierEdgeX + 16) / plankCount;
+  for (let i = 0; i < plankCount; i++) {
+    const x = i * plankWidth;
+    const isEven = i % 2 === 0;
+    ctx.fillStyle = isEven ? plankColA : plankColB;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.roundRect(x, pierDeckY - 6, plankWidth - 2, 14, 2.5);
+    ctx.fill();
+    ctx.stroke();
+
+    // Top Chamfer Highlight catching light
+    ctx.fillStyle = plankHighlight;
+    ctx.fillRect(x + 2, pierDeckY - 5, plankWidth - 6, 2.5);
+
+    // Wood Grain streaks
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x + 4, pierDeckY - 1);
+    ctx.lineTo(x + plankWidth - 6, pierDeckY - 1);
+    ctx.moveTo(x + 6, pierDeckY + 3);
+    ctx.lineTo(x + plankWidth - 4, pierDeckY + 3);
+    ctx.stroke();
+
+    // Square Blackened Forge Nails
+    ctx.fillStyle = '#18181b';
+    ctx.fillRect(x + 3, pierDeckY - 3, 2.2, 2.2);
+    ctx.fillRect(x + plankWidth - 7, pierDeckY - 3, 2.2, 2.2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.fillRect(x + 3, pierDeckY - 3, 1, 1);
+    ctx.fillRect(x + plankWidth - 7, pierDeckY - 3, 1, 1);
+  }
+
+  // 4. Heavy Cast-Iron Mooring Bollard / Cleat with Coiled Rope
+  const cleatX = pierEdgeX - 58;
+  const cleatY = pierDeckY - 7;
+  // Coiled Docking Hawser Rope on deck
+  ctx.strokeStyle = '#b45309';
+  ctx.lineWidth = 2.4;
+  for (let c = 0; c < 3; c++) {
+    ctx.beginPath();
+    ctx.ellipse(cleatX + 2, cleatY - 1 + c * 2, 14 - c * 2.5, 6 - c * 1.2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // Iron Cleat T-post
+  ctx.fillStyle = '#27272a';
   ctx.strokeStyle = INK;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.4;
   ctx.beginPath();
-  ctx.ellipse(lanternX, lanternY, 8.5, 11, 0, 0, Math.PI * 2);
+  ctx.roundRect(cleatX - 3.5, cleatY - 14, 7, 10, 2);
+  ctx.fill();
+  ctx.stroke();
+  // T-crossbar
+  ctx.beginPath();
+  ctx.roundRect(cleatX - 11, cleatY - 15, 22, 5, 2);
   ctx.fill();
   ctx.stroke();
 
-  // Lantern ribs & caps
-  ctx.fillStyle = '#1e1b4b';
-  ctx.fillRect(lanternX - 5, lanternY - 12, 10, 2.5);
-  ctx.fillRect(lanternX - 5, lanternY + 9.5, 10, 2.5);
+  // 5. Fisherman's Wooden Bait Barrel & Vintage Tackle Box
+  const bucketX = pierEdgeX - 108;
+  const bucketY = pierDeckY - 24;
+  // Wooden barrel body
+  ctx.fillStyle = pierStyle === 'obsidian_stone' ? '#292524' : '#854d0e';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.roundRect(bucketX, bucketY, 28, 20, 3.5);
+  ctx.fill();
+  ctx.stroke();
+  // Copper hoops with rivets
+  ctx.fillStyle = '#d97706';
+  ctx.fillRect(bucketX + 1, bucketY + 3.5, 26, 2.5);
+  ctx.fillRect(bucketX + 1, bucketY + 13, 26, 2.5);
+  // Water pool & floating red-white bobber
+  ctx.fillStyle = '#0284c7';
+  ctx.beginPath();
+  ctx.ellipse(bucketX + 14, bucketY + 1, 11, 2.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Little float bobber
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(bucketX + 12, bucketY + 1, 2.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Vintage Tackle Box beside the barrel
+  const boxX = bucketX - 22;
+  const boxY = pierDeckY - 15;
+  ctx.fillStyle = '#1e293b';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.roundRect(boxX, boxY, 18, 12, 2);
+  ctx.fill();
+  ctx.stroke();
+  // Brass latch
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillRect(boxX + 7, boxY + 3.5, 4, 3);
+
+  // 6. Traditional Japanese Seaside Chochin Lantern Post (提灯)
+  const postX = pierEdgeX - 146;
+  ctx.fillStyle = pillarColA;
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1.6;
+  // Vertical timber pole
+  ctx.fillRect(postX, pierDeckY - 96, 7, 92);
+  ctx.strokeRect(postX, pierDeckY - 96, 7, 92);
+  // Diagonal support strut
+  ctx.beginPath();
+  ctx.moveTo(postX + 7, pierDeckY - 76);
+  ctx.lineTo(postX + 22, pierDeckY - 91);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = pillarColA;
+  ctx.stroke();
+  ctx.lineWidth = 1.6;
+  ctx.strokeStyle = INK;
+  // Horizontal overhang arm
+  ctx.fillStyle = pillarColA;
+  ctx.fillRect(postX, pierDeckY - 96, 32, 6);
+  ctx.strokeRect(postX, pierDeckY - 96, 32, 6);
+  // Brass decorative tip
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(postX + 31, pierDeckY - 97, 3, 8);
+
+  const lanternX = postX + 26;
+  const lanternY = pierDeckY - 74 + Math.sin(timeSec * 2.0) * 1.6;
+
+  // Brass hanging chain
+  ctx.strokeStyle = '#b45309';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(lanternX, pierDeckY - 90);
+  ctx.lineTo(lanternX, lanternY - 14);
+  ctx.stroke();
+
+  // Atmospheric Radial Bloom Glow (Intensified at Night!)
+  const bloomRadius = isNight ? 64 : 38;
+  const lanternGlow = ctx.createRadialGradient(lanternX, lanternY, 2, lanternX, lanternY, bloomRadius);
+  lanternGlow.addColorStop(0, lanternGlowA);
+  lanternGlow.addColorStop(0.35, lanternGlowB);
+  lanternGlow.addColorStop(1, lanternGlowC);
+  ctx.fillStyle = lanternGlow;
+  ctx.beginPath();
+  ctx.arc(lanternX, lanternY, bloomRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Paper Lantern Body (Traditional Oval Chochin with Cel Shading)
+  const lGrad = ctx.createRadialGradient(lanternX - 2, lanternY - 2, 1, lanternX, lanternY, 13);
+  lGrad.addColorStop(0, lanternBodyA);
+  lGrad.addColorStop(0.55, lanternBodyB);
+  lGrad.addColorStop(1, lanternBodyC);
+  ctx.fillStyle = lGrad;
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.ellipse(lanternX, lanternY, 10, 13, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Lantern horizontal bamboo ribs
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.28)';
+  ctx.lineWidth = 1.0;
+  for (let r = -2; r <= 2; r++) {
+    const ry = lanternY + r * 4.2;
+    const rWidth = 8.5 * Math.cos((r * 4.2) / 14);
+    ctx.beginPath();
+    ctx.moveTo(lanternX - rWidth, ry);
+    ctx.lineTo(lanternX + rWidth, ry);
+    ctx.stroke();
+  }
+
+  // Dark lacquered wood caps (Top & Bottom)
+  ctx.fillStyle = '#0f172a';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.roundRect(lanternX - 6.5, lanternY - 14, 13, 3.5, 1.5);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.roundRect(lanternX - 6.5, lanternY + 11, 13, 3.5, 1.5);
+  ctx.fill();
+  ctx.stroke();
+
+  // Little hanging tassel at the bottom
+  ctx.strokeStyle = '#dc2626';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(lanternX, lanternY + 14.5);
+  ctx.lineTo(lanternX + Math.sin(timeSec * 2.5) * 2, lanternY + 23);
+  ctx.stroke();
 
   ctx.restore();
 }
