@@ -354,3 +354,41 @@ export interface TutorialState {
   step: number; // 0: Welcome & Match intro, 1: Combat observation, 2: Auto-win buff notification, 3: Completed & Pack open
   guaranteedWin: boolean;
 }
+
+// --- Fishing Marine Ecosystem & Aquarium Showroom ---
+
+export type AquariumTankTier = 1 | 2 | 3 | 4 | 5;
+
+export interface AquariumTankConfig {
+  tier: AquariumTankTier;
+  id: string;
+  nameTh: string;
+  nameEn: string;
+  capacity: number;
+  coinMultiplier: number;
+  requiredLevel: number;
+  price: number;
+  accentColor: string;
+  waterTint?: string;
+}
+
+export type FishRarityTier = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary' | 'Secret';
+
+export interface FishCatchEvent {
+  fishUid: string;
+  speciesId: string;
+  rarity: FishRarityTier;
+  weightKg: number;
+  lengthCm: number;
+  sellPrice: number;
+  isNewRecord: boolean;
+  timestamp: string;
+}
+
+export interface AquariumTelemetryState {
+  currentTier: AquariumTankTier;
+  currentFishCount: number;
+  maxCapacity: number;
+  passiveCoinsPerSec: number;
+  totalExhibitedValue: number;
+}
