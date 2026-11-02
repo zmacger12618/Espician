@@ -99,12 +99,64 @@ export interface ChampionSkill {
   type: 'Damage' | 'CrowdControl' | 'Buff' | 'Dash' | 'Shield';
 }
 
+export type MobaItemTier = 'Starter' | 'Basic' | 'Epic' | 'Legendary' | 'Mythic';
+
+export interface MobaItemStats {
+  attackDamage?: number;
+  abilityPower?: number;
+  armor?: number;
+  magicResistance?: number;
+  health?: number;
+  movementSpeed?: number;
+  critChancePct?: number;
+  cooldownReductionPct?: number;
+}
+
+export type ClubLedgerEntryType =
+  | 'match_prize'
+  | 'sponsorship'
+  | 'ticket_sales'
+  | 'gear_purchase'
+  | 'gear_upgrade'
+  | 'staff_salary'
+  | 'player_salary'
+  | 'training_fee'
+  | 'transfer_fee_in'
+  | 'transfer_fee_out'
+  | 'misc';
+
+export interface ClubLedgerEntry {
+  id: string;
+  timestamp: string;
+  dayIndex: number;
+  type: ClubLedgerEntryType;
+  amount: number;
+  balanceAfter: number;
+  description: string;
+  counterparty?: string;
+}
+
+export interface ClubFinancialReport {
+  totalRevenue: number;
+  totalExpense: number;
+  netProfit: number;
+  currentCashReserve: number;
+  payrollPerDay: number;
+  projectedRunwayDays: number;
+}
+
 export interface MobaItem {
   id: string;
   name: string;
   price: number;
   category: 'Attack' | 'Magic' | 'Defense' | 'Movement';
   statsDescription: string;
+  tier?: MobaItemTier;
+  recipeItemIds?: string[];
+  sellPrice?: number;
+  passiveName?: string;
+  passiveDescription?: string;
+  numericalStats?: MobaItemStats;
   icon: string;
 }
 
