@@ -199,12 +199,80 @@ export interface TowerEntity {
   isDestroyed: boolean;
 }
 
+export type KillStreakType =
+  | 'FirstBlood'
+  | 'DoubleKill'
+  | 'TripleKill'
+  | 'QuadraKill'
+  | 'PentaKill'
+  | 'Shutdown'
+  | 'Godlike';
+
+export type CombatActionType =
+  | 'attack'
+  | 'skill_cast'
+  | 'damage_dealt'
+  | 'dodge'
+  | 'heal'
+  | 'shield'
+  | 'cc_applied'
+  | 'kill'
+  | 'tower_down'
+  | 'dragon_slain'
+  | 'baron_slain';
+
+export interface DamageTelemetryEvent {
+  sourceEntityId: string;
+  targetEntityId: string;
+  rawDamage: number;
+  mitigatedDamage: number;
+  damageType: 'physical' | 'magic' | 'true';
+  isCrit: boolean;
+  isClutch: boolean;
+  timestampSec: number;
+}
+
+export interface PlayerMatchTelemetry {
+  playerId: string;
+  totalDamageDealt: number;
+  totalDamageTaken: number;
+  totalHealingOrShielding: number;
+  goldEarned: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  kdaRatio: number;
+  cs: number;
+  killParticipationPct: number;
+  mvpScore: number;
+  isMvp?: boolean;
+}
+
+export interface MatchStatsSummary {
+  matchDurationSec: number;
+  winnerTeam: 'blue' | 'red';
+  blueScore: number;
+  redScore: number;
+  blueTowersDestroyed: number;
+  redTowersDestroyed: number;
+  blueDragons: number;
+  redDragons: number;
+  blueBarons: number;
+  redBarons: number;
+  mvpPlayerId: string;
+  playerTelemetry: Record<string, PlayerMatchTelemetry>;
+}
+
 export interface MatchLogEvent {
   id: string;
   timestamp: string;
   type: 'kill' | 'tower' | 'objective' | 'info' | 'outplay' | 'dragon' | 'baron';
   text: string;
   killerTeam?: 'blue' | 'red';
+  streakType?: KillStreakType;
+  involvedPlayerIds?: string[];
+  goldBounty?: number;
+  coordinate?: { x: number; y: number };
 }
 
 export interface TransferListing {
