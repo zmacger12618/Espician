@@ -2,6 +2,20 @@ import { PlayerData } from '../../types';
 
 export type TrainingType = 'mechanics' | 'mapAwareness' | 'teamwork' | 'professionalism' | 'clutch' | 'stamina';
 
+export interface InjuryRiskEvaluation {
+  riskPercent: number;
+  riskLevel: 'Safe' | 'Moderate' | 'Dangerous' | 'Critical';
+  primaryVulnerability: 'wrist' | 'burnout' | 'fatigue' | 'none';
+  recommendedAction: string;
+}
+
+export interface RestRecoveryResult {
+  recoveredEnergy: number;
+  reducedFatigue: number;
+  moraleChange: number;
+  healedConditions: string[];
+}
+
 export interface TrainingResult {
   success: boolean;
   message: string;
@@ -236,5 +250,85 @@ export class TrainingCalculator {
     }
 
     return sessions;
+  }
+
+  /**
+   * คำนวณความเสี่ยงต่ออาการบาดเจ็บ/หมดไฟ (Fatigue Accumulation & Injury Risk Math)
+   * ใช้อัลกอริทึม Exponential Strain Model เมื่อ Energy < 35 หรือ Mental Fatigue > 60
+   */
+  public static calculateInjuryRisk(player: PlayerData): InjuryRiskEvaluation {
+    const energyDeficit = Math.max(0, 50 - player.energy);
+    const staminaResistance = player.stats.stamina / 100;
+    const fatigue = player.mentalFatigue || Math.max(0, 100 - player.energy);
+
+    const baseStrain = (energyDeficit * 0.8 + fatigue * 0.5) * (1.25 - staminaResistance * 0.5);
+    let riskPercent = Math.max(2, Math.min(95, Math.round(baseStrain)));
+
+    if (player.conditions.some((c) => c.id === 'cond_wrist_strain')) {
+      riskPercent = Math.min(99, riskPercent + 35);
+    }
+    if (player.conditions.some((c) => c.id === 'cond_flu')) {
+      riskPercent = Math.min(95, riskPercent + 20);
+    }
+
+    let riskLevel: InjuryRiskEvaluation['riskLevel'] = 'Safe';
+    let primaryVulnerability: InjuryRiskEvaluation['primaryVulnerability'] = 'none';
+    let recommendedAction = 'พร้อมสำหรับการฝึกซ้อมและลงแข่งขันเต็มรูปแบบ';
+
+    if (riskPercent >= 75) {
+      riskLevel = 'Critical';
+      primaryVulnerability = 'wrist';
+      recommendedAction = 'อันตรายระดับวิกฤต! เสี่ยงต่อการบาดเจ็บรุนแรง ต้องหยุดซ้อมและเข้าพบแพทย์ทันที';
+    } else if (riskPercent >= 50) {
+      riskLevel = 'Dangerous';
+      primaryVulnerability = fatigue > 60 ? 'burnout' : 'wrist';
+      recommendedAction = 'มีความเสี่ยงสูง ควรพักผ่อน (Rest Team) ห้ามฝึกคอร์สหนักต่อเนื่อง';
+    } else if (riskPercent >= 25) {
+      riskLevel = 'Moderate';
+      primaryVulnerability = 'fatigue';
+      recommendedAction = 'ความล้าสะสมปานกลาง แนะนำให้ซ้อมเบาหรือหมุนเวียนนักแข่ง';
+    }
+
+    return {
+      riskPercent,
+      riskLevel,
+      primaryVulnerability,
+      recommendedAction
+    };
+  }
+
+  /**
+   * คำนวณการฟื้นฟูความฟิตจากการพักผ่อน (Day/Rest Recovery Engine)
+   */
+  public static calculateRestRecovery(
+    player: PlayerData,
+    hasPhysioStaff: boolean = false
+  ): RestRecoveryResult {
+    const staminaBonus = (player.stats.stamina / 100) * 10;
+    const physioBonus = hasPhysioStaff ? 15 : 0;
+
+    const baseEnergyGain = 35 + staminaBonus + physioBonus;
+    const recoveredEnergy = Math.min(100, Math.round(player.energy + baseEnergyGain));
+
+    const currentFatigue = player.mentalFatigue || Math.max(0, 100 - player.energy);
+    const fatigueReduction = Math.round(40 + (player.stats.professionalism / 100) * 15 + physioBonus);
+    const reducedFatigue = Math.max(0, currentFatigue - fatigueReduction);
+
+    const moraleChange = player.morale < 50 ? +10 : +4;
+
+    const healedConditions: string[] = [];
+    if (player.conditions.some((c) => c.id === 'cond_wrist_strain')) {
+      const healChance = hasPhysioStaff ? 0.45 : 0.22;
+      if (Math.random() < healChance) {
+        healedConditions.push('cond_wrist_strain');
+      }
+    }
+
+    return {
+      recoveredEnergy,
+      reducedFatigue,
+      moraleChange,
+      healedConditions
+    };
   }
 }
