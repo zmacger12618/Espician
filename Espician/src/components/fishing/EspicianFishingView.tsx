@@ -97,6 +97,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { ApiService } from '../../services/apiService';
+import { AnimeVfxSystem, GameActionButton } from '../ui/vfx';
 
 /* ------------------------------------------------------------------ */
 /* State                                                               */
@@ -1404,8 +1405,12 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, duration: 0.35, stagger: 0.08, delay: 0.25, ease: 'power2.out' }
       );
+      if (latestCatch) {
+        const sp = TWENTY_OCEAN_FISH_SPECIES.find((s) => s.id === latestCatch.speciesId);
+        if (sp) AnimeVfxSystem.triggerVictoryCelebration(sp.rarity);
+      }
     }
-  }, [phase]);
+  }, [phase, latestCatch]);
 
   // Auto-Fishing Loop for Admin Testing
   useEffect(() => {
@@ -3514,28 +3519,32 @@ const CostumeDetailModal: React.FC<{
                 </div>
 
                 <div className="absolute bottom-4 right-4 z-10">
-                  <button
+                  <GameActionButton
                     onClick={handleJerk}
                     disabled={jerkCooling}
-                    className="relative overflow-hidden px-6 py-3 rounded-2xl font-black text-sm tracking-wide transition-all bg-gradient-to-b from-[#38bdf8] via-[#0ea5e9] to-[#0284c7] hover:from-[#60a5fa] hover:to-[#0284c7] disabled:from-slate-300 disabled:to-slate-400 border-2 border-white disabled:border-slate-200 text-white shadow-[0_5px_0_#0369a1,0_10px_20px_rgba(2,132,199,0.3)] disabled:shadow-none active:translate-y-1 active:shadow-[0_1px_0_#0369a1] flex items-center gap-2"
+                    cooldownActive={jerkCooling}
+                    cooldownDurationSec={3.5}
+                    variant="primary"
+                    icon={<Waves className="w-4 h-4 text-sky-100" />}
+                    className="px-6 py-3 rounded-2xl text-sm"
                   >
-                    <Waves className="w-4 h-4 text-sky-100" />
-                    <span>{t.jerkRod}</span>
-                    {jerkCooling && <span className="absolute left-0 bottom-0 h-[3px] bg-white" style={{ animation: 'cool 3.5s linear forwards' }} />}
-                  </button>
+                    {t.jerkRod}
+                  </GameActionButton>
                 </div>
               </>
             )}
 
             {phase === 'FISH_BITING' && !autoReel && (
               <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-none">
-                <button
+                <GameActionButton
                   onClick={startReeling}
-                  className="pointer-events-auto px-14 py-4 rounded-2xl font-black text-xl tracking-wider uppercase transition-all bg-gradient-to-b from-[#ff4757] via-[#ff6b81] to-[#ee5253] hover:from-[#ff6b81] hover:to-[#d63031] text-white border-2 border-white shadow-[0_6px_0_#b71540,0_16px_32px_rgba(255,71,87,0.4)] active:translate-y-1.5 active:shadow-[0_1px_0_#b71540] animate-bounce flex items-center gap-3"
+                  variant="crimson"
+                  pulseWhenReady={true}
+                  icon={<Sparkles className="w-6 h-6 text-amber-200 animate-spin" />}
+                  className="pointer-events-auto px-14 py-4 rounded-2xl text-xl animate-bounce"
                 >
-                  <Sparkles className="w-6 h-6 text-amber-200 animate-spin" />
-                  <span>{t.pullHook}</span>
-                </button>
+                  {t.pullHook}
+                </GameActionButton>
               </div>
             )}
 
@@ -3605,13 +3614,15 @@ const CostumeDetailModal: React.FC<{
 
             {phase === 'IDLE_READY' && !isEntranceCutscene && (
               <div className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none">
-                <button
+                <GameActionButton
                   onClick={handleCastLine}
-                  className="pointer-events-auto px-12 py-3.5 rounded-2xl font-black text-base sm:text-lg tracking-wider uppercase transition-all bg-gradient-to-b from-[#ff6b81] via-[#ee5253] to-[#d63031] hover:from-[#ff7979] hover:to-[#eb4d4b] text-white border-2 border-white shadow-[0_6px_0_#b71540,0_14px_28px_rgba(238,82,83,0.35)] active:translate-y-1 active:shadow-[0_2px_0_#b71540] flex items-center gap-3 drop-shadow"
+                  variant="crimson"
+                  pulseWhenReady={true}
+                  icon={<Anchor className="w-5 h-5 text-white" />}
+                  className="pointer-events-auto px-12 py-3.5 rounded-2xl text-base sm:text-lg"
                 >
-                  <Anchor className="w-5 h-5 text-white" />
-                  <span>{t.castLine}</span>
-                </button>
+                  {t.castLine}
+                </GameActionButton>
               </div>
             )}
           </div>

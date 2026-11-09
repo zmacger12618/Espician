@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Trophy, Anchor, Play, LogOut, Globe, Volume2, VolumeX } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Trophy, Anchor, Play, LogOut, Globe, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { GameLang, FISHING_UI, getSavedLang, saveLang } from '../../core/data/fishingI18n';
 import { soundEngine } from '../../services/soundEngine';
+import { AnimeVfxSystem } from '../ui/vfx';
 
 interface MainPortalViewProps {
   onSelectGame: (game: 'manager' | 'fishing') => void;
@@ -96,14 +98,23 @@ export const MainPortalView: React.FC<MainPortalViewProps> = ({
 
       {/* Main Game Selection Grid */}
       <main className="relative z-10 max-w-4xl w-full mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
+        >
           {/* Card 1: Espician Manager */}
-          <button
-            onClick={() => {
+          <motion.button
+            whileHover={{ scale: 1.025, y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            onClick={(e) => {
               soundEngine.playClick();
-              onSelectGame('manager');
+              AnimeVfxSystem.createRippleShockwave(e, 'rgba(255, 70, 85, 0.45)');
+              setTimeout(() => onSelectGame('manager'), 120);
             }}
-            className="group relative bg-[#0d0e14] border border-zinc-800 hover:border-[#ff4655] p-7 text-left transition-all duration-300 shadow-2xl hover:shadow-[#ff4655]/15 flex flex-col justify-between"
+            className="group relative bg-[#0d0e14] border border-zinc-800 hover:border-[#ff4655] p-7 text-left transition-colors duration-300 shadow-2xl hover:shadow-[#ff4655]/20 flex flex-col justify-between overflow-hidden select-none"
             style={{
               clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)'
             }}
@@ -138,15 +149,19 @@ export const MainPortalView: React.FC<MainPortalViewProps> = ({
             >
               <Play className="w-3.5 h-3.5 fill-current" /> {t.portalPlay}
             </div>
-          </button>
+          </motion.button>
 
           {/* Card 2: Espician Fishing */}
-          <button
-            onClick={() => {
+          <motion.button
+            whileHover={{ scale: 1.025, y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            onClick={(e) => {
               soundEngine.playClick();
-              onSelectGame('fishing');
+              AnimeVfxSystem.createRippleShockwave(e, 'rgba(14, 165, 233, 0.45)');
+              setTimeout(() => onSelectGame('fishing'), 120);
             }}
-            className="group relative bg-[#0d0e14] border border-zinc-800 hover:border-[#ff4655] p-7 text-left transition-all duration-300 shadow-2xl hover:shadow-[#ff4655]/15 flex flex-col justify-between overflow-hidden"
+            className="group relative bg-[#0d0e14] border border-zinc-800 hover:border-sky-400 p-7 text-left transition-colors duration-300 shadow-2xl hover:shadow-sky-500/20 flex flex-col justify-between overflow-hidden select-none"
             style={{
               clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)'
             }}
@@ -154,14 +169,14 @@ export const MainPortalView: React.FC<MainPortalViewProps> = ({
             <div>
               <div className="flex items-center justify-between mb-5">
                 <div
-                  className="w-13 h-13 p-3 bg-zinc-900 border border-zinc-800 group-hover:border-[#ff4655] group-hover:bg-[#ff4655]/10 flex items-center justify-center transition"
+                  className="w-13 h-13 p-3 bg-zinc-900 border border-zinc-800 group-hover:border-sky-400 group-hover:bg-sky-500/10 flex items-center justify-center transition"
                   style={{
                     clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)'
                   }}
                 >
-                  <Anchor className="w-7 h-7 text-[#ff4655]" />
+                  <Anchor className="w-7 h-7 text-sky-400" />
                 </div>
-                <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest group-hover:text-[#ff4655] transition">
+                <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest group-hover:text-sky-400 transition">
                   02 / 2D ANIME OCEAN
                 </span>
               </div>
@@ -174,15 +189,15 @@ export const MainPortalView: React.FC<MainPortalViewProps> = ({
             </div>
 
             <div
-              className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 border border-zinc-800 group-hover:bg-[#ff4655] group-hover:border-[#ff4655] text-white font-black text-xs uppercase tracking-wider transition"
+              className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 border border-zinc-800 group-hover:bg-sky-500 group-hover:border-sky-500 text-white font-black text-xs uppercase tracking-wider transition"
               style={{
                 clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)'
               }}
             >
               <Play className="w-3.5 h-3.5 fill-current" /> {t.portalPlay}
             </div>
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </main>
     </div>
   );
