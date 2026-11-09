@@ -41,6 +41,7 @@ export interface SceneRenderParams {
   entranceProgress01?: number; // 0..1 (walk along pier and sit down)
   islandId?: string;
   timeOfDay?: 'day' | 'night';
+  screenShakeTrauma?: number; // 0..1 Game Feel camera shake intensity
 }
 
 // Painted Biome Background Image Cache with instant preloading for Day & Night
@@ -122,10 +123,29 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
   const pierEdgeX = width * 0.44;
   const pierDeckY = height * 0.63;
 
-  // --- Dynamic Camera System ---
+  // --- Dynamic Camera System + Trauma Screen Shake (Game Feel / Juice) ---
   let camZoom = 1.0;
   let camPanX = 0;
   let camPanY = 0;
+  let camRot = 0;
+
+  const jerkAge = params.jerkAgeSec ?? 99;
+  const castP = params.castProgress01 ?? 0;
+  const catchP = params.catchProgress01 ?? 0;
+
+  // Compute combined trauma (0..1) from actions + explicit trauma prop
+  let trauma = params.screenShakeTrauma ?? 0;
+  if (jerkAge < 0.28) {
+    trauma = Math.max(trauma, (1 - jerkAge / 0.28) * 0.65);
+  }
+  if (phase === 'CASTING' && castP >= 0.73 && castP <= 0.88) {
+    trauma = Math.max(trauma, (1 - (castP - 0.73) / 0.15) * 0.45);
+  }
+  if (phase === 'CATCHING' && catchP < 0.25) {
+    trauma = Math.max(trauma, (1 - catchP / 0.25) * 0.85);
+  }
+
+  const shakeMag = trauma * trauma; // Quadratic trauma feel
 
   if (entranceProgress01 < 1.0) {
     // Opening entrance cutscene: start wide (0.86), zoom in smoothly to 1.05
@@ -138,6 +158,7 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
     camZoom = 1.14;
     camPanX = Math.sin(timeSec * 36) * 3.5;
     camPanY = Math.cos(timeSec * 42) * 2.8;
+    camRot = Math.sin(timeSec * 28) * 0.004;
   } else if (phase === 'REELING_MINIGAME') {
     // Camera breathes with reeling tension
     camZoom = 1.04 + reelTension01 * 0.08;
@@ -149,6 +170,13 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
     camPanY = height * 0.06;
   }
 
+  if (shakeMag > 0.001) {
+    camPanX += Math.sin(timeSec * 58) * 9.5 * shakeMag;
+    camPanY += Math.cos(timeSec * 64) * 7.5 * shakeMag;
+    camRot += Math.sin(timeSec * 47) * 0.012 * shakeMag;
+    camZoom += shakeMag * 0.035;
+  }
+
   ctx.save();
   ctx.clearRect(0, 0, width, height);
 
@@ -156,6 +184,7 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
   const focalX = pierEdgeX - 20;
   const focalY = pierDeckY - 40;
   ctx.translate(focalX + camPanX, focalY + camPanY);
+  if (camRot !== 0) ctx.rotate(camRot);
   ctx.scale(camZoom, camZoom);
   ctx.translate(-focalX, -focalY);
 
@@ -312,7 +341,6 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
   }
 
   // Jerk Water Ripple Burst when player clicks "Jerk Line"
-  const jerkAge = params.jerkAgeSec ?? 99;
   if (jerkAge < 0.7) {
     const pierDeckY = horizonY + (height - horizonY) * 0.18;
     const pierEdgeX = width * 0.36;
@@ -432,7 +460,73 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
     }
   }
 
-  // 8. SUBTLE CINEMATIC VIGNETTE
+  // 8. POST-PROCESSING SHADER PASS: SOFT BLOOM FILTER & REACTIVE VIGNETTE
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+
+  // 8A. Soft Water Bobber & Action Bloom Halo
+  if (phase !== 'IDLE_READY' && phase !== 'CATCH_REVEAL' && entranceProgress01 >= 1.0) {
+    const bobBloomX = pierEdgeX + 185;
+    const bobBloomY = pierDeckY + 48;
+    const isIntense = phase === 'FISH_BITING' || phase === 'REELING_MINIGAME' || phase === 'CATCHING';
+    const bloomRad = isIntense ? 58 + Math.sin(timeSec * 12) * 10 : 32;
+    const bGrad = ctx.createRadialGradient(bobBloomX, bobBloomY, 2, bobBloomX, bobBloomY, bloomRad);
+    if (phase === 'FISH_BITING') {
+      bGrad.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
+      bGrad.addColorStop(0.5, 'rgba(248, 113, 113, 0.22)');
+      bGrad.addColorStop(1, 'rgba(248, 113, 113, 0)');
+    } else {
+      bGrad.addColorStop(0, 'rgba(186, 230, 253, 0.35)');
+      bGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.14)');
+      bGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+    }
+    ctx.fillStyle = bGrad;
+    ctx.beginPath();
+    ctx.arc(bobBloomX, bobBloomY, bloomRad, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 8B. Heroic Golden-Cyan Bloom during Catch Haul
+  if (phase === 'CATCHING' || phase === 'CATCH_REVEAL') {
+    const heroBloom = ctx.createRadialGradient(
+      pierEdgeX + 40,
+      pierDeckY - 30,
+      10,
+      pierEdgeX + 40,
+      pierDeckY - 30,
+      220
+    );
+    heroBloom.addColorStop(0, 'rgba(254, 240, 138, 0.28)');
+    heroBloom.addColorStop(0.5, 'rgba(56, 189, 248, 0.12)');
+    heroBloom.addColorStop(1, 'rgba(56, 189, 248, 0)');
+    ctx.fillStyle = heroBloom;
+    ctx.fillRect(0, 0, width, height);
+  }
+  ctx.restore();
+
+  // 8C. Anime Action Speed Lines on Fish Bite / Catch Burst
+  if (phase === 'FISH_BITING' || (phase === 'CATCHING' && catchP < 0.35)) {
+    ctx.save();
+    const centerX = pierEdgeX + 80;
+    const centerY = pierDeckY - 10;
+    ctx.strokeStyle =
+      phase === 'FISH_BITING'
+        ? `rgba(255, 255, 255, ${0.14 + Math.abs(Math.sin(timeSec * 18)) * 0.12})`
+        : 'rgba(254, 240, 138, 0.22)';
+    ctx.lineWidth = 1.5;
+    for (let sl = 0; sl < 24; sl++) {
+      const ang = (sl / 24) * Math.PI * 2 + Math.sin(timeSec * 8 + sl) * 0.04;
+      const innerR = 190 + (sl % 3) * 28;
+      const outerR = Math.max(width, height);
+      ctx.beginPath();
+      ctx.moveTo(centerX + Math.cos(ang) * innerR, centerY + Math.sin(ang) * innerR);
+      ctx.lineTo(centerX + Math.cos(ang) * outerR, centerY + Math.sin(ang) * outerR);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // 8D. DYNAMIC CINEMATIC VIGNETTE (Draws Focus to Center Stage)
   const vg = ctx.createRadialGradient(
     width / 2,
     height * 0.52,
@@ -442,7 +536,14 @@ export function renderOceanFishingScene(params: SceneRenderParams) {
     height * 0.98
   );
   vg.addColorStop(0, 'rgba(0,0,0,0)');
-  vg.addColorStop(1, 'rgba(12,4,8,0.48)');
+  if (phase === 'FISH_BITING') {
+    const pulse = 0.48 + Math.sin(timeSec * 14) * 0.08;
+    vg.addColorStop(1, `rgba(28, 6, 14, ${pulse})`);
+  } else if (phase === 'REELING_MINIGAME') {
+    vg.addColorStop(1, `rgba(10, 14, 28, ${0.46 + reelTension01 * 0.12})`);
+  } else {
+    vg.addColorStop(1, 'rgba(12, 4, 8, 0.46)');
+  }
   ctx.fillStyle = vg;
   ctx.fillRect(0, 0, width, height);
 

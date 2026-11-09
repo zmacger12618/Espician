@@ -975,6 +975,13 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
 
   // GSAP-driven rig values (character idle, cast, jerk, catch, entrance walk & sit)
   const animRef = useRef({ breath: 0.5, sway: 0.5, blink: 0, cast: 0, catchP: 0, jerk: 1, entrance: 0 });
+  // Game Feel Juice: Hit Stop (~0.055s impact pause) + Trauma Screen Shake (0..1)
+  const juiceRef = useRef({ hitStopUntilMs: 0, frozenTimeSec: 0, trauma: 0 });
+  const triggerImpactJuice = useCallback((traumaAmount: number, hitStopMs = 55) => {
+    const now = performance.now();
+    juiceRef.current.hitStopUntilMs = Math.max(juiceRef.current.hitStopUntilMs, now + hitStopMs);
+    juiceRef.current.trauma = Math.min(1, Math.max(juiceRef.current.trauma, traumaAmount));
+  }, []);
 
   const playEntranceCutscene = useCallback(() => {
     setIsEntranceCutscene(true);
@@ -1209,6 +1216,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           setPendingSpecies(res.species);
           setPityBonus(0);
           setPhase('FISH_BITING');
+          triggerImpactJuice(0.8, 55);
           soundEngine.playBite();
           notify(t.fishBiting, 'rare');
         } else {
@@ -1235,6 +1243,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
   const handleJerk = () => {
     if (phase !== 'WAITING_FOR_BITE' || jerkCooling) return;
     soundEngine.playJerk();
+    triggerImpactJuice(0.55, 45);
     const a = animRef.current;
     a.jerk = 0;
     gsap.to(a, { jerk: 1, duration: 0.7, ease: 'none' });
@@ -1255,6 +1264,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       setPendingSpecies(res.species);
       setPityBonus(0);
       setPhase('FISH_BITING');
+      triggerImpactJuice(0.95, 65);
       soundEngine.playBite();
       notify(lang === 'th' ? '⚡ กระตุกสายโดนใจ! ปลาติดเบ็ดทันที!' : '⚡ Line jerked! Immediate strike!', 'rare');
     } else {
@@ -1307,6 +1317,7 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
       const sp = pendingSpecies;
       soundEngine.playSplash();
       soundEngine.playCatch(sp.rarity);
+      triggerImpactJuice(1.0, 65);
       const caught = createCaughtFishInstance(sp, mood, fishingState.totalCatches + castSeq.current);
       catchHueRef.current = caught.hueShiftDeg;
       setLatestCatch(caught);
@@ -1501,17 +1512,30 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
   useEffect(() => {
     let id = 0;
     const start = performance.now();
+    let lastNow = start;
     const loop = (now: number) => {
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastNow) * 0.001));
+      lastNow = now;
       const canvas = mainCanvasRef.current;
       const ctx = canvas?.getContext('2d');
       if (canvas && ctx) {
         const s = sceneRef.current;
         const a = animRef.current;
+        const j = juiceRef.current;
+        const rawTimeSec = (now - start) * 0.001;
+        // Hit Stop (~0.05s freeze frame on impact) & Trauma decay
+        const inHitStop = now < j.hitStopUntilMs;
+        if (!inHitStop) {
+          j.frozenTimeSec = rawTimeSec;
+          j.trauma = Math.max(0, j.trauma - dt * 2.4);
+        }
+        const effectiveTimeSec = inHitStop ? j.frozenTimeSec || rawTimeSec : rawTimeSec;
+
         renderOceanFishingScene({
           ctx,
           width: canvas.width,
           height: canvas.height,
-          timeSec: (now - start) * 0.001,
+          timeSec: effectiveTimeSec,
           mood: s.mood,
           phase: s.phase,
           rodColor: s.rodColor,
@@ -1527,7 +1551,8 @@ export const EspicianFishingView: React.FC<EspicianFishingViewProps> = ({ onBack
           entranceProgress01: a.entrance,
           islandId: s.islandId,
           timeOfDay: s.timeOfDay,
-          rig: { breath: a.breath, sway: a.sway, blink: a.blink }
+          rig: { breath: a.breath, sway: a.sway, blink: a.blink },
+          screenShakeTrauma: j.trauma
         });
       }
       id = requestAnimationFrame(loop);

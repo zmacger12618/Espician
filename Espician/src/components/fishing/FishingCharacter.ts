@@ -2,7 +2,10 @@ import { FishSpeciesData, RARITY_CONFIG } from '../../core/data/fishingDatabase'
 import { CostumeItem } from '../../core/data/fishingMeta';
 import { drawRod } from './FishingRodArt';
 import { renderFishIllustration } from './FishRig';
+import { SpineAnimationController, SpineAnimationTrack } from '../../services/spine2dEngine';
 import rawManifest from '../../core/data/spriteManifest.json';
+
+const spineController = new SpineAnimationController();
 
 export type AnglerPhase =
   | 'IDLE_READY'
@@ -103,14 +106,20 @@ function drawGranbluePierCat(
   const isWalkingIn = entrance01 < 0.72;
   const isSittingDown = entrance01 >= 0.72 && entrance01 < 1.0;
   const excited = phase === 'FISH_BITING' || phase === 'REELING_MINIGAME' || phase === 'CATCHING';
-  const hop = phase === 'CATCHING' ? Math.abs(Math.sin(t * 10)) * 6 : 0;
+  const hopPhase = phase === 'CATCHING' ? Math.sin(t * 10) : 0;
+  const hop = phase === 'CATCHING' ? Math.abs(hopPhase) * 6 : 0;
   const tailSpeed = excited ? 9 : isWalkingIn ? 4 : 2.2;
   const tailAmp = excited ? 9 : 5;
   const tailWag = Math.sin(t * tailSpeed) * tailAmp;
   const breath = Math.sin(t * 2.4) * (excited ? 1.0 : 0.6);
 
+  // Squash & Stretch on Pier Cat (hop peak stretch vs landing squash)
+  const catSquashX = phase === 'CATCHING' ? 1.0 + (0.5 - Math.abs(hopPhase)) * 0.14 : 1.0 + breath * 0.025;
+  const catStretchY = phase === 'CATCHING' ? 1.0 - (0.5 - Math.abs(hopPhase)) * 0.14 : 1.0 - breath * 0.025;
+
   ctx.save();
   ctx.translate(x, y - hop);
+  ctx.scale(catSquashX, catStretchY);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
 
@@ -361,82 +370,197 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
   // Character anchor position: anchors accurately to pierDeckY without sinking or floating
   const charAnchorY = pierDeckY - (isWalking ? walkBounce : -breathY);
 
-  // 4. ACTION LOOP SELECTION (4 Frames for EVERY Action State, Tuned Pacing)
-  let frameName = 'idle_1';
+  // 3B. SPINE 2D SKELETAL KINEMATICS & SQUASH-AND-STRETCH PHYSICS
+  const spineTrack: SpineAnimationTrack = isWalking
+    ? 'walk'
+    : entranceProgress01 < 1.0
+    ? 'sit_down'
+    : isCast
+    ? 'cast'
+    : phase === 'FISH_BITING'
+    ? 'bite_alert'
+    : phase === 'REELING_MINIGAME'
+    ? 'reeling'
+    : isCatching || phase === 'CATCH_REVEAL'
+    ? 'catch'
+    : 'idle_fishing';
+
+  const sitProg01 = isWalking ? 0 : entranceProgress01 < 1.0 ? (entranceProgress01 - 0.72) / 0.28 : 1.0;
+  const skeleton = spineController.evaluate({
+    track: spineTrack,
+    timeSec: t,
+    walkProgress01: walkT,
+    sitProgress01: sitProg01,
+    breath01: o.rig?.breath ?? 0.5,
+    sway01: o.rig?.sway ?? 0.5,
+    blink01: o.rig?.blink ?? 0,
+    tension01: o.reelTension01,
+    castProgress01: castP,
+    jerkKick,
+    charX,
+    deckY: pierDeckY
+  });
+
+  // Procedural Squash & Stretch (scaleX, scaleY) with elastic/spring feel
+  let squashX = 1.0;
+  let stretchY = 1.0;
 
   if (isWalking) {
-    // 4-frame walk cycle (smooth relaxed pace)
-    const stepIdx = (Math.floor(walkT * 10) % 4) + 1;
-    frameName = `walk_${stepIdx}`;
+    // Footstep impact squash vs mid-stride stretch
+    const stepWave = Math.cos(walkT * 32);
+    squashX = 1.0 + stepWave * 0.042;
+    stretchY = 1.0 - stepWave * 0.042;
+  } else if (entranceProgress01 < 1.0) {
+    // Cushioned sitting-down landing squash with back.out rebound
+    const sitBounce = Math.sin(sitProg01 * Math.PI) * (1 - sitProg01 * 0.45);
+    squashX = 1.0 + sitBounce * 0.075;
+    stretchY = 1.0 - sitBounce * 0.075;
   } else if (isCast) {
-    // 4-frame forward cast swing with clear anticipation and follow-through
-    if (castP < 0.32) {
-      frameName = 'cast_1'; // wind-back anticipation
-    } else if (castP < 0.55) {
-      frameName = 'cast_2'; // power arc
-    } else if (castP < 0.80) {
-      frameName = 'cast_3'; // forward release
+    if (castP < 0.35) {
+      // Wind-up coil squash
+      const coil = Math.sin((castP / 0.35) * Math.PI * 0.5);
+      squashX = 1.0 + coil * 0.075;
+      stretchY = 1.0 - coil * 0.075;
+    } else if (castP < 0.72) {
+      // Forward whip snap stretch
+      const whip = Math.sin(((castP - 0.35) / 0.37) * Math.PI);
+      squashX = 1.0 - whip * 0.085;
+      stretchY = 1.0 + whip * 0.105;
     } else {
-      frameName = 'cast_4'; // follow-through splash
+      // Follow-through elastic recoil
+      const rec = (castP - 0.72) / 0.28;
+      const damp = Math.sin(rec * Math.PI * 2.5) * (1 - rec) * 0.045;
+      squashX = 1.0 + damp;
+      stretchY = 1.0 - damp;
+    }
+  } else if (o.jerkAgeSec < 0.7) {
+    // High-energy upward snap stretch with damped spring
+    const jNorm = o.jerkAgeSec / 0.7;
+    const jWave = Math.sin(jNorm * Math.PI * 2.5) * Math.exp(-jNorm * 3.2);
+    squashX = 1.0 - jWave * 0.085;
+    stretchY = 1.0 + jWave * 0.095;
+  } else if (phase === 'FISH_BITING') {
+    // Startled bite shock & struggle pulse
+    const bWave = Math.sin(t * 14) * 0.032;
+    squashX = 1.0 - bWave;
+    stretchY = 1.0 + bWave;
+  } else if (phase === 'REELING_MINIGAME') {
+    // High-tension muscle strain compression
+    const rWave = Math.sin(t * (10 + o.reelTension01 * 8)) * (0.022 + o.reelTension01 * 0.024);
+    squashX = 1.0 + rWave;
+    stretchY = 1.0 - rWave;
+  } else if (isCatching || phase === 'CATCH_REVEAL') {
+    // Joyful victory celebration bounce
+    const vWave = Math.sin(t * 8.4) * 0.042;
+    squashX = 1.0 - vWave;
+    stretchY = 1.0 + vWave;
+  } else {
+    // Peaceful organic chest breathing
+    squashX = 1.0 - harmonicBreath * 0.015;
+    stretchY = 1.0 + harmonicBreath * 0.020;
+  }
+
+  // 4. ACTION LOOP SELECTION + SUB-FRAME INTERPOLATION (60-120 FPS Smoothness)
+  let frameName = 'idle_1';
+  let nextFrameName = 'idle_2';
+  let frameFrac = 0;
+
+  const setLoopFrames = (prefix: string, rawProgress: number) => {
+    const idx0 = Math.floor(rawProgress) % 4;
+    const idx1 = (idx0 + 1) % 4;
+    frameName = `${prefix}_${idx0 + 1}`;
+    nextFrameName = `${prefix}_${idx1 + 1}`;
+    frameFrac = rawProgress - Math.floor(rawProgress);
+  };
+
+  if (isWalking) {
+    setLoopFrames('walk', walkT * 10);
+  } else if (isCast) {
+    if (castP < 0.32) {
+      frameName = 'cast_1';
+      nextFrameName = 'cast_2';
+      frameFrac = castP / 0.32;
+    } else if (castP < 0.55) {
+      frameName = 'cast_2';
+      nextFrameName = 'cast_3';
+      frameFrac = (castP - 0.32) / 0.23;
+    } else if (castP < 0.80) {
+      frameName = 'cast_3';
+      nextFrameName = 'cast_4';
+      frameFrac = (castP - 0.55) / 0.25;
+    } else {
+      frameName = 'cast_4';
+      nextFrameName = 'cast_4';
+      frameFrac = 0;
     }
   } else if (phase === 'RETRIEVING') {
-    const retStep = (Math.floor(t * 3.2) % 4) + 1;
-    frameName = `retrieve_${retStep}`;
+    setLoopFrames('retrieve', t * 3.2);
   } else if (phase === 'CATCH_FAIL') {
-    const failStep = (Math.floor(t * 3.0) % 4) + 1;
-    frameName = `fail_${failStep}`;
+    setLoopFrames('fail', t * 3.0);
   } else if (o.jerkAgeSec < 0.7) {
-    const jerkStep = Math.min(4, Math.max(1, Math.floor((o.jerkAgeSec / 0.7) * 4) + 1));
-    frameName = `jerk_${jerkStep}`;
+    const jProg = (o.jerkAgeSec / 0.7) * 3.99;
+    const jIdx = Math.min(4, Math.max(1, Math.floor(jProg) + 1));
+    const jNext = Math.min(4, jIdx + 1);
+    frameName = `jerk_${jIdx}`;
+    nextFrameName = `jerk_${jNext}`;
+    frameFrac = jProg - Math.floor(jProg);
   } else if (phase === 'FISH_BITING') {
-    // 4-frame fish bite struggle (tuned from 9 fps to smooth 5.5 fps)
-    const biteIdx = (Math.floor(t * 5.5) % 4) + 1;
-    frameName = `bite_${biteIdx}`;
+    setLoopFrames('bite', t * 5.5);
   } else if (phase === 'REELING_MINIGAME') {
-    // 4-frame reeling battle loop (tension-driven 5.5..10.5 fps)
     const reelSpeed = 5.5 + o.reelTension01 * 5.0;
-    const reelIdx = (Math.floor(t * reelSpeed) % 4) + 1;
-    frameName = `reel_${reelIdx}`;
+    setLoopFrames('reel', t * reelSpeed);
   } else if (isCatching) {
-    // Multi-stage cinematic catch haul:
     if (catchP < 0.30) {
-      frameName = 'jerk_3'; // heavy strike hookset!
+      frameName = 'jerk_3';
+      nextFrameName = 'reel_3';
+      frameFrac = catchP / 0.30;
     } else if (catchP < 0.65) {
-      frameName = (Math.floor(t * 6) % 2 === 0 ? 'reel_3' : 'reel_4'); // hauling pull!
+      const rStep = t * 6;
+      frameName = Math.floor(rStep) % 2 === 0 ? 'reel_3' : 'reel_4';
+      nextFrameName = Math.floor(rStep) % 2 === 0 ? 'reel_4' : 'reel_3';
+      frameFrac = rStep - Math.floor(rStep);
     } else if (catchP < 0.85) {
-      frameName = 'victory_1'; // standing up with open hands
+      frameName = 'victory_1';
+      nextFrameName = 'victory_2';
+      frameFrac = (catchP - 0.65) / 0.20;
     } else {
-      frameName = `victory_${(Math.floor(t * 4.2) % 4) + 1}`; // victory bounce holding fish!
+      setLoopFrames('victory', t * 4.2);
     }
   } else if (phase === 'CATCH_REVEAL') {
-    // Victory celebration loop
-    const vicIdx = (Math.floor(t * 4.2) % 4) + 1;
-    frameName = `victory_${vicIdx}`;
+    setLoopFrames('victory', t * 4.2);
   } else {
-    // Peaceful idle fishing loop (calm 2.2 fps breath & rod sway)
-    const idleIdx = (Math.floor(t * 2.2) % 4) + 1;
-    frameName = `idle_${idleIdx}`;
+    setLoopFrames('idle', t * 2.2);
   }
 
-  // Retrieve frame metadata from manifest
-  let frameMeta = costumeData?.frames[frameName];
-  if (!frameMeta) {
-    // Fallback to base frame if specific loop frame not found
-    const baseAction = frameName.split('_')[0];
-    frameMeta = costumeData?.frames[baseAction] || costumeData?.frames['idle'] || {
-      file: 'idle.png',
-      w: 277,
-      h: 332,
-      anchorX: 139,
-      anchorY: 230,
-      tipX: 270,
-      tipY: 52
-    };
-  }
+  const resolveMeta = (fName: string): SpriteFrameMeta => {
+    const baseAction = fName.split('_')[0];
+    return (
+      costumeData?.frames[fName] ||
+      costumeData?.frames[baseAction] ||
+      costumeData?.frames['idle'] || {
+        file: 'idle.png',
+        w: 277,
+        h: 332,
+        anchorX: 139,
+        anchorY: 230,
+        tipX: 270,
+        tipY: 52
+      }
+    );
+  };
 
-  const spriteImg = getSpriteImage(costumeId, frameName) ||
-                    getSpriteImage(costumeId, frameName.split('_')[0]) ||
-                    getSpriteImage(costumeId, 'idle');
+  const frameMeta = resolveMeta(frameName);
+  const nextFrameMeta = resolveMeta(nextFrameName);
+
+  const spriteImg =
+    getSpriteImage(costumeId, frameName) ||
+    getSpriteImage(costumeId, frameName.split('_')[0]) ||
+    getSpriteImage(costumeId, 'idle');
+
+  const nextSpriteImg =
+    getSpriteImage(costumeId, nextFrameName) ||
+    getSpriteImage(costumeId, nextFrameName.split('_')[0]) ||
+    spriteImg;
 
   // Scale: Normalize UNIT_PX (340) to on-screen height (~128px)
   const scale = 128 / 340; // 0.376
@@ -445,18 +569,65 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
   const anchorX = frameMeta.anchorX * scale;
   const anchorY = frameMeta.anchorY * scale;
 
+  // Spine 2D Secondary Motion (Head/Hair/Chest Wind & Breathing Wave)
+  const headRot = skeleton.getBone('head')?.rotation ?? 0;
+  const hairRot = skeleton.getBone('hair_back')?.rotation ?? 0;
+  const ahogeRot = skeleton.getBone('ahoge')?.rotation ?? 0;
+
   ctx.save();
   ctx.translate(charX, charAnchorY);
   ctx.rotate(totalTilt);
+  ctx.scale(squashX, stretchY);
 
   if (spriteImg) {
-    ctx.drawImage(
-      spriteImg,
-      -anchorX,
-      -anchorY,
-      drawW,
-      drawH
-    );
+    // 10-Strip Skeletal Mesh Deformation (eliminates rigid cutout stiffness!)
+    const STRIPS = 10;
+    const srcStripH = spriteImg.naturalHeight / STRIPS;
+    const dstStripH = drawH / STRIPS;
+
+    for (let s = 0; s < STRIPS; s++) {
+      // heightFromFeet01: 0 at bottom (feet/hips), 1 at top (head/ahoge/rod tip)
+      const heightFromFeet01 = 1 - s / (STRIPS - 1);
+      // Secondary follow-through wave (stronger on upper torso, head, and hair)
+      const secondarySwayPx =
+        Math.pow(heightFromFeet01, 1.65) *
+        (Math.sin(t * 2.5 - heightFromFeet01 * 1.9) * 1.6 + (headRot + hairRot * 0.45 + ahogeRot * 0.2) * 5.5);
+      // Chest breathing width expansion around mid-body (heightFromFeet01 ~ 0.45..0.75)
+      const chestFactor = Math.sin(heightFromFeet01 * Math.PI);
+      const stripScaleX = 1 + chestFactor * harmonicBreath * 0.016;
+
+      const sy = s * srcStripH;
+      const dy = -anchorY + s * dstStripH;
+
+      ctx.drawImage(
+        spriteImg,
+        0,
+        sy,
+        spriteImg.naturalWidth,
+        srcStripH + 0.6, // +0.6px overlap prevents sub-pixel seam lines
+        -anchorX * stripScaleX + secondarySwayPx,
+        dy,
+        drawW * stripScaleX,
+        dstStripH + 0.35
+      );
+    }
+
+    // Sub-frame motion blend on fast action transitions (smooths 4-frame steps into 60fps)
+    if (
+      nextSpriteImg &&
+      nextSpriteImg !== spriteImg &&
+      (isCast || pulling || isCatching || o.jerkAgeSec < 0.7) &&
+      frameFrac > 0.65
+    ) {
+      ctx.save();
+      ctx.globalAlpha = (frameFrac - 0.65) / 0.35 * 0.38;
+      const nDrawW = nextFrameMeta.w * scale;
+      const nDrawH = nextFrameMeta.h * scale;
+      const nAnchorX = nextFrameMeta.anchorX * scale;
+      const nAnchorY = nextFrameMeta.anchorY * scale;
+      ctx.drawImage(nextSpriteImg, -nAnchorX, -nAnchorY, nDrawW, nDrawH);
+      ctx.restore();
+    }
   } else {
     // Graceful vector placeholder while image completes decoding
     ctx.fillStyle = '#78350f';
@@ -475,19 +646,70 @@ export function drawAngler(ctx: CanvasRenderingContext2D, o: AnglerOpts) {
 
   ctx.restore();
 
-  // 5. FISHING LINE, ROD TIP DYNAMICS & LEAPING CATCH SEQUENCE
-  if (!isWalking) {
-    const rawTipX = frameMeta.tipX ?? (frameMeta.w * 0.9);
-    const rawTipY = frameMeta.tipY ?? (frameMeta.h * 0.2);
+  // Anime Action Emotion Badge: "!!" Bite Shock Pop with Squash & Stretch
+  if (phase === 'FISH_BITING') {
+    const popCycle = Math.sin(t * 14);
+    const badgeScaleX = 1.0 + popCycle * 0.12;
+    const badgeScaleY = 1.0 - popCycle * 0.12;
+    const badgeX = charX + 16;
+    const badgeY = charAnchorY - 104 - Math.abs(popCycle) * 5;
 
-    const relTipX = (rawTipX * scale) - anchorX;
-    const relTipY = (rawTipY * scale) - anchorY;
+    ctx.save();
+    ctx.translate(badgeX, badgeY);
+    ctx.scale(badgeScaleX, badgeScaleY);
+
+    // Burst speech pill
+    ctx.fillStyle = '#fef08a';
+    ctx.strokeStyle = '#dc2626';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.roundRect(-14, -14, 28, 22, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    // Exclamation marks "!!"
+    ctx.fillStyle = '#dc2626';
+    ctx.font = '900 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('!!', 0, -2);
+    ctx.restore();
+  }
+
+  // 5. FISHING LINE, CONTINUOUS INTERPOLATED ROD TIP & LEAPING CATCH SEQUENCE
+  if (!isWalking) {
+    // Smoothly interpolate (lerp) rod tip between current frame and next frame so line NEVER jumps!
+    const tipX0 = (frameMeta.tipX ?? frameMeta.w * 0.9) * scale - anchorX;
+    const tipY0 = (frameMeta.tipY ?? frameMeta.h * 0.2) * scale - anchorY;
+    const nAnchorX = nextFrameMeta.anchorX * scale;
+    const nAnchorY = nextFrameMeta.anchorY * scale;
+    const tipX1 = (nextFrameMeta.tipX ?? nextFrameMeta.w * 0.9) * scale - nAnchorX;
+    const tipY1 = (nextFrameMeta.tipY ?? nextFrameMeta.h * 0.2) * scale - nAnchorY;
+
+    const smoothFrac = frameFrac * frameFrac * (3 - 2 * frameFrac); // smoothstep
+    const spineTipRot = skeleton.getBone('rod_tip')?.rotation ?? 0;
+    const relTipX = (tipX0 + (tipX1 - tipX0) * smoothFrac) * squashX + Math.sin(t * 2.5) * 1.2;
+    const relTipY = (tipY0 + (tipY1 - tipY0) * smoothFrac) * stretchY + spineTipRot * 6.5;
 
     // Apply rotation transformation
     const cosA = Math.cos(totalTilt);
     const sinA = Math.sin(totalTilt);
     const worldTipX = charX + (relTipX * cosA - relTipY * sinA);
     const worldTipY = charAnchorY + (relTipX * sinA + relTipY * cosA);
+
+    // Subtle Bloom Glint on Rod Tip during active tension
+    if (pulling || isCatching) {
+      ctx.save();
+      const tipGlow = ctx.createRadialGradient(worldTipX, worldTipY, 1, worldTipX, worldTipY, 16);
+      tipGlow.addColorStop(0, 'rgba(254, 240, 138, 0.85)');
+      tipGlow.addColorStop(0.5, 'rgba(56, 189, 248, 0.35)');
+      tipGlow.addColorStop(1, 'rgba(56, 189, 248, 0)');
+      ctx.fillStyle = tipGlow;
+      ctx.beginPath();
+      ctx.arc(worldTipX, worldTipY, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
 
     // Ocean water entry coordinates for the bobber
     const bobX = pierEdgeX + 185;
